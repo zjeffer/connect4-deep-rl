@@ -1,16 +1,15 @@
 #pragma once
 
-// torch
 #include <torch/torch.h>
 
 #include "cell.hpp"
 
 class Environment {
   public:
-	Environment(int width = 7, int height = 6);
+	Environment(int rows = 6, int cols = 7);
 	~Environment();
 
-	void newEnvironment(int width, int height);
+	void newEnvironment(int cols, int rows);
 
 	[[nodiscard]] ePlayer getCurrentPlayer() const;
 	void setPlayer(ePlayer player);
@@ -20,18 +19,20 @@ class Environment {
 	bool undoMove();
 	[[nodiscard]] bool isValidMove(int column) const;
 
-	[[nodiscard]] int getWidth() const;
-	[[nodiscard]] int getHeight() const;
+	[[nodiscard]] int getRows() const;
+	[[nodiscard]] int getCols() const;
 	[[nodiscard]] ePlayer getPlayerAtPiece(int row, int column) const;
 
 	[[nodiscard]] bool isGameOver() const;
+	[[nodiscard]] bool hasValidMoves() const;
+	[[nodiscard]] ePlayer getWinner() const;
 
 	void print();
 	void printHistory();
 
   private:
-	int m_Width;
-	int m_Height;
+	int m_Rows;
+	int m_Cols;
 	ePlayer m_CurrentPlayer = ePlayer::YELLOW;
 
 	torch::Tensor m_Board;
