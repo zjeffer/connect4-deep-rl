@@ -5,9 +5,10 @@ A deep reinforcement learning algorithm that plays Connect 4, based on AlphaZero
 ## TODO
 
 * [X] Connect 4 environment
-* [ ] MCTS algorithm
-* [ ] Neural network
+* [X] MCTS algorithm
+* [X] Neural network
 * [ ] AlphaZero self-play
+* [ ] Save played moves to memory, and memory to file
 * [ ] AlphaZero training
 * [ ] AlphaZero evaluation
 * [ ] Play against computer
