@@ -7,5 +7,6 @@ inline bool g_running = true;
 
 inline std::shared_ptr<Logger> logger;
 
+inline std::uniform_int_distribution<int> g_uniform_int_dist;
 inline std::default_random_engine g_generator;
-inline std::gamma_distribution<double> g_distribution(0.3, 1.0);
+inline std::gamma_distribution<double> g_gamma_distribution(0.3, 1.0);

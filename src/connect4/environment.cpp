@@ -7,6 +7,13 @@ Environment::Environment(int rows, int cols) {
 	newEnvironment(rows, cols);
 }
 
+Environment::Environment(torch::Tensor board, ePlayer currentPlayer) {
+	m_Board = board;
+	m_Rows = board.size(0);
+	m_Cols = board.size(1);
+	m_CurrentPlayer = currentPlayer;
+}
+
 Environment::~Environment(){
 	LOG(DEBUG) << "Environment destructor";
 }
@@ -84,7 +91,7 @@ bool Environment::isValidMove(int column) const{
 	if (column < 0 || column >= m_Cols){
 		return false;
 	}
-	// if column is not empty
+	// if column is full
 	return m_Board[0][column].item<int>() == 0;
 }
 
@@ -98,6 +105,20 @@ int Environment::getCols() const{
 
 ePlayer Environment::getPlayerAtPiece(int row, int column) const{
 	return static_cast<ePlayer>(m_Board[row][column].item<int>());
+}
+
+torch::Tensor Environment::getBoard(){
+	return m_Board;
+}
+
+std::vector<int> Environment::getValidMoves() {
+	std::vector<int> validMoves;
+	for (int i = 0; i < m_Cols; i++){
+		if (isValidMove(i)){
+			validMoves.push_back(i);
+		}
+	}
+	return validMoves;
 }
 
 bool Environment::isGameOver() const{
@@ -181,7 +202,8 @@ ePlayer Environment::getWinner() const {
 	if (!hasValidMoves()){
 		return ePlayer::NONE;
 	}
-	throw std::runtime_error("Game is not over yet");
+	// throw std::runtime_error("Game is not over yet");
+	return ePlayer::NONE;
 }
 
 void Environment::print(){

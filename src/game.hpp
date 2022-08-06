@@ -2,7 +2,9 @@
 
 #include "settings.hpp"
 #include "connect4/environment.hpp"
+#include "agent.hpp"
 #include "common.hpp"
+
 
 class Game {
   public:
@@ -17,4 +19,6 @@ class Game {
   private:
 	Settings* m_Settings = nullptr;
 	Environment* m_Env = nullptr;
+
+	std::vector<Agent*> m_Agents;
 };

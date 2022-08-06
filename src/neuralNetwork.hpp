@@ -4,12 +4,13 @@
 #include <string>
 
 #include "neuralNetwork/network.hpp"
+#include "settings.hpp"
 #include "utils.hpp"
 
 
 class NeuralNetwork {
   public:
-	NeuralNetwork();
+	NeuralNetwork(Settings* settings);
 	~NeuralNetwork();
 
 	std::tuple<torch::Tensor, torch::Tensor> predict(torch::Tensor &input);
@@ -21,6 +22,7 @@ class NeuralNetwork {
 
 
   private:
-	torch::Device device = torch::Device(torch::kCPU);
-	Network net = nullptr;
+	torch::Device m_Device = torch::Device(torch::kCPU);
+	Network m_Net = nullptr;
+	Settings* m_Settings = nullptr;
 };

@@ -1,1 +1,155 @@
 #include "mcts.hpp"
+#include "tqdm.h"
+
+MCTS::MCTS(Settings *settings, Node *root,
+		   const std::shared_ptr<NeuralNetwork> &nn) {
+	m_Settings = settings;
+	m_NN = nn;
+
+	if (root == nullptr) {
+		Environment *env =
+			new Environment(settings->getRows(), settings->getCols());
+		m_Root = new Node(env);
+	} else {
+		m_Root = root;
+	}
+
+	if (m_Settings->useGPU()) {
+		m_Device = torch::kCUDA;
+	}
+}
+
+MCTS::~MCTS() {
+	// delete m_Root;
+}
+
+Node *MCTS::getRoot() { return m_Root; }
+
+void MCTS::run_simulations() {
+	Node *root = this->getRoot();
+
+	tqdm bar;
+	int sims = m_Settings->getSimulations();
+	LOG(INFO) << "Running " << sims << " simulations...\n";
+	for (int i = 0; i < sims; i++) {
+		bar.progress(i, sims);
+		Node *selected = this->select(root);
+		float result = this->expand(selected);
+		this->backpropagate(selected, result);
+	}
+}
+
+Node *MCTS::select(Node *root) {
+	// keep selecting nodes using the Q+U formula
+	// until we reach a node not yet expanded
+	Node *current = root;
+	while (!current->getChildren().size() == 0) {
+		std::vector<Node *> children = current->getChildren();
+		// TODO: start with random child instead of the first one
+		Node *best_child = nullptr;
+		float best_score = -1;
+		for (Node *child : children) {
+			float score = child->getQ() + child->getU();
+			if (score > best_score) {
+				best_child = child;
+				best_score = score;
+			}
+		}
+		if (best_child == nullptr) {
+			LOG(FATAL) << "Error: best child is null";
+			exit(EXIT_FAILURE);
+		}
+		current = best_child;
+	}
+	return current;
+}
+
+float MCTS::expand(Node *node) {
+	// expand the node by adding a child for each possible move
+
+	Environment *env = node->getEnvironment();
+	torch::Tensor board = env->getBoard();
+
+	torch::Tensor input = board.unsqueeze(0).to(m_Device);
+	std::tuple<torch::Tensor, torch::Tensor> output = m_NN->predict(input);
+
+	// policy
+	torch::Tensor policy = std::get<0>(output).view({7});
+	// value
+	float value = std::get<1>(output).item<float>();
+
+	std::vector<int> valid_moves = env->getValidMoves();
+
+	if (valid_moves.size() == 0) {
+		LOG(WARNING) << "Warning: no valid moves";
+		exit(EXIT_FAILURE); // TODO
+	}
+
+	for (int move : valid_moves) {
+		// create the new environment
+		Environment *new_env = new Environment(board, env->getCurrentPlayer());
+		new_env->makeMove(move);
+
+		Node *child = new Node(node, new_env, move, policy[move].item<float>());
+		node->addChild(child);
+	}
+
+	return value;
+}
+
+void MCTS::backpropagate(Node *root, float result) {
+	ePlayer player = root->getEnvironment()->getCurrentPlayer();
+	// backpropagate the result to the root
+	Node *current = root;
+	while (current != nullptr) {
+		current->incrementVisit();
+		float value = current->getValue();
+		if (current->getEnvironment()->getCurrentPlayer() == player) {
+			value += result;
+		} else {
+			value -= result;
+		}
+		current->setValue(value);
+		current = current->getParent();
+	}
+}
+
+int MCTS::getBestMoveDeterministic() {
+	// get move where prob is highest
+	float max_prob = 0;
+	int max_index = 0;
+	std::vector<Node *> moves = m_Root->getChildren();
+	for (int i = 0; i < (int)moves.size(); i++) {
+		if (moves[i]->getVisits() > max_prob) {
+			max_prob = moves[i]->getValue();
+			max_index = i;
+		}
+	}
+	return max_index;
+}
+
+int MCTS::getBestMoveStochastic() {
+	float total_prob = 0;
+	std::vector<Node *> moves = m_Root->getChildren();
+	for (const auto &move : moves) {
+		total_prob += move->getVisits();
+	}
+	float p = (g_uniform_int_dist(g_generator) / static_cast<float>(RAND_MAX)) *
+			  total_prob;
+	int index = 0;
+	while (p > 0) {
+		p -= moves[index]->getVisits();
+		index++;
+	}
+	return moves[index]->getMove();
+}
+
+int MCTS::getTreeDepth(Node *root) {
+	int depth = 0;
+	Node *current = root;
+	while (current->getParent() != nullptr) {
+		depth++;
+		current = current->getParent();
+	}
+	return depth;
+}

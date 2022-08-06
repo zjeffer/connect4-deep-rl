@@ -7,6 +7,7 @@
 class Environment {
   public:
 	Environment(int rows = 6, int cols = 7);
+	Environment(torch::Tensor board, ePlayer currentPlayer);
 	~Environment();
 
 	void newEnvironment(int cols, int rows);
@@ -22,6 +23,9 @@ class Environment {
 	[[nodiscard]] int getRows() const;
 	[[nodiscard]] int getCols() const;
 	[[nodiscard]] ePlayer getPlayerAtPiece(int row, int column) const;
+
+	[[nodiscard]] torch::Tensor getBoard();
+	[[nodiscard]] std::vector<int> getValidMoves();
 
 	[[nodiscard]] bool isGameOver() const;
 	[[nodiscard]] bool hasValidMoves() const;
