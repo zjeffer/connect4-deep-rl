@@ -33,6 +33,9 @@ file (GLOB PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/src/logger/*.hpp
     ${PROJECT_SOURCE_DIR}/src/neuralNetwork/*.cpp
     ${PROJECT_SOURCE_DIR}/src/neuralNetwork/*.hpp
+    ${PROJECT_SOURCE_DIR}/src/tree/*.hpp
+    ${PROJECT_SOURCE_DIR}/src/tree/*.cpp
+
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
