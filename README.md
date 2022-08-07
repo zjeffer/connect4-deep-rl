@@ -7,9 +7,17 @@ A deep reinforcement learning algorithm that plays Connect 4, based on AlphaZero
 * [X] Connect 4 environment
 * [X] MCTS algorithm
 * [X] Neural network
-* [ ] AlphaZero self-play
+* [X] AlphaZero self-play
+* [X] Argument parsing
+* [ ] Load settings from file
+* [ ] Unit tests:
+  * [ ] Endgame tests
+  * [ ] ...?
 * [ ] Save played moves to memory, and memory to file
 * [ ] AlphaZero training
 * [ ] AlphaZero evaluation
 * [ ] Play against computer
 * [ ] GUI?
+
+
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fzjeffer%2Fconnect4-deep-rl&count_bg=%235E81AC&title_bg=%23555555&icon=&icon_color=%235E81AC&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
