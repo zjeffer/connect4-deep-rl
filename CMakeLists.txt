@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.23 FATAL_ERROR)
 
 ######### MAIN PROJECT #########
 project(connect4 VERSION 1.0)
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1) # for clangd
 
 ###### LibTorch ######
 set(CMAKE_PREFIX_PATH /usr/include/libtorch/share/cmake/)
