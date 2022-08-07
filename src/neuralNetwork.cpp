@@ -2,7 +2,7 @@
 
 NeuralNetwork::NeuralNetwork(Settings* settings) {
     m_Settings = settings;
-    m_Net = Network(1, settings->getCols(), settings->getRows(), settings->getCols(), 256, 2, 1);
+    m_Net = Network(settings->getInputPlanes(), settings->getCols(), settings->getRows(), settings->getOutputSize(), 256, 2, 1);
     if (m_Settings->useGPU()){
         m_Device = torch::Device(torch::kCUDA);
     }
@@ -10,7 +10,22 @@ NeuralNetwork::NeuralNetwork(Settings* settings) {
 }
 
 NeuralNetwork::~NeuralNetwork() {
+    std::cout << "NeuralNetwork destructor" << std::endl;
+}
 
+torch::Tensor NeuralNetwork::boardToInput(Environment* env) {
+    // Create input tensor
+    torch::Tensor input = torch::zeros({m_Settings->getInputPlanes(), m_Settings->getRows(), m_Settings->getCols()});
+	torch::Tensor board = env->getBoard();
+
+    // Fill first plane of input tensor with board
+    input[0] = board.detach().clone();
+
+    // Fill second plane of input tensor with player (yellow = 0, red = 1)
+    int player = static_cast<int>(env->getCurrentPlayer()) - 1;
+    input[1] = torch::full({m_Settings->getRows(), m_Settings->getCols()}, player);
+
+    return input.to(m_Device).unsqueeze(0);
 }
 
 std::tuple<torch::Tensor, torch::Tensor> NeuralNetwork::predict(torch::Tensor &input) {

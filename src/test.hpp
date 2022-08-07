@@ -14,7 +14,7 @@ void testHorizontalWin(){
 	env.makeMove(3);
 	env.print();
 
-	assert(env.isGameOver());
+	assert(env.currentPlayerHasConnected4());
 }
 
 void testVerticalWin(){
@@ -28,7 +28,7 @@ void testVerticalWin(){
 	env.makeMove(1);
 	env.makeMove(0);
 	env.print();
-	assert(env.isGameOver());
+	assert(env.currentPlayerHasConnected4());
 }
 
 void testDiagonalWin(){
@@ -46,7 +46,7 @@ void testDiagonalWin(){
 	env.makeMove(1);
 	env.makeMove(3);
 	env.print();
-	assert(env.isGameOver());
+	assert(env.currentPlayerHasConnected4());
 
 	LOG(INFO) << "Testing diagonal win (from top left to bottom right)";
 	env.newEnvironment(6, 7);
@@ -61,5 +61,5 @@ void testDiagonalWin(){
 	env.makeMove(2);
 	env.makeMove(2);
 	env.makeMove(1);
-	assert(env.isGameOver());
+	assert(env.currentPlayerHasConnected4());
 }

@@ -35,6 +35,11 @@ class Settings {
 	[[nodiscard]] bool useGPU();
 	void setUseGPU(bool useGPU);
 
+	[[nodiscard]] int getInputPlanes();
+	void setInputPlanes(int inputPlanes);
+
+	[[nodiscard]] int getOutputSize();
+
   private:
 	int m_Simulations = 400;
 	bool m_UseStochasticSearch = true;
@@ -42,4 +47,5 @@ class Settings {
 	int m_Cols = 7;
 	std::vector<AgentData> m_AgentSettings = std::vector<AgentData>();
 	bool m_UseGPU = true;
+	int m_InputPlanes = 2;
 };

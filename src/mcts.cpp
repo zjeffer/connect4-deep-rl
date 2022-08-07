@@ -25,6 +25,8 @@ MCTS::~MCTS() {
 
 Node *MCTS::getRoot() { return m_Root; }
 
+void MCTS::setRoot(Node *root) { m_Root = root; }
+
 void MCTS::run_simulations() {
 	Node *root = this->getRoot();
 
@@ -37,13 +39,14 @@ void MCTS::run_simulations() {
 		float result = this->expand(selected);
 		this->backpropagate(selected, result);
 	}
+	std::cout << std::endl;
 }
 
 Node *MCTS::select(Node *root) {
 	// keep selecting nodes using the Q+U formula
 	// until we reach a node not yet expanded
 	Node *current = root;
-	while (!current->getChildren().size() == 0) {
+	while (current->getChildren().size() != 0) {
 		std::vector<Node *> children = current->getChildren();
 		// TODO: start with random child instead of the first one
 		Node *best_child = nullptr;
@@ -66,11 +69,9 @@ Node *MCTS::select(Node *root) {
 
 float MCTS::expand(Node *node) {
 	// expand the node by adding a child for each possible move
-
 	Environment *env = node->getEnvironment();
-	torch::Tensor board = env->getBoard();
 
-	torch::Tensor input = board.unsqueeze(0).to(m_Device);
+	torch::Tensor input = m_NN->boardToInput(env);
 	std::tuple<torch::Tensor, torch::Tensor> output = m_NN->predict(input);
 
 	// policy
@@ -81,13 +82,12 @@ float MCTS::expand(Node *node) {
 	std::vector<int> valid_moves = env->getValidMoves();
 
 	if (valid_moves.size() == 0) {
-		LOG(WARNING) << "Warning: no valid moves";
-		exit(EXIT_FAILURE); // TODO
+		return env->getWinner() == ePlayer::NONE ? 0 : 1;
 	}
 
-	for (int move : valid_moves) {
+	for (const auto& move : valid_moves) {
 		// create the new environment
-		Environment *new_env = new Environment(board, env->getCurrentPlayer());
+		Environment* new_env = new Environment(env->getBoard().detach().clone(), env->getCurrentPlayer());
 		new_env->makeMove(move);
 
 		Node *child = new Node(node, new_env, move, policy[move].item<float>());
@@ -129,19 +129,15 @@ int MCTS::getBestMoveDeterministic() {
 }
 
 int MCTS::getBestMoveStochastic() {
-	float total_prob = 0;
-	std::vector<Node *> moves = m_Root->getChildren();
-	for (const auto &move : moves) {
-		total_prob += move->getVisits();
+	std::vector<Node *> children = m_Root->getChildren();
+	std::vector<int> moves;
+	for (const auto &node : children) {
+		moves.push_back(node->getMove());
 	}
-	float p = (g_uniform_int_dist(g_generator) / static_cast<float>(RAND_MAX)) *
-			  total_prob;
-	int index = 0;
-	while (p > 0) {
-		p -= moves[index]->getVisits();
-		index++;
-	}
-	return moves[index]->getMove();
+	std::discrete_distribution<int> distribution(moves.begin(), moves.end());
+	int index = distribution(g_generator);
+
+	return children[index]->getMove();
 }
 
 int MCTS::getTreeDepth(Node *root) {

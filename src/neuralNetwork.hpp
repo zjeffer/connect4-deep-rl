@@ -4,8 +4,10 @@
 #include <string>
 
 #include "neuralNetwork/network.hpp"
+#include "connect4/environment.hpp"
 #include "settings.hpp"
 #include "utils.hpp"
+#include "common.hpp"
 
 
 class NeuralNetwork {
@@ -13,6 +15,7 @@ class NeuralNetwork {
 	NeuralNetwork(Settings* settings);
 	~NeuralNetwork();
 
+	torch::Tensor boardToInput(Environment* env);
 	std::tuple<torch::Tensor, torch::Tensor> predict(torch::Tensor &input);
 
 	bool loadModel(std::string modelPath);

@@ -9,7 +9,9 @@ Logger::Logger() {
 }
 
 Logger::~Logger(){
-	this->destroy();
+	// TODO: this segfaults for some reason
+	// it exits fine if not included
+	// this->destroy(); 
 }
 
 void Logger::destroy(){

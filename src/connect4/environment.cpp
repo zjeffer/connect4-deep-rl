@@ -1,5 +1,9 @@
 #include "environment.hpp"
 #include "../common.hpp"
+#include "player.hpp"
+#include <cstdlib>
+#include <g3log/loglevels.hpp>
+#include <stdexcept>
 
 Environment::Environment(int rows, int cols) {
 	m_Rows = rows;
@@ -15,7 +19,7 @@ Environment::Environment(torch::Tensor board, ePlayer currentPlayer) {
 }
 
 Environment::~Environment(){
-	LOG(DEBUG) << "Environment destructor";
+	std::cout << "Environment destructor" << std::endl;
 }
 
 void Environment::newEnvironment(int rows, int cols){
@@ -43,11 +47,7 @@ void Environment::togglePlayer(){
 	setPlayer(m_CurrentPlayer == ePlayer::YELLOW ? ePlayer::RED : ePlayer::YELLOW);
 }
 
-bool Environment::makeMove(int column) {
-	if (!isValidMove(column) && !isGameOver()) {
-		return false;
-	}
-	LOG(INFO) << "Player " << static_cast<int>(m_CurrentPlayer) << " makes move at column " << column;
+void Environment::makeMove(int column) {
 	// go down the column until we find an non-empty cell
 	int row = m_Rows - 1;
 	try {
@@ -62,15 +62,14 @@ bool Environment::makeMove(int column) {
 
 	// fill cell with currentPlayer's piece
 	if (m_Board[row][column].item<int>() != 0){
-		LOG(WARNING) << "Error: cell is already filled";
-		return false;
+		LOG(FATAL) << "Error: cell is already filled";
+		exit(EXIT_FAILURE);
 	}
 	m_Board[row][column] = static_cast<int>(m_CurrentPlayer);
 	m_BoardHistory.push_back(Cell {row, column, m_CurrentPlayer});
 
 	// switch current player
 	togglePlayer();
-	return true;
 }
 
 bool Environment::undoMove() {
@@ -91,8 +90,14 @@ bool Environment::isValidMove(int column) const{
 	if (column < 0 || column >= m_Cols){
 		return false;
 	}
-	// if column is full
-	return m_Board[0][column].item<int>() == 0;
+	// if top cell of the column is full
+	int value = m_Board[0][column].item<int>();
+	if(value == 0){
+		return true;
+	} else if (value == 1 || value == 2){
+		return false;
+	}
+	throw std::runtime_error("Error: isValidMove(): value is not 0, 1 or 2, but: " + std::to_string(value));
 }
 
 int Environment::getRows() const{
@@ -111,6 +116,17 @@ torch::Tensor Environment::getBoard(){
 	return m_Board;
 }
 
+void Environment::setBoard(torch::Tensor board){
+	m_Board = board.detach().clone();
+	// set player according to amount of pieces
+	torch::Tensor counts = torch::bincount(m_Board.flatten());
+	if (counts[1].item<int>() > counts[2].item<int>()){
+		setPlayer(ePlayer::RED);
+	} else {
+		setPlayer(ePlayer::YELLOW);
+	}
+}
+
 std::vector<int> Environment::getValidMoves() {
 	std::vector<int> validMoves;
 	for (int i = 0; i < m_Cols; i++){
@@ -121,7 +137,7 @@ std::vector<int> Environment::getValidMoves() {
 	return validMoves;
 }
 
-bool Environment::isGameOver() const{
+bool Environment::currentPlayerHasConnected4() const{
 	// TODO: rewrite this?
 	if (m_BoardHistory.size() < 7){
 		return false;
@@ -196,14 +212,11 @@ bool Environment::hasValidMoves() const {
 }
 
 ePlayer Environment::getWinner() const {
-	if (isGameOver()){
+	if (currentPlayerHasConnected4()){
 		return m_CurrentPlayer;
-	}
-	if (!hasValidMoves()){
+	} else {
 		return ePlayer::NONE;
 	}
-	// throw std::runtime_error("Game is not over yet");
-	return ePlayer::NONE;
 }
 
 void Environment::print(){

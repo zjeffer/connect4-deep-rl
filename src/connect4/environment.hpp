@@ -16,7 +16,7 @@ class Environment {
 	void setPlayer(ePlayer player);
 	void togglePlayer();
 
-	bool makeMove(int column);
+	void makeMove(int column);
 	bool undoMove();
 	[[nodiscard]] bool isValidMove(int column) const;
 
@@ -25,9 +25,11 @@ class Environment {
 	[[nodiscard]] ePlayer getPlayerAtPiece(int row, int column) const;
 
 	[[nodiscard]] torch::Tensor getBoard();
+	void setBoard(torch::Tensor board);
+	
 	[[nodiscard]] std::vector<int> getValidMoves();
 
-	[[nodiscard]] bool isGameOver() const;
+	[[nodiscard]] bool currentPlayerHasConnected4() const;
 	[[nodiscard]] bool hasValidMoves() const;
 	[[nodiscard]] ePlayer getWinner() const;
 

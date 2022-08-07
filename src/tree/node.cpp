@@ -60,11 +60,11 @@ float Node::getQ() {
 
 float Node::getU() {
 	if (m_Parent == nullptr){
-		LOG(WARNING) << "Parent is null";
+		LOG(FATAL) << "Parent is null";
 		exit(EXIT_FAILURE);
 	}
-	float exp_rate = log((m_Parent->getVisits() + 19652 + 1) / 19652) + 1.25;
-	exp_rate *= sqrt(m_Parent->getVisits() + 1) / (m_Visits + 1);
+	float exp_rate = log((m_Parent->getVisits() + 19652.0f + 1.0f) / 19652.0f) + 1.25f;
+	exp_rate *= sqrt(m_Parent->getVisits() + 1.0f) / (m_Visits + 1.0f);
 	return exp_rate * this->m_Prior;
 }
 
