@@ -1,8 +1,8 @@
 #include "neuralNetwork.hpp"
 
-NeuralNetwork::NeuralNetwork(Settings* settings) {
-    m_Settings = settings;
-    m_Net = Network(settings->getInputPlanes(), settings->getCols(), settings->getRows(), settings->getOutputSize(), 256, 2, 1);
+NeuralNetwork::NeuralNetwork(SelfPlaySettings* selfPlaySettings) {
+    m_Settings = selfPlaySettings;
+    m_Net = Network(selfPlaySettings->getInputPlanes(), selfPlaySettings->getCols(), selfPlaySettings->getRows(), selfPlaySettings->getOutputSize(), 256, 2, 1);
     if (m_Settings->useGPU()){
         m_Device = torch::Device(torch::kCUDA);
     }
@@ -10,13 +10,15 @@ NeuralNetwork::NeuralNetwork(Settings* settings) {
 }
 
 NeuralNetwork::~NeuralNetwork() {
-    std::cout << "NeuralNetwork destructor" << std::endl;
+    // std::cout << "NeuralNetwork destructor" << std::endl;
 }
 
 torch::Tensor NeuralNetwork::boardToInput(Environment* env) {
     // Create input tensor
     torch::Tensor input = torch::zeros({m_Settings->getInputPlanes(), m_Settings->getRows(), m_Settings->getCols()});
 	torch::Tensor board = env->getBoard();
+
+    // TODO: fuck
 
     // Fill first plane of input tensor with board
     input[0] = board.detach().clone();

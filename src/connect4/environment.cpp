@@ -19,7 +19,7 @@ Environment::Environment(torch::Tensor board, ePlayer currentPlayer) {
 }
 
 Environment::~Environment(){
-	std::cout << "Environment destructor" << std::endl;
+	// std::cout << "Environment destructor" << std::endl;
 }
 
 void Environment::newEnvironment(int rows, int cols){
@@ -138,10 +138,16 @@ std::vector<int> Environment::getValidMoves() {
 }
 
 bool Environment::currentPlayerHasConnected4() const{
-	// TODO: rewrite this?
-	if (m_BoardHistory.size() < 7){
+	// TODO: rewrite this function?
+
+	// if (m_BoardHistory.size() < 7){
+	// 	return false;
+	// }
+
+	if (!m_BoardHistory.size()){
 		return false;
 	}
+
 	// get last played piece
 	Cell cell = m_BoardHistory.back();
 	const int row = cell.getRow();
@@ -253,7 +259,7 @@ void Environment::printHistory(){
 	LOG(INFO) << "History: ";
 	std::stringstream ss;
 	ss << "\n";
-	for (int i = 0; i < m_BoardHistory.size(); i++){
+	for (int i = 0; i < (int)m_BoardHistory.size(); i++){
 		Cell cell = m_BoardHistory[i];
 		ss << cell.getRow() << " " << cell.getCol() << " " << static_cast<int>(cell.getPlayer()) << std::endl;
 	}

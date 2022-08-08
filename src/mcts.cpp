@@ -1,18 +1,18 @@
 #include "mcts.hpp"
-#include "tqdm.h"
+#include "common.hpp"
+#include "utils/tqdm.h"
 
-MCTS::MCTS(Settings *settings, Node *root,
+MCTS::MCTS(SelfPlaySettings *selfPlaySettings, Node *root,
 		   const std::shared_ptr<NeuralNetwork> &nn) {
-	m_Settings = settings;
+	m_Settings = selfPlaySettings;
 	m_NN = nn;
 
 	if (root == nullptr) {
 		Environment *env =
-			new Environment(settings->getRows(), settings->getCols());
-		m_Root = new Node(env);
-	} else {
-		m_Root = root;
+			new Environment(selfPlaySettings->getRows(), selfPlaySettings->getCols());
+		root = new Node(env);
 	}
+	m_Root = root;
 
 	if (m_Settings->useGPU()) {
 		m_Device = torch::kCUDA;
@@ -33,7 +33,7 @@ void MCTS::run_simulations() {
 	tqdm bar;
 	int sims = m_Settings->getSimulations();
 	LOG(INFO) << "Running " << sims << " simulations...\n";
-	for (int i = 0; i < sims; i++) {
+	for (int i = 0; i < sims && g_running; i++) {
 		bar.progress(i, sims);
 		Node *selected = this->select(root);
 		float result = this->expand(selected);
@@ -46,9 +46,9 @@ Node *MCTS::select(Node *root) {
 	// keep selecting nodes using the Q+U formula
 	// until we reach a node not yet expanded
 	Node *current = root;
+	// TODO: use boolean instead of checking size of vector
 	while (current->getChildren().size() != 0) {
 		std::vector<Node *> children = current->getChildren();
-		// TODO: start with random child instead of the first one
 		Node *best_child = nullptr;
 		float best_score = -1;
 		for (Node *child : children) {
@@ -83,6 +83,10 @@ float MCTS::expand(Node *node) {
 
 	if (valid_moves.size() == 0) {
 		return env->getWinner() == ePlayer::NONE ? 0 : 1;
+	}
+
+	if (env->getWinner() != ePlayer::NONE) {
+		return 1;
 	}
 
 	for (const auto& move : valid_moves) {

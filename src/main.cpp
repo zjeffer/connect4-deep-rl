@@ -8,8 +8,8 @@
 #include <signal.h>
 
 #include "connect4/environment.hpp"
-#include "test.hpp"
-#include "settings.hpp"
+#include "utils/test.hpp"
+#include "utils/selfPlaySettings.hpp"
 #include "game.hpp"
 #include "common.hpp"
 
@@ -70,24 +70,24 @@ int main(int argc, char* argv[]){
 
 	// set random seed
 	g_generator.seed(std::random_device{}());
-	LOG(DEBUG) << "Test random value: " << g_generator();
+	// LOG(DEBUG) << "Test random value: " << g_generator();
 
-	// TODO: load settings from file
-	Settings settings = Settings();
-	settings.setCols(7);
-	settings.setRows(6);
-	settings.setStochastic(true);
+	// TODO: load selfPlaySettings from file
+	SelfPlaySettings selfPlaySettings = SelfPlaySettings();
+	selfPlaySettings.setCols(7);
+	selfPlaySettings.setRows(6);
+	selfPlaySettings.setStochastic(true);
 
 	// create model
 	if (!std::filesystem::exists("models/model.pt")){
-		NeuralNetwork* nn = new NeuralNetwork(&settings);
+		NeuralNetwork* nn = new NeuralNetwork(&selfPlaySettings);
 		nn->saveModel("models/model.pt");
 		delete nn;
 	}
 
 	// add agents
-	settings.addAgent("Yellow", "models/model.pt", ePlayer::YELLOW);
-	settings.addAgent("Red", "models/model.pt", ePlayer::RED);
+	selfPlaySettings.addAgent("Yellow", "models/model.pt", ePlayer::YELLOW);
+	selfPlaySettings.addAgent("Red", "models/model.pt", ePlayer::RED);
 
 	// parse arguments
 	InputParser inputParser = InputParser(argc, argv);
@@ -98,7 +98,7 @@ int main(int argc, char* argv[]){
 	if (inputParser.cmdOptionExists("--sims")) {
 		try {
 			int sims = std::stoi(inputParser.getCmdOption("--sims"));
-			settings.setSimulations(sims);
+			selfPlaySettings.setSimulations(sims);
 			if (sims < 1) {
 				throw std::invalid_argument("Amount must be greater or equal to 1");
 			}
@@ -108,12 +108,29 @@ int main(int argc, char* argv[]){
 		}
 	}
 
+	int draws = 0, yellow = 0, red = 0;
 
-	// create game
-	Game game = Game(&settings);
+	while(g_running) {
+		// create game
+		Game game = Game(&selfPlaySettings);
+		ePlayer winner = game.playGame();
+		if (winner == ePlayer::NONE) {
+			draws++;
+		} else if (winner == ePlayer::YELLOW) {
+			yellow++;
+		} else if (winner == ePlayer::RED) {
+			red++;
+		}
+		LOG(INFO) << "Winner: " << static_cast<int>(winner) << "\n";
+		LOG(INFO) << "========= Tally:";
+		LOG(INFO) << "===== Yellow: " << yellow;
+		LOG(INFO) << "===== Red: " << red;
+		LOG(INFO) << "===== Draws: " << draws;
+		LOG(INFO) << "===============  \n";
+		LOG(INFO) << "\n\n\n";
+	}
+
 	
-	ePlayer winner = game.playGame();
-	LOG(INFO) << "Winner: " << static_cast<int>(winner);
 
 	return 0;
 }

@@ -9,7 +9,7 @@
 
 class Agent {
   public:
-	Agent(std::string name, std::string model_path, Settings *settings);
+	Agent(std::string name, std::string model_path, SelfPlaySettings *selfPlaySettings);
 	~Agent();
 
 	MCTS* getMCTS();

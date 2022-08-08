@@ -2,11 +2,11 @@
 
 
 
-Agent::Agent(std::string name, std::string model_path, Settings *settings) {
+Agent::Agent(std::string name, std::string model_path, SelfPlaySettings *selfPlaySettings) {
 	m_Name = name;
-	m_NN = std::make_shared<NeuralNetwork>(settings);
+	m_NN = std::make_shared<NeuralNetwork>(selfPlaySettings);
 	m_NN->loadModel(model_path);
-	m_MCTS = new MCTS(settings, nullptr, m_NN);
+	m_MCTS = new MCTS(selfPlaySettings, nullptr, m_NN);
 }
 
 Agent::~Agent(){

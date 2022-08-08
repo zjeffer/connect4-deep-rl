@@ -5,14 +5,14 @@
 
 #include "neuralNetwork/network.hpp"
 #include "connect4/environment.hpp"
-#include "settings.hpp"
-#include "utils.hpp"
+#include "utils/selfPlaySettings.hpp"
+#include "utils/utils.hpp"
 #include "common.hpp"
 
 
 class NeuralNetwork {
   public:
-	NeuralNetwork(Settings* settings);
+	NeuralNetwork(SelfPlaySettings* selfPlaySettings);
 	~NeuralNetwork();
 
 	torch::Tensor boardToInput(Environment* env);
@@ -27,5 +27,5 @@ class NeuralNetwork {
   private:
 	torch::Device m_Device = torch::Device(torch::kCPU);
 	Network m_Net = nullptr;
-	Settings* m_Settings = nullptr;
+	SelfPlaySettings* m_Settings = nullptr;
 };
