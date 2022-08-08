@@ -1,5 +1,5 @@
-#include "connect4/environment.hpp"
-#include "common.hpp"
+#include "../connect4/environment.hpp"
+#include "../common.hpp"
 
 
 void testHorizontalWin(){

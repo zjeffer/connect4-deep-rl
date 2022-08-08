@@ -12,6 +12,16 @@ std::string utils::getTimeString() {
 	return std::string(buffer);
 }
 
+std::vector<int> utils::boardToVector(torch::Tensor tensor) {
+	std::vector<int> board;
+	for (int i = 0; i < tensor.size(0); i++) {
+		for (int j = 0; j < tensor.size(1); j++) {
+			board.push_back(tensor[i][j].item().to<int>());
+		}
+	}
+	return board;
+}
+
 torch::Tensor utils::boardToTensor(Connect4Board board){
 	return torch::from_blob(board.board.data(), {board.rows, board.cols});
 }
