@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.23 FATAL_ERROR)
 
+# set warnings
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+
 ######### MAIN PROJECT #########
 project(connect4 VERSION 1.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1) # for clangd
@@ -34,14 +37,15 @@ file (GLOB PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/src/logger/*.hpp
     ${PROJECT_SOURCE_DIR}/src/neuralNetwork/*.cpp
     ${PROJECT_SOURCE_DIR}/src/neuralNetwork/*.hpp
-    ${PROJECT_SOURCE_DIR}/src/tree/*.hpp
     ${PROJECT_SOURCE_DIR}/src/tree/*.cpp
-
+    ${PROJECT_SOURCE_DIR}/src/tree/*.hpp
+    ${PROJECT_SOURCE_DIR}/src/utils/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/utils/*.hpp
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
-# link libraries (opencv, torch, g3log, qt)
+# link libraries (torch, g3log)
 target_link_libraries(${PROJECT_NAME} ${TORCH_LIBRARIES} g3log)
 
 # fix libgomp error
