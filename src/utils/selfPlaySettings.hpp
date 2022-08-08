@@ -3,7 +3,8 @@
 #include <string>
 #include <filesystem>
 #include <vector>
-#include "connect4/player.hpp"
+#include "../connect4/player.hpp"
+#include "settings.hpp"
 
 struct AgentData {
 	std::string name;
@@ -11,11 +12,11 @@ struct AgentData {
 	ePlayer player;
 };
 
-class Settings {
+class SelfPlaySettings : public Settings {
   public:
-	Settings();
-	Settings(const std::filesystem::path& settings_path);
-	~Settings();
+	SelfPlaySettings();
+	SelfPlaySettings(const std::filesystem::path& settings_path);
+	~SelfPlaySettings();
 
 	[[nodiscard]] int getSimulations();
 	void setSimulations(int simulations);
@@ -32,20 +33,18 @@ class Settings {
 	[[nodiscard]] int getCols();
 	void setCols(int cols);
 
-	[[nodiscard]] bool useGPU();
-	void setUseGPU(bool useGPU);
-
 	[[nodiscard]] int getInputPlanes();
 	void setInputPlanes(int inputPlanes);
 
 	[[nodiscard]] int getOutputSize();
 
+	
+
   private:
 	int m_Simulations = 400;
 	bool m_UseStochasticSearch = true;
+	std::vector<AgentData> m_AgentSettings = std::vector<AgentData>();
 	int m_Rows = 6;
 	int m_Cols = 7;
-	std::vector<AgentData> m_AgentSettings = std::vector<AgentData>();
-	bool m_UseGPU = true;
-	int m_InputPlanes = 2;
+	int m_InputPlanes = 3;
 };
