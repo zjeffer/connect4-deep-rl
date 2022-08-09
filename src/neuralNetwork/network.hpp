@@ -4,12 +4,6 @@
 #include <torch/torch.h>
 #include <tuple>
 
-#define INPUT_CHANNELS 2
-#define CONV_FILTERS 256
-#define OUTPUT_PLANES 7
-#define POLICY_FILTERS 2
-#define VALUE_FILTERS 1
-
 #include "convBlock.hpp"
 #include "residualBlock.hpp"
 #include "valueHead.hpp"

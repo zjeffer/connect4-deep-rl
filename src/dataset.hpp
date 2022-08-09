@@ -10,9 +10,9 @@
 
 using Data = std::pair<torch::Tensor, torch::Tensor>;
 
-class Dataset : public torch::data::datasets::Dataset<Data> {
+class C4Dataset : public torch::data::datasets::Dataset<C4Dataset> {
   public:
-	explicit Dataset(TrainerSettings* settings);
+	explicit C4Dataset(TrainerSettings* settings);
 
 	bool loadData(std::string path);
 	

@@ -1,8 +1,8 @@
 #include "neuralNetwork.hpp"
 
-NeuralNetwork::NeuralNetwork(SelfPlaySettings* selfPlaySettings) {
+NeuralNetwork::NeuralNetwork(Settings* selfPlaySettings) {
     m_Settings = selfPlaySettings;
-    m_Net = Network(selfPlaySettings->getInputPlanes(), selfPlaySettings->getCols(), selfPlaySettings->getRows(), selfPlaySettings->getOutputSize(), 256, 2, 1);
+    m_Net = Network(selfPlaySettings->getInputPlanes(), selfPlaySettings->getRows(), selfPlaySettings->getCols(), selfPlaySettings->getOutputSize(), 256, 2, 1);
     if (m_Settings->useGPU()){
         m_Device = torch::Device(torch::kCUDA);
     }
@@ -11,6 +11,10 @@ NeuralNetwork::NeuralNetwork(SelfPlaySettings* selfPlaySettings) {
 
 NeuralNetwork::~NeuralNetwork() {
     // std::cout << "NeuralNetwork destructor" << std::endl;
+}
+
+Network NeuralNetwork::getNetwork(){
+    return m_Net;
 }
 
 torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, int player, int inputPlanes) {
@@ -34,6 +38,7 @@ torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, int player, int i
     }
     input[2] = torch::full({rows, cols}, player);
 
+    LOG(DEBUG) << "input created";
     return input.unsqueeze(0);
 }
 

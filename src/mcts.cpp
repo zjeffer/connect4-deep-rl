@@ -46,7 +46,7 @@ Node *MCTS::select(Node *root) {
 	// keep selecting nodes using the Q+U formula
 	// until we reach a node not yet expanded
 	Node *current = root;
-	while (current->getVisits() > 0) {
+	while (current->getChildren().size() > 0) {
 		std::vector<Node *> children = current->getChildren();
 		Node *best_child = nullptr;
 		float best_score = -1;

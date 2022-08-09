@@ -12,7 +12,7 @@
 
 class NeuralNetwork {
   public:
-	NeuralNetwork(SelfPlaySettings* selfPlaySettings);
+	NeuralNetwork(Settings* selfPlaySettings);
 	~NeuralNetwork();
 
 	static torch::Tensor boardToInput(torch::Tensor board, int player, int inputPlanes);
@@ -28,5 +28,5 @@ class NeuralNetwork {
   private:
 	torch::Device m_Device = torch::Device(torch::kCPU);
 	Network m_Net = nullptr;
-	SelfPlaySettings* m_Settings = nullptr;
+	Settings* m_Settings = nullptr;
 };

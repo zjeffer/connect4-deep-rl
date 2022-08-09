@@ -3,7 +3,6 @@
 #include "mcts.hpp"
 #include "utils/types.hpp"
 #include "utils/utils.hpp"
-#include <ATen/ops/from_blob.h>
 #include <cstdint>
 #include <cstdlib>
 #include <filesystem>
