@@ -30,17 +30,11 @@ include_directories(${G3LOG_INCLUDE_DIRS})
 ###### main files ######
 file (GLOB PROJECT_SOURCES 
     ${PROJECT_SOURCE_DIR}/src/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/*.hpp
     ${PROJECT_SOURCE_DIR}/src/connect4/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/connect4/*.hpp
     ${PROJECT_SOURCE_DIR}/src/logger/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/logger/*.hpp
     ${PROJECT_SOURCE_DIR}/src/neuralNetwork/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/neuralNetwork/*.hpp
     ${PROJECT_SOURCE_DIR}/src/tree/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/tree/*.hpp
     ${PROJECT_SOURCE_DIR}/src/utils/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/utils/*.hpp
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
