@@ -1,0 +1,20 @@
+{
+	"name": "mnist",
+	"build": {
+		"dockerfile": "../Dockerfile"
+	},
+
+	"extensions": [
+		"ms-vscode.cpptools-themes",
+		"ms-vscode.cpptools",
+		"cschlosser.doxdocgen",
+		"GitHub.copilot",
+		"GitHub.vscode-pull-request-github",
+		"ms-vscode.cmake-tools",
+		"ms-vscode.cpptools-extension-pack"
+	],
+
+	"runArgs": [
+		"--gpus=all"
+	]
+}
