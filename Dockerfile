@@ -1,4 +1,4 @@
-FROM ghcr.io/joren-vangoethem/cuda-libtorch:latest
+FROM ghcr.io/zjeffer/docker-arch-cuda:latest
 
 WORKDIR /app
 
