@@ -27,24 +27,9 @@ class SelfPlaySettings : public Settings {
 	void addAgent(std::string name, const std::string& model_path, ePlayer player);
 	std::vector<AgentData> getAgents();
 
-	[[nodiscard]] int getRows();
-	void setRows(int rows);
-
-	[[nodiscard]] int getCols();
-	void setCols(int cols);
-
-	[[nodiscard]] int getInputPlanes();
-	void setInputPlanes(int inputPlanes);
-
-	[[nodiscard]] int getOutputSize();
-
-	
-
   private:
 	int m_Simulations = 400;
 	bool m_UseStochasticSearch = true;
 	std::vector<AgentData> m_AgentSettings = std::vector<AgentData>();
-	int m_Rows = 6;
-	int m_Cols = 7;
-	int m_InputPlanes = 3;
+	
 };

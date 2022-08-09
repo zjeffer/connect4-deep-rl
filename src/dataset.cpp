@@ -11,7 +11,6 @@ Dataset::Dataset(TrainerSettings* settings) {
 }
 
 bool Dataset::loadData(std::string path) {
-	// TODO: load data from folder
 	try {
 		for (auto& file : std::filesystem::directory_iterator(path)) {
 			if (file.path().extension() == ".bin") {
@@ -23,11 +22,19 @@ bool Dataset::loadData(std::string path) {
 				while(!input.eof()){
 					MemoryElement element;
 					input.read((char*)&element, sizeof(MemoryElement));
-					
-					Data d;
-					// TODO: load data
-					
+					torch::Tensor board = torch::from_blob(element.board.data(), {1, m_Settings->getRows(), m_Settings->getCols()});
 
+					// create input tensor from board
+					torch::Tensor inputTensor = NeuralNetwork::boardToInput(board, element.player, m_Settings->getInputPlanes());
+
+					// create output tensor from winner
+					torch::Tensor outputTensor = torch::full({m_Settings->getRows(), m_Settings->getCols()}, element.winner);
+
+					Data d;
+					d.first = inputTensor;
+					d.second = outputTensor;
+					
+					m_Data.push_back(d);
 				}
 				input.close();
 			}

@@ -15,6 +15,7 @@ class NeuralNetwork {
 	NeuralNetwork(SelfPlaySettings* selfPlaySettings);
 	~NeuralNetwork();
 
+	static torch::Tensor boardToInput(torch::Tensor board, int player, int inputPlanes);
 	torch::Tensor boardToInput(Environment* env);
 	std::tuple<torch::Tensor, torch::Tensor> predict(torch::Tensor &input);
 

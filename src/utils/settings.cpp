@@ -16,3 +16,18 @@ void Settings::setMemoryFolder(std::string memoryFolder) {
   }
   m_MemoryFolder = memoryFolder;
 }
+
+int Settings::getRows() { return m_Rows; }
+
+void Settings::setRows(int rows) { m_Rows = rows; }
+
+int Settings::getCols() { return m_Cols; }
+
+void Settings::setCols(int cols) { m_Cols = cols; }
+
+int Settings::getInputPlanes() { return m_InputPlanes; }
+
+void Settings::setInputPlanes(int inputPlanes) { m_InputPlanes = inputPlanes; }
+
+int Settings::getOutputSize() { return m_Cols; }
+

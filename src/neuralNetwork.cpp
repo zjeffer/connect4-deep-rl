@@ -13,21 +13,32 @@ NeuralNetwork::~NeuralNetwork() {
     // std::cout << "NeuralNetwork destructor" << std::endl;
 }
 
-torch::Tensor NeuralNetwork::boardToInput(Environment* env) {
+torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, int player, int inputPlanes) {
     // Create input tensor
-    torch::Tensor input = torch::zeros({m_Settings->getInputPlanes(), m_Settings->getRows(), m_Settings->getCols()});
-	torch::Tensor board = env->getBoard();
+    int rows = board.size(0);
+    int cols = board.size(1);
+    torch::Tensor input = torch::zeros({inputPlanes, rows, cols});
 
-    // TODO: fuck
+    // 2 planes for pieces, 1 plane for player
+    // input[0] is the plane with yellow pieces
+    // input[1] is the plane with red pieces
+    // input[2] is the plane filled with 1 if the player is yellow, 0 otherwise
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (board[i][j].item<int>() == 1) {
+                input[0][i][j] = 1;
+            } else if (board[i][j].item<int>() == 2) {
+                input[1][i][j] = 1;
+            }
+        }
+    }
+    input[2] = torch::full({rows, cols}, player);
 
-    // Fill first plane of input tensor with board
-    input[0] = board.detach().clone();
+    return input.unsqueeze(0);
+}
 
-    // Fill second plane of input tensor with player (yellow = 0, red = 1)
-    int player = static_cast<int>(env->getCurrentPlayer()) - 1;
-    input[1] = torch::full({m_Settings->getRows(), m_Settings->getCols()}, player);
-
-    return input.to(m_Device).unsqueeze(0);
+torch::Tensor NeuralNetwork::boardToInput(Environment* env) {
+    return NeuralNetwork::boardToInput(env->getBoard().detach().clone(), static_cast<int>(env->getCurrentPlayer()), m_Settings->getInputPlanes()).to(m_Device);
 }
 
 std::tuple<torch::Tensor, torch::Tensor> NeuralNetwork::predict(torch::Tensor &input) {

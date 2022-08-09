@@ -1,11 +1,12 @@
 #pragma once
 
 #include <torch/torch.h>
+#include <filesystem>
 
 #include "utils/trainerSettings.hpp"
-#include "common.hpp"
 #include "utils/types.hpp"
-#include <filesystem>
+#include "neuralNetwork.hpp"
+#include "common.hpp"
 
 using Data = std::pair<torch::Tensor, torch::Tensor>;
 
