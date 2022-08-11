@@ -135,11 +135,10 @@ int MCTS::getBestMoveStochastic() {
 	std::vector<Node *> children = m_Root->getChildren();
 	std::vector<int> moves;
 	for (const auto &node : children) {
-		moves.push_back(node->getMove());
+		moves.push_back(node->getVisits());
 	}
 	std::discrete_distribution<int> distribution(moves.begin(), moves.end());
 	int index = distribution(g_generator);
-
 	return children[index]->getMove();
 }
 
