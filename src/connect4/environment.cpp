@@ -226,10 +226,9 @@ ePlayer Environment::getWinner() const {
 }
 
 void Environment::print(){
-	LOG(INFO) << "Current player: " << (int)m_CurrentPlayer;
-	LOG(INFO) << "Board: ";
 	std::stringstream ss;
-	ss << "\n";
+	ss << "Current player: " << static_cast<int>(m_CurrentPlayer);
+	ss << "\nBoard: \n";
 	for (int i = 0; i < m_Rows; i++){
 		for (int j = 0; j < m_Cols; j++){
 			int value = m_Board[i][j].item<int>();
