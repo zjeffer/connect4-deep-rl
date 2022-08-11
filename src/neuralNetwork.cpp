@@ -38,7 +38,7 @@ torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, int player, int i
     }
     input[2] = torch::full({rows, cols}, player);
 
-    LOG(DEBUG) << "input created";
+    // LOG(DEBUG) << "input created";
     return input.unsqueeze(0);
 }
 
@@ -78,8 +78,8 @@ bool NeuralNetwork::saveModel(std::string path, bool isTrained){
             std::filesystem::remove(path);
         }
         // save model to path
-        LOG(INFO) << "Saving model to: " << path;
 		torch::save(this->m_Net, path);
+        LOG(INFO) << "Saved model to: " << path;
     } catch (const std::exception& e) {
         LOG(WARNING) << "Error saving model: " << e.what();
         return false;

@@ -29,3 +29,11 @@ void SelfPlaySettings::addAgent(std::string name, const std::string &model_path,
 
 std::vector<AgentData> SelfPlaySettings::getAgents() { return m_AgentSettings; }
 
+bool SelfPlaySettings::showMoves() { return m_ShowMoves; }
+
+void SelfPlaySettings::setShowMoves(bool show_moves) { m_ShowMoves = show_moves; }
+
+bool SelfPlaySettings::saveMemory() { return m_SaveMemory; }
+
+void SelfPlaySettings::setSaveMemory(bool save_memory) { m_SaveMemory = save_memory; }
+

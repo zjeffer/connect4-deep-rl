@@ -24,9 +24,13 @@ public:
 
   [[nodiscard]] int getOutputSize();
 
+  [[nodiscard]] std::string getModelPath();
+	void setModelPath(const std::string& model_path);
+
 private:
   bool m_UseGPU = true;
   std::string m_MemoryFolder = "memory/";
+  std::string m_ModelPath = "models/model.pt";
 
   int m_Rows = 6;
 	int m_Cols = 7;

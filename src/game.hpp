@@ -22,8 +22,9 @@ class Game {
 
 	bool saveMemoryToFile();
 
+	Environment* getEnvironment();
 
-
+	
 
   private:
 	SelfPlaySettings* m_Settings = nullptr;
@@ -32,6 +33,6 @@ class Game {
 
 	std::vector<Agent*> m_Agents;
 
-	std::vector<MemoryElement> memory;
+	std::vector<MemoryElement> m_Memory;
 
 };

@@ -21,7 +21,7 @@ std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor,
     torch::Tensor policy_output = std::get<0>(outputs);
     torch::Tensor value_output = std::get<1>(outputs);
 
-    int policySize = policy_output.size(1) - 1;
+    int policySize = policy_output.size(1);
     int valueSize = 1;
 
     // divide policy and value targets
@@ -31,7 +31,7 @@ std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor,
     
     if (!torch::nan_to_num(policy_output).equal(policy_output)){
         LOG(WARNING) << policy_output;
-        LOG(WARNING) << "Policy output contains nans";
+        LOG(FATAL) << "Policy output contains nans";
         exit(EXIT_FAILURE);
     }
 
@@ -70,7 +70,7 @@ void Trainer::train() {
     // loss_history.batch_size = batch_size;
     // loss_history.data_size = data_size;
 
-	LOG(INFO) << "Starting training with " << train_set_size << " examples";
+	LOG(INFO) << "Starting training with " << train_set_size << " samples. Learning rate: " << m_Settings->getLearningRate();
 	int index = 0;
 	for (auto batch : *data_loader) {
         if (!g_running) {
@@ -103,8 +103,8 @@ void Trainer::train() {
 		// calculate average loss
 		Loss += loss.item<float>();
 		auto end = std::min(train_set_size, (index + 1) * batch_size);
-		LOG(INFO) << "======== Epoch: " << index << ". Batch size: " << size << " => Loss: " << Loss / (end)
-            << ". Policy loss: " << policy_loss.item<float>() << ". Value loss: " << value_loss.item<float>() << " ========";
+		LOG(INFO) << "Epoch: " << index << ". Batch size: " << size << " => Loss: " << Loss / (end)
+            << ". Policy loss: " << policy_loss.item<float>() << ". Value loss: " << value_loss.item<float>();
 
         // add loss to history
         // loss_history.losses.push_back(loss.item<float>());
@@ -114,7 +114,7 @@ void Trainer::train() {
 
 		index++;
 	}
-	LOG(INFO) << "Training finished";
+	LOG(INFO) << "Training finished. Saving model...";
 
     std::string timeString = utils::getTimeString();
     // save loss history to csv, to make graphs with

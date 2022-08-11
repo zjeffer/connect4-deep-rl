@@ -31,3 +31,6 @@ void Settings::setInputPlanes(int inputPlanes) { m_InputPlanes = inputPlanes; }
 
 int Settings::getOutputSize() { return m_Cols; }
 
+std::string Settings::getModelPath() { return m_ModelPath; }
+
+void Settings::setModelPath(const std::string& model_path) { m_ModelPath = model_path; }

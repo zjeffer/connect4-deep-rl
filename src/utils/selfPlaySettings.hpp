@@ -27,9 +27,16 @@ class SelfPlaySettings : public Settings {
 	void addAgent(std::string name, const std::string& model_path, ePlayer player);
 	std::vector<AgentData> getAgents();
 
+	bool showMoves();
+	void setShowMoves(bool show_moves);
+
+	bool saveMemory();
+	void setSaveMemory(bool save_memory);
+
   private:
 	int m_Simulations = 400;
 	bool m_UseStochasticSearch = true;
 	std::vector<AgentData> m_AgentSettings = std::vector<AgentData>();
-	
+	bool m_ShowMoves = false;
+	bool m_SaveMemory = true;
 };

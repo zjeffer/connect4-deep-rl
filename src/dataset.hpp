@@ -14,7 +14,7 @@ class C4Dataset : public torch::data::datasets::Dataset<C4Dataset> {
   public:
 	explicit C4Dataset(TrainerSettings* settings);
 
-	bool loadData(std::string path);
+	bool loadData(std::string folder);
 	
 	torch::data::Example<> get(size_t index) override;
 

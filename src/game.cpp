@@ -1,34 +1,22 @@
 #include "game.hpp"
 #include "common.hpp"
+#include "connect4/environment.hpp"
 #include "mcts.hpp"
 #include "utils/types.hpp"
 #include "utils/utils.hpp"
 #include <cstdint>
 #include <cstdlib>
 #include <filesystem>
+#include <memory>
 
 Game::Game(SelfPlaySettings* selfPlaySettings){
 	m_Settings = selfPlaySettings;
 	m_Env = new Environment(m_Settings->getRows(), m_Settings->getCols());
 	m_Agents = std::vector<Agent*>();
+	std::shared_ptr<NeuralNetwork> nn = std::make_shared<NeuralNetwork>(m_Settings);
 	for (auto &agentData : m_Settings->getAgents()){
-		m_Agents.push_back(new Agent(agentData.name, agentData.nn_path, m_Settings));
+		m_Agents.push_back(new Agent(agentData.name, nn, m_Settings));
 	}
-
-	/* 
-		// for debugging purposes: try pre-configured board
-		std::vector<uint8_t> data = {
-			0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0,
-			0, 2, 2, 2, 0, 0, 0,
-			0, 1, 1, 1, 0, 0, 0,
-		};
-		auto options = torch::TensorOptions().dtype(torch::kInt8);
-		torch::Tensor board = torch::from_blob(data.data(), {m_Settings->getRows(), m_Settings->getCols()}, options);
-		m_Env->setBoard(board); 
-	*/ 
 
 	// create a random id
 	std::string current_date = std::to_string(std::time(nullptr));
@@ -41,6 +29,10 @@ Game::~Game() {
 	for (auto &agent : m_Agents){
 		delete agent;
 	}
+}
+
+Environment* Game::getEnvironment(){
+	return m_Env;
 }
 
 ePlayer Game::playGame() {
@@ -57,13 +49,19 @@ ePlayer Game::playGame() {
 	m_Env->togglePlayer();
 	winner = m_Env->getWinner();
 
-	updateMemoryWithWinner(winner);
-
-	if (!saveMemoryToFile()){
-		LOG(FATAL) << "Could not save memory to file";
-		exit(EXIT_FAILURE);
+	if (!g_running) {
+		std::cout << "Game stopped" << std::endl;
+		exit(EXIT_SUCCESS);
 	}
 
+	if (m_Settings->saveMemory()) {
+		updateMemoryWithWinner(winner);
+		if (!saveMemoryToFile()){
+			LOG(FATAL) << "Could not save memory to file";
+			exit(EXIT_FAILURE);
+		}
+	}
+	
 	return winner;
 }
 
@@ -78,27 +76,38 @@ bool Game::playMove() {
 	agent->getMCTS()->setRoot(currentNode);
 
 	agent->getMCTS()->run_simulations();
+	LOG(INFO) << "State value according to current player (" << agent->getName() << "): " << agent->getMCTS()->getRoot()->getQ();
 
 	// get best move from mcts tree
-	int bestMove = agent->getMCTS()->getBestMoveStochastic();
+	int bestMove = -1;
+	if (m_Settings->isStochastic()) {
+		bestMove = agent->getMCTS()->getBestMoveStochastic();
+	} else {
+		bestMove = agent->getMCTS()->getBestMoveDeterministic();
+	}
+	
 
 	// print moves and their q + u values
 	std::vector<Node*> children = agent->getMCTS()->getRoot()->getChildren();
-	std::vector<MoveProb> moveProbs = std::vector<MoveProb>();
+	// vector of moveprobs of size m_Env->getCols()
+	std::vector<float> moveProbs = std::vector<float>(m_Env->getCols(), 0.0f);
 	for (Node* child : children) {
-		MoveProb moveProb = MoveProb{child->getMove(), child->getQ() + child->getU()};
-		moveProbs.push_back(moveProb);
-		// LOG(DEBUG) << "Move: " << child->getMove() << " Q: " << child->getQ() << " U: " << child->getU() << ". Visits: " << child->getVisits();
+		moveProbs[child->getMove()] = child->getQ() + child->getU();
+		if (m_Settings->showMoves()) {
+			LOG(DEBUG) << "Move: " << child->getMove() << " Q: " << child->getQ() << " U: " << child->getU() << ". Visits: " << child->getVisits();
+		}
 	}
 
-	// create memory element
-	MemoryElement element;
-	element.board = utils::boardToVector(m_Env->getBoard());
-	element.moves = moveProbs;
-	element.winner= 0;
-
-	// save element to memory
-	this->addElementToMemory(element);
+	if (m_Settings->saveMemory()) {
+		// create memory element
+		MemoryElement element;
+		element.board = utils::boardToVector(m_Env->getBoard());
+		element.currentPlayer = static_cast<uint8_t>(m_Env->getCurrentPlayer());
+		element.moveList = moveProbs;
+		element.winner = 0;
+		// save element to memory
+		this->addElementToMemory(element);
+	}
 
 	LOG(INFO) << "Playing best move: " << bestMove;
 
@@ -112,8 +121,8 @@ bool Game::playMove() {
 
 void Game::updateMemoryWithWinner(ePlayer winner) {
 	// update memory with winner
-	for (MemoryElement &element : this->memory) {
-		element.winner = static_cast<int>(winner);
+	for (MemoryElement &element : m_Memory) {
+		element.winner = static_cast<uint8_t>(winner);
 	}
 }
 
@@ -123,18 +132,9 @@ bool Game::saveMemoryToFile(){
 		std::filesystem::create_directory(folder);
 	}
 	std::string filename = folder + m_GameID + ".bin";
-
-	std::ofstream file(filename, std::ios::binary);
-	if (file.is_open()) {
-		for (MemoryElement &element : this->memory) {
-			file.write(reinterpret_cast<char*>(&element), sizeof(element));
-		}
-		file.close();
-		return true;
-	}
-	return false;
+	return utils::writeMemoryElementsToFile(m_Memory, filename);	
 }
 
 void Game::addElementToMemory(MemoryElement element) {
-	this->memory.push_back(element);
+	m_Memory.push_back(element);
 }

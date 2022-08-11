@@ -84,13 +84,49 @@ int main(int argc, char *argv[]) {
 	g_generator.seed(std::random_device{}());
 	// LOG(DEBUG) << "Test random value: " << g_generator();
 
+	// test
+	if (inputParser.cmdOptionExists("--test")) {
+		testHorizontalWin();
+		testVerticalWin();
+		testDiagonalWin();
+		testEasyPuzzle();
+		// testStochasticDistribution();
+		exit(EXIT_SUCCESS);
+	}
+
 	// TODO: load settings from file
 	if (inputParser.cmdOptionExists("--train")) {
 		// get settings
 		TrainerSettings *settings = new TrainerSettings();
 
-		settings->setLearningRate(0.02);
-		settings->setBatchSize(256);
+		if (inputParser.cmdOptionExists("--model")) {
+			std::string modelPath = inputParser.getCmdOption("--model");
+			if (std::filesystem::is_regular_file(modelPath) && modelPath.ends_with(".pt")) {
+				settings->setModelPath(modelPath);
+			} else {
+				LOG(FATAL) << "Model file invalid: " << modelPath;
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		try {
+			if (inputParser.cmdOptionExists("--bs")) {
+				settings->setBatchSize(std::stoi(inputParser.getCmdOption("--bs")));
+			}
+		} catch (const std::invalid_argument &e) {
+			LOG(FATAL) << "Invalid batch size: " << e.what();
+			exit(EXIT_FAILURE);
+		}
+
+		try {
+			if (inputParser.cmdOptionExists("--lr")) {
+				settings->setLearningRate(std::stod(inputParser.getCmdOption("--lr")));
+			}
+		} catch (const std::invalid_argument &e) {
+			LOG(FATAL) << "Invalid learning rate: " << e.what();
+			exit(EXIT_FAILURE);
+		}
+		
 		settings->setMemoryFolder("memory/");
 
 		// TODO: implement
@@ -100,21 +136,28 @@ int main(int argc, char *argv[]) {
 		LOG(INFO) << "Training new network...";
 		Trainer trainer(settings);
 		trainer.train();
-	} else {
+
+	} else { // selfplay
 		SelfPlaySettings *settings = new SelfPlaySettings();
-		settings->setSimulations(300);
-		settings->setStochastic(true);
+
+		if (inputParser.cmdOptionExists("--model")) {
+			settings->setModelPath(inputParser.getCmdOption("--model"));
+		}
+		std::string modelPath = settings->getModelPath();
 
 		// create/load model
-		if (!std::filesystem::exists("models/model.pt")) {
+		if (!std::filesystem::exists(modelPath)) {
 			NeuralNetwork *nn = new NeuralNetwork(settings);
-			nn->saveModel("models/model.pt");
+			nn->saveModel(modelPath);
 			delete nn;
 		}
 
+		// FOR DEBUGGING PURPOSES
+		settings->setShowMoves(true);
+
 		// add agents
-		settings->addAgent("Yellow", "models/model.pt", ePlayer::YELLOW);
-		settings->addAgent("Red", "models/model.pt", ePlayer::RED);
+		settings->addAgent("Yellow", modelPath, ePlayer::YELLOW);
+		settings->addAgent("Red", modelPath, ePlayer::RED);
 
 		if (inputParser.cmdOptionExists("--sims")) {
 			try {

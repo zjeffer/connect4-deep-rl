@@ -1,16 +1,12 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 
-struct MoveProb {
-	int move;
-	float prob;
-};
-
 struct MemoryElement {
-	std::vector<int> board;
-	int player;
-	std::vector<MoveProb> moves;
-	int winner;
+	std::vector<uint8_t> board;
+	uint8_t currentPlayer;
+	std::vector<float> moveList;
+	uint8_t winner;
 };
