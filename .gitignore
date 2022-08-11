@@ -2,4 +2,4 @@
 .vscode/
 build/
 models/*.pt
-memory/*.bin
+memory/**/*.bin
