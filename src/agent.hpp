@@ -10,11 +10,13 @@
 class Agent {
   public:
 	Agent(std::string name, std::string model_path, SelfPlaySettings *selfPlaySettings);
+	Agent(std::string name, std::shared_ptr<NeuralNetwork> nn, SelfPlaySettings *selfPlaySettings);
 	~Agent();
 
-	MCTS* getMCTS();
+	[[nodiscard]] MCTS* getMCTS();
 
-	std::string getName();
+	[[nodiscard]] std::string getName();
+	void setName(std::string name);
 
   private:
 	std::string m_Name;
