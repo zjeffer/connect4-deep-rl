@@ -10,12 +10,17 @@ A deep reinforcement learning algorithm that plays Connect 4, based on AlphaZero
 * [X] AlphaZero self-play
 * [X] Argument parsing
 * [ ] Load settings from file
-* [ ] Unit tests:
-  * [ ] Endgame tests
+* [X] Unit tests:
+  * [X] Horizontal win
+  * [X] Vertical win
+  * [X] Diagonal win
+  * [X] Easy puzzle
+  * [ ] Harder puzzle
   * [ ] ...?
 * [X] Save played moves to memory, and memory to file
-* [ ] AlphaZero training
+* [X] AlphaZero training
 * [ ] AlphaZero evaluation
+* [ ] Automatic pipeline for selfplay, training and evaluation
 * [ ] Play against computer
 * [ ] GUI?
 
