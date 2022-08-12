@@ -60,7 +60,8 @@ void Trainer::train() {
     optimizer.zero_grad();
 
 	// TODO: plot loss
-	float Loss = 0;
+	float Loss = 0.0f;
+    float Acc = 0.0f;
 
     // enable training mode
     m_NN->getNetwork()->train();
@@ -99,12 +100,27 @@ void Trainer::train() {
 		loss.backward();
 		optimizer.step();
 
+        
 
 		// calculate average loss
 		Loss += loss.item<float>();
 		auto end = std::min(train_set_size, (index + 1) * batch_size);
-		LOG(INFO) << "Epoch: " << index << ". Batch size: " << size << " => Loss: " << Loss / (end)
-            << ". Policy loss: " << policy_loss.item<float>() << ". Value loss: " << value_loss.item<float>();
+
+        // calculate average accuracy of value output
+        int policySize = std::get<0>(outputs).size(1);
+        torch::Tensor value_output = std::get<1>(outputs);
+        torch::Tensor value_target = target.slice(1, policySize, policySize + 1);
+        int amountCorrect = 0;
+        for (int i = 0; i < value_output.size(0); i++) {
+            if (std::abs(value_output[i].item<float>() - value_target[i].item<float>()) < 0.5) {
+                amountCorrect++;
+            }
+        }
+        // calculate average accuracy
+        Acc += (float)amountCorrect / (float)size;
+
+		LOG(INFO) << "Epoch: " << index << ". Batch size: " << size << " => Average loss: " << Loss / end
+            << ". Policy loss: " << policy_loss.item<float>() << ". Value loss: " << value_loss.item<float>() << ". Value accuracy: " << Acc / (index + 1);
 
         // add loss to history
         // loss_history.losses.push_back(loss.item<float>());
