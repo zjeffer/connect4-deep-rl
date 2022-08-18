@@ -37,11 +37,11 @@ class Environment {
 	void printHistory();
 
   private:
+	torch::Tensor m_Board;
 	int m_Rows;
 	int m_Cols;
 	ePlayer m_CurrentPlayer = ePlayer::YELLOW;
 
-	torch::Tensor m_Board;
 
 	std::vector<Cell> m_BoardHistory;
 };

@@ -5,16 +5,16 @@
 #include <g3log/loglevels.hpp>
 #include <stdexcept>
 
-Environment::Environment(int rows, int cols) {
-	m_Rows = rows;
-	m_Cols = cols;
+Environment::Environment(int rows, int cols) : m_Rows(rows), m_Cols(cols) {
 	newEnvironment(rows, cols);
 }
 
-Environment::Environment(torch::Tensor board, ePlayer currentPlayer) {
-	m_Board = board;
-	m_Rows = board.size(0);
-	m_Cols = board.size(1);
+Environment::Environment(torch::Tensor board, ePlayer currentPlayer) : 
+	m_Board(board), 
+	m_Rows(board.size(0)),
+	m_Cols(board.size(1)),
+	m_CurrentPlayer(currentPlayer) {
+
 	m_CurrentPlayer = currentPlayer;
 }
 

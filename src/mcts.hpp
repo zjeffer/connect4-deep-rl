@@ -18,11 +18,11 @@ class MCTS {
 
 	void backpropagate(Node *root, float result);
 
-	Node *getRoot();
+	Node *getRoot() const;
 	void setRoot(Node *root);
 
-	int getBestMoveDeterministic();
-	int getBestMoveStochastic();
+	int getBestMoveDeterministic() const;
+	int getBestMoveStochastic() const;
 
 	static int getTreeDepth(Node *root);
 

@@ -1,18 +1,25 @@
 #include "node.hpp"
 
-Node::Node(Node *parent, Environment* env, int move, float prior) {
-	m_Parent = parent;
-	m_Environment = env;
-	m_Move = move;
-	m_Prior = prior;
-}
+Node::Node(Node *parent, Environment* env, int move, float prior) :
+	m_Parent(parent),
+	m_Environment(env),
+	m_Move(move),
+	m_Prior(prior)
+{}
 
-Node::Node(Environment* env) {
-	m_Environment = env;
+Node::Node(Environment* env) : m_Environment(env) {
 }
 
 Node::~Node() {}
 
+Node::Node(const Node& node) {
+	m_Parent = node.m_Parent;
+	m_Environment = node.m_Environment;
+	m_Move = node.m_Move;
+	m_Prior = node.m_Prior;
+	m_Value = node.m_Value;
+	m_Visits = node.m_Visits;
+}
 
 std::vector<Node *> Node::getChildren() {
 	return m_Children;
@@ -55,7 +62,7 @@ void Node::setPrior(float prior) {
 }
 
 float Node::getQ() {
-	return m_Value / (m_Visits + 1e-6);
+	return m_Value / (float)(m_Visits + 1e-6);
 }
 
 float Node::getU() {

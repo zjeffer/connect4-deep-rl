@@ -1,8 +1,12 @@
 #include "logger.hpp"
+#include "customSink.hpp"
+#include <g3log/loglevels.hpp>
+#include <memory>
 
-Logger::Logger() {
-	logWorker = g3::LogWorker::createLogWorker();
-	stdoutSink = std::make_unique<StdoutSink>();
+Logger::Logger() :
+	logWorker(g3::LogWorker::createLogWorker()),
+	stdoutSink(std::make_unique<StdoutSink>())
+ {
 	logWorker->addSink(std::move(stdoutSink), &StdoutSink::callback);
 
 	g3::initializeLogging(logWorker.get());

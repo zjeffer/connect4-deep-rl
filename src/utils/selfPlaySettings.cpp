@@ -2,9 +2,9 @@
 
 SelfPlaySettings::SelfPlaySettings() {}
 
-SelfPlaySettings::SelfPlaySettings(const std::filesystem::path &settings_path) {
+/* SelfPlaySettings::SelfPlaySettings(const std::filesystem::path &settings_path) {
   // TODO: load selfPlaySettings from file
-}
+} */
 
 SelfPlaySettings::~SelfPlaySettings() {}
 

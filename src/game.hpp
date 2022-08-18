@@ -3,7 +3,6 @@
 #include "utils/selfPlaySettings.hpp"
 #include "connect4/environment.hpp"
 #include "agent.hpp"
-#include "common.hpp"
 #include "utils/types.hpp"
 
 
@@ -22,7 +21,7 @@ class Game {
 
 	bool saveMemoryToFile();
 
-	Environment* getEnvironment();
+	Environment* getEnvironment() const;
 
 	
 

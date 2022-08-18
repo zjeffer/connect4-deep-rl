@@ -13,9 +13,9 @@ class Agent {
 	Agent(std::string name, std::shared_ptr<NeuralNetwork> nn, SelfPlaySettings *selfPlaySettings);
 	~Agent();
 
-	[[nodiscard]] MCTS* getMCTS();
+	[[nodiscard]] MCTS* getMCTS() const;
 
-	[[nodiscard]] std::string getName();
+	[[nodiscard]] std::string getName() const;
 	void setName(std::string name);
 
   private:

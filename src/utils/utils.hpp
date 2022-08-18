@@ -22,4 +22,6 @@ namespace utils {
 	void readIntVector(std::vector<uint8_t>& vector, std::ifstream& file);
 	void readFloatVector(std::vector<float>& vector, std::ifstream& file);
 
+	std::string getDirectoryFromFilename(std::string filename);
+	void writeLossToCSV(std::string filename, LossHistory &lossHistory);
 }

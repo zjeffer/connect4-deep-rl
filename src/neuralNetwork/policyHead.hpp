@@ -13,7 +13,7 @@ struct PolicyHeadImpl : public torch::nn::Module {
     }
 
     torch::Tensor forward(const torch::Tensor &input) {
-        int size = input.size(0);
+        int64_t size = input.size(0);
 
         // conv block
         auto pol = convPolicy(input);

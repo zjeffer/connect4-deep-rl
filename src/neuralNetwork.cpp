@@ -1,4 +1,5 @@
 #include "neuralNetwork.hpp"
+#include <cstdlib>
 
 NeuralNetwork::NeuralNetwork(Settings* selfPlaySettings) {
     m_Settings = selfPlaySettings;
@@ -13,7 +14,7 @@ NeuralNetwork::~NeuralNetwork() {
     // std::cout << "NeuralNetwork destructor" << std::endl;
 }
 
-Network NeuralNetwork::getNetwork(){
+Network NeuralNetwork::getNetwork() const{
     return m_Net;
 }
 
@@ -62,16 +63,13 @@ bool NeuralNetwork::loadModel(std::string path) {
     return true;
 }
 
-bool NeuralNetwork::saveModel(std::string path, bool isTrained){
+std::filesystem::path NeuralNetwork::saveModel(std::filesystem::path path){
     try {
-        if (path.size() == 0) {
-            path = "./models/model_" + utils::getTimeString();
+        if (path.string().size() == 0) {
+            path = "models/model_" + utils::getTimeString();
         }
-        if (isTrained) {
-            path.append("_trained");
-        }
-        if (!path.ends_with(".pt")) {
-            path.append(".pt");
+        if (path.extension() != ".pt") {
+            path.replace_extension(".pt");
         }
         if (std::filesystem::exists(path)) {
             LOG(WARNING) << "Model already exists at: " << path << ". Overwriting...";
@@ -82,7 +80,7 @@ bool NeuralNetwork::saveModel(std::string path, bool isTrained){
         LOG(INFO) << "Saved model to: " << path;
     } catch (const std::exception& e) {
         LOG(WARNING) << "Error saving model: " << e.what();
-        return false;
+        exit(EXIT_FAILURE);
     }
-    return true;
+    return path;
 }

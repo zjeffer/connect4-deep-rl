@@ -15,7 +15,7 @@ struct ValueHeadImpl : public torch::nn::Module {
     }
 
     torch::Tensor forward(const torch::Tensor &input) {
-		int size = input.size(0);
+		int64_t size = input.size(0);
 
 		auto value = convValue(input);
 		value = value.view({size, -1});

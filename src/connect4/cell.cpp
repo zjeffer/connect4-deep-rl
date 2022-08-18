@@ -1,10 +1,9 @@
 #include "cell.hpp"
 
-Cell::Cell(int row, int column, ePlayer player) {
-	m_Row = row;
-	m_Col = column;
-	m_Player = player;
-}
+Cell::Cell(int row, int column, ePlayer player) :
+	m_Row(row),
+	m_Col(column),
+	m_Player(player) {}
 
 
 Cell::~Cell() {

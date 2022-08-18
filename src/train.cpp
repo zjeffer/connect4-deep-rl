@@ -45,7 +45,7 @@ std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor,
     return std::make_tuple(policy_loss, value_loss);
 }
 
-void Trainer::train() {
+std::filesystem::path Trainer::train() {
     // load data
 	C4Dataset dataset = C4Dataset(m_Settings);
 	int batch_size = m_Settings->getBatchSize();
@@ -67,9 +67,9 @@ void Trainer::train() {
     m_NN->getNetwork()->train();
     m_NN->getNetwork()->to(m_Device);
 
-    // LossHistory loss_history;
-    // loss_history.batch_size = batch_size;
-    // loss_history.data_size = data_size;
+    LossHistory loss_history;
+    loss_history.batch_size = batch_size;
+    loss_history.data_size = train_set_size;
 
 	LOG(INFO) << "Starting training with " << train_set_size << " samples. Learning rate: " << m_Settings->getLearningRate();
 	int index = 0;
@@ -123,10 +123,10 @@ void Trainer::train() {
             << ". Policy loss: " << policy_loss.item<float>() << ". Value loss: " << value_loss.item<float>() << ". Value accuracy: " << Acc / (index + 1);
 
         // add loss to history
-        // loss_history.losses.push_back(loss.item<float>());
-        // loss_history.policies.push_back(policy_loss.item<float>());
-        // loss_history.values.push_back(value_loss.item<float>());
-        // loss_history.historySize++;
+        loss_history.losses.push_back(loss.item<float>());
+        loss_history.policies.push_back(policy_loss.item<float>());
+        loss_history.values.push_back(value_loss.item<float>());
+        loss_history.historySize++;
 
 		index++;
 	}
@@ -134,12 +134,13 @@ void Trainer::train() {
 
     std::string timeString = utils::getTimeString();
     // save loss history to csv, to make graphs with
-    // utils::writeLossToCSV("losses/history_" + timeString + ".csv", loss_history);
+    utils::writeLossToCSV("losses/history_" + timeString + ".csv", loss_history);
     // save the trained model
-    m_NN->saveModel("./models/model_" + timeString, true);
+    std::filesystem::path trainedModelName = m_NN->saveModel("./models/model_" + timeString);
 
     // set network back to evaluation mode
     m_NN->getNetwork()->eval();
+    return trainedModelName;
 }
 
 

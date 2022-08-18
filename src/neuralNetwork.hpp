@@ -20,9 +20,9 @@ class NeuralNetwork {
 	std::tuple<torch::Tensor, torch::Tensor> predict(torch::Tensor &input);
 
 	bool loadModel(std::string modelPath);
-	bool saveModel(std::string modelPath, bool isTrained = false);
+	std::filesystem::path saveModel(std::filesystem::path modelPath);
 
-	Network getNetwork();
+	Network getNetwork() const;
 
 
   private:

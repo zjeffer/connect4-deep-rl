@@ -8,9 +8,10 @@ bool Settings::useGPU() { return m_UseGPU; }
 
 void Settings::setUseGPU(bool useGPU) { m_UseGPU = useGPU; }
 
-std::string Settings::getMemoryFolder() { return m_MemoryFolder; }
+const std::string& Settings::getMemoryFolder() const { return m_MemoryFolder; }
 
 void Settings::setMemoryFolder(std::string memoryFolder) {
+  // TODO: is this necessary?
   if (!memoryFolder.ends_with('/')) {
     memoryFolder += '/';
   }

@@ -5,12 +5,9 @@
 #include <vector>
 #include "../connect4/player.hpp"
 #include "settings.hpp"
+#include "types.hpp"
 
-struct AgentData {
-	std::string name;
-	std::string nn_path;
-	ePlayer player;
-};
+
 
 class SelfPlaySettings : public Settings {
   public:

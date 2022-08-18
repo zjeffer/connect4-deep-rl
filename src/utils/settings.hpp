@@ -10,7 +10,7 @@ public:
   [[nodiscard]] bool useGPU();
   void setUseGPU(bool useGPU);
 
-  [[nodiscard]] std::string getMemoryFolder();
+  [[nodiscard]] const std::string& getMemoryFolder() const;
   void setMemoryFolder(std::string memoryFolder);
 
   [[nodiscard]] int getRows();
@@ -29,7 +29,7 @@ public:
 
 private:
   bool m_UseGPU = true;
-  std::string m_MemoryFolder = "memory/";
+  std::string m_MemoryFolder = "memory";
   std::string m_ModelPath = "models/model.pt";
 
   int m_Rows = 6;

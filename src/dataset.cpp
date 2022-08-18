@@ -41,8 +41,6 @@ bool C4Dataset::loadData(std::string folder) {
 
 				m_Data.push_back(std::make_pair(input, output));
 			}
-		} else {
-			LOG(WARNING) << "Ignoring file: " << file.path();
 		}
 	}
 	return true;

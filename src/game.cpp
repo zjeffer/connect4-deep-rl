@@ -31,7 +31,7 @@ Game::~Game() {
 	}
 }
 
-Environment* Game::getEnvironment(){
+Environment* Game::getEnvironment() const{
 	return m_Env;
 }
 
@@ -76,7 +76,13 @@ bool Game::playMove() {
 	agent->getMCTS()->setRoot(currentNode);
 
 	agent->getMCTS()->run_simulations();
-	LOG(INFO) << "State value according to current player (" << agent->getName() << "): " << agent->getMCTS()->getRoot()->getQ();
+	// calculate average action-value of all actions in the root node
+	/* float value = 0.0f;
+	for (auto &node : agent->getMCTS()->getRoot()->getChildren()) {
+		float weight = (float)node->getVisits() / (float)agent->getMCTS()->getRoot()->getVisits();
+		value += node->getQ() * weight;
+	}
+	LOG(INFO) << "Average action-value according to current player (" << agent->getName() << "): " << value; */
 
 	// get best move from mcts tree
 	int bestMove = -1;
@@ -92,7 +98,7 @@ bool Game::playMove() {
 	// vector of moveprobs of size m_Env->getCols()
 	std::vector<float> moveProbs = std::vector<float>(m_Env->getCols(), 0.0f);
 	for (Node* child : children) {
-		moveProbs[child->getMove()] = child->getQ() + child->getU();
+		moveProbs[child->getMove()] = (float)child->getVisits() / (float)agent->getMCTS()->getRoot()->getVisits();
 		if (m_Settings->showMoves()) {
 			LOG(DEBUG) << "Move: " << child->getMove() << " Q: " << child->getQ() << " U: " << child->getU() << ". Visits: " << child->getVisits();
 		}
@@ -107,13 +113,18 @@ bool Game::playMove() {
 		element.winner = 0;
 		// save element to memory
 		this->addElementToMemory(element);
+
+		if ((int)element.board.size() != m_Env->getRows() * m_Env->getCols()) {
+			LOG(FATAL) << "Memory element has no board";
+			exit(EXIT_FAILURE);
+		}
 	}
 
-	LOG(INFO) << "Playing best move: " << bestMove;
+	// LOG(INFO) << "Playing best move: " << bestMove;
 
 	// make the best move
 	this->m_Env->makeMove(bestMove);
-	m_Env->print();
+	// m_Env->print();
 
 	return !m_Env->hasValidMoves() || m_Env->currentPlayerHasConnected4();
 }

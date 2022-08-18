@@ -23,23 +23,23 @@ MCTS::~MCTS() {
 	// delete m_Root;
 }
 
-Node *MCTS::getRoot() { return m_Root; }
+Node *MCTS::getRoot() const { return m_Root; }
 
 void MCTS::setRoot(Node *root) { m_Root = root; }
 
 void MCTS::run_simulations() {
 	Node *root = this->getRoot();
 
-	tqdm bar;
+	// tqdm bar;
 	int sims = m_Settings->getSimulations();
-	LOG(INFO) << "Running " << sims << " simulations...\n";
+	LOG(INFO) << "Running " << sims << " simulations...";
 	for (int i = 0; i < sims && g_running; i++) {
-		bar.progress(i, sims);
+		// bar.progress(i, sims);
 		Node *selected = this->select(root);
 		float result = this->expand(selected);
 		this->backpropagate(selected, result);
 	}
-	std::cout << std::endl;
+	// std::cout << std::endl;
 }
 
 Node *MCTS::select(Node *root) {
@@ -117,7 +117,7 @@ void MCTS::backpropagate(Node *root, float result) {
 	}
 }
 
-int MCTS::getBestMoveDeterministic() {
+int MCTS::getBestMoveDeterministic() const {
 	// get move where prob is highest
 	float max_prob = 0;
 	int max_index = 0;
@@ -131,7 +131,7 @@ int MCTS::getBestMoveDeterministic() {
 	return max_index;
 }
 
-int MCTS::getBestMoveStochastic() {
+int MCTS::getBestMoveStochastic() const {
 	std::vector<Node *> children = m_Root->getChildren();
 	std::vector<int> moves;
 	for (const auto &node : children) {

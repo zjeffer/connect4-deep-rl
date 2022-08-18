@@ -15,7 +15,7 @@ public:
   Trainer(TrainerSettings *settings);
   ~Trainer();
 
-  void train();
+  std::filesystem::path train();
 
 private:
   std::shared_ptr<NeuralNetwork> m_NN;

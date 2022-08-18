@@ -6,6 +6,7 @@ class Node {
   public:
 	Node(Node* parent, Environment* env, int move, float prior);
 	Node(Environment* env);
+	Node(const Node& node);
 	~Node();
 
 	Node *getParent();
@@ -32,7 +33,7 @@ class Node {
 
   private:
 	Node *m_Parent = nullptr;
-	std::vector<Node *> m_Children;
+	std::vector<Node *> m_Children = {};
 	Environment* m_Environment = nullptr;
 	int m_Move = -1;
 	float m_Prior = 0.0f;

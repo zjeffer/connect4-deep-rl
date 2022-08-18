@@ -91,17 +91,43 @@ bool readMemoryElementsFromFile(std::vector<MemoryElement> &elements, const std:
 			file.read((char*)&element.currentPlayer, sizeof(element.currentPlayer));
 			readFloatVector(element.moveList, file);
 			file.read((char*)&element.winner, sizeof(element.winner));
-
-			if (element.board.size() == 0) {
-				LOG(WARNING) << "Empty memory element found at index " << i;
-			}
-
+			
 			elements.push_back(element);
 			i++;
 		}
 		return true;
 	}
 	return false;
+}
+
+std::string getDirectoryFromFilename(std::string filename){
+    if (filename.find_last_of("/") == std::string::npos) {
+        return "";
+    }
+    return filename.substr(0, filename.find_last_of("/"));
+}
+
+void writeLossToCSV(std::string filename, LossHistory &lossHistory) {
+	if (!filename.ends_with((".csv"))) {
+		filename += ".csv";
+	}
+	// check if filename is in subdirectory
+    std::string dir;
+    if (!(dir = utils::getDirectoryFromFilename(filename)).empty()) {
+        // if it is, create the directory to be sure
+        std::filesystem::create_directories(dir);
+    }
+    LOG(INFO) << "Saving loss history to " << filename;
+    std::ofstream file;
+    file.open(filename);
+    // header
+    file << "Epoch;Policy Loss;Value Loss;Total Loss" << std::endl;
+	// data
+    for (int i = 0; i < lossHistory.historySize; i++) {
+        file << i << ";" << lossHistory.policies[i] << ";" << lossHistory.values[i] << ";" << lossHistory.losses[i] << "\n";
+    }
+    file << "\n";
+    file.close();
 }
 
 } // namespace utils

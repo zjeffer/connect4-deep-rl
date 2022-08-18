@@ -15,6 +15,6 @@ public:
 	int getBatchSize();
 
 private:
-	float m_LearningRate = 0.02;
+	float m_LearningRate = 0.02f;
 	int m_BatchSize = 64;
 };
