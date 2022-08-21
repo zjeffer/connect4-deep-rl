@@ -1,5 +1,5 @@
 {
-	"name": "mnist",
+	"name": "Connect 4",
 	"build": {
 		"dockerfile": "../Dockerfile"
 	},
