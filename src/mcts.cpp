@@ -81,12 +81,12 @@ float MCTS::expand(Node *node) {
 	std::shared_ptr<Environment> env = node->getEnvironment();
 
 	torch::Tensor input = m_NN->boardToInput(env);
-	std::tuple<torch::Tensor, torch::Tensor> output = m_NN->predict(input);
+	std::pair<torch::Tensor, torch::Tensor> output = m_NN->predict(input);
 
 	// policy
-	torch::Tensor policy = std::get<0>(output).view({7});
+	torch::Tensor policy = output.first.view({7});
 	// value
-	float value = std::get<1>(output).item<float>();
+	float value = output.second.item<float>();
 
 	std::vector<int> valid_moves = env->getValidMoves();
 

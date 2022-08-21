@@ -47,7 +47,7 @@ torch::Tensor NeuralNetwork::boardToInput(const std::shared_ptr<Environment>& en
     return NeuralNetwork::boardToInput(env->getBoard().detach().clone(), static_cast<int>(env->getCurrentPlayer()), m_Settings->getInputPlanes()).to(m_Device);
 }
 
-std::tuple<torch::Tensor, torch::Tensor> NeuralNetwork::predict(torch::Tensor &input) {
+std::pair<torch::Tensor, torch::Tensor> NeuralNetwork::predict(torch::Tensor &input) {
 	return m_Net->forward(input);
 }
 

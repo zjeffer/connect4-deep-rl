@@ -17,7 +17,7 @@ class NeuralNetwork {
 
 	static torch::Tensor boardToInput(torch::Tensor board, int player, int inputPlanes);
 	torch::Tensor boardToInput(const std::shared_ptr<Environment>& env);
-	std::tuple<torch::Tensor, torch::Tensor> predict(torch::Tensor &input);
+	std::pair<torch::Tensor, torch::Tensor> predict(torch::Tensor &input);
 
 	bool loadModel(std::string modelPath);
 	std::filesystem::path saveModel(std::filesystem::path modelPath);
