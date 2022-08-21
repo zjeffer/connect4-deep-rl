@@ -43,7 +43,7 @@ torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, int player, int i
     return input.unsqueeze(0);
 }
 
-torch::Tensor NeuralNetwork::boardToInput(Environment* env) {
+torch::Tensor NeuralNetwork::boardToInput(const std::shared_ptr<Environment>& env) {
     return NeuralNetwork::boardToInput(env->getBoard().detach().clone(), static_cast<int>(env->getCurrentPlayer()), m_Settings->getInputPlanes()).to(m_Device);
 }
 

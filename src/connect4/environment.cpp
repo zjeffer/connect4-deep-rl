@@ -1,6 +1,7 @@
 #include "environment.hpp"
 #include "../common.hpp"
 #include "player.hpp"
+#include <c10/util/Exception.h>
 #include <cstdlib>
 #include <g3log/loglevels.hpp>
 #include <stdexcept>
@@ -10,12 +11,18 @@ Environment::Environment(int rows, int cols) : m_Rows(rows), m_Cols(cols) {
 }
 
 Environment::Environment(torch::Tensor board, ePlayer currentPlayer) : 
-	m_Board(board), 
+	m_Board(board.detach().clone()), 
 	m_Rows(board.size(0)),
 	m_Cols(board.size(1)),
 	m_CurrentPlayer(currentPlayer) {
 
-	m_CurrentPlayer = currentPlayer;
+}
+
+// copy constructor
+Environment::Environment(const std::shared_ptr<Environment>& other)
+	: m_Board(other->m_Board.detach().clone()), m_Rows(other->m_Rows), m_Cols(other->m_Cols),
+	  m_CurrentPlayer(other->m_CurrentPlayer),
+	  m_BoardHistory(other->m_BoardHistory) {
 }
 
 Environment::~Environment(){
@@ -54,8 +61,9 @@ void Environment::makeMove(int column) {
 		while (m_Board[row][column].item<int>() != 0){
 			row--;
 		}
-	} catch (std::out_of_range& e){
+	} catch (c10::IndexError& e) {
 		// out of bounds
+		LOG(WARNING) << m_Board;
 		LOG(FATAL) << "Out of bounds: " << e.what();
 		exit(EXIT_FAILURE);
 	}
@@ -139,12 +147,7 @@ std::vector<int> Environment::getValidMoves() {
 
 bool Environment::currentPlayerHasConnected4() const{
 	// TODO: rewrite this function?
-
-	// if (m_BoardHistory.size() < 7){
-	// 	return false;
-	// }
-
-	if (!m_BoardHistory.size()){
+	if (m_BoardHistory.size() < 7){
 		return false;
 	}
 
@@ -225,27 +228,32 @@ ePlayer Environment::getWinner() const {
 	}
 }
 
-void Environment::print(){
+void Environment::print() {
 	std::stringstream ss;
 	ss << "Current player: " << static_cast<int>(m_CurrentPlayer);
 	ss << "\nBoard: \n";
-	for (int i = 0; i < m_Rows; i++){
-		for (int j = 0; j < m_Cols; j++){
-			int value = m_Board[i][j].item<int>();
-			if (value == 0){
-				ss << ".";
-			} else if (value == static_cast<int>(ePlayer::RED)) {
-				ss << "R";
-			} else if (value == static_cast<int>(ePlayer::YELLOW)) {
-				ss << "Y";
-			} else {
-				std::cout << "\n" << std::endl;
-				std::cout << m_Board << std::endl;
-				throw std::runtime_error("Invalid value in board");
+	try {
+		for (int i = 0; i < m_Rows; i++) {
+			for (int j = 0; j < m_Cols; j++) {
+				int value = m_Board[i][j].item<int>();
+				if (value == 0) {
+					ss << ".";
+				} else if (value == static_cast<int>(ePlayer::RED)) {
+					ss << "R";
+				} else if (value == static_cast<int>(ePlayer::YELLOW)) {
+					ss << "Y";
+				} else {
+					throw std::runtime_error("Error: Environment::print(): "
+											 "value is not 0, 1 or 2, but: " +
+											 std::to_string(value));
+				}
+				ss << " ";
 			}
-			ss << " ";
+			ss << std::endl;
 		}
-		ss << std::endl;
+	} catch (std::runtime_error &e) {
+		LOG(FATAL) << "Error in Environment::print(): " << e.what();
+		exit(EXIT_FAILURE);
 	}
 	LOG(INFO) << ss.str();
 }

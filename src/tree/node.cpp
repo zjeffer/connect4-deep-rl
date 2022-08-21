@@ -1,13 +1,15 @@
 #include "node.hpp"
+#include <memory>
 
-Node::Node(Node *parent, Environment* env, int move, float prior) :
+Node::Node(Node *parent, std::shared_ptr<Environment> env, int move, float prior) :
 	m_Parent(parent),
 	m_Environment(env),
 	m_Move(move),
 	m_Prior(prior)
 {}
 
-Node::Node(Environment* env) : m_Environment(env) {
+Node::Node(std::shared_ptr<Environment> env) : m_Environment(env) {
+	// root node, no parent, move or prior
 }
 
 Node::~Node() {}
@@ -21,19 +23,19 @@ Node::Node(const Node& node) {
 	m_Visits = node.m_Visits;
 }
 
-std::vector<Node *> Node::getChildren() {
+const std::vector<std::unique_ptr<Node>>& Node::getChildren() const {
 	return m_Children;
 }
 
-void Node::addChild(Node *child) {
-	m_Children.push_back(child);
+void Node::addChild(std::unique_ptr<Node> child) {
+	m_Children.push_back(std::move(child));
 }
 
 Node* Node::getParent() {
 	return m_Parent;
 }
 
-Environment* Node::getEnvironment() {
+std::shared_ptr<Environment> Node::getEnvironment() const {
 	return m_Environment;
 }
 
@@ -41,11 +43,11 @@ void Node::incrementVisit() {
 	m_Visits++;
 }
 
-int Node::getVisits() {
+int Node::getVisits() const {
 	return m_Visits;
 }
 
-float Node::getValue() {
+float Node::getValue() const {
 	return m_Value;
 }
 
@@ -53,7 +55,7 @@ void Node::setValue(float value) {
 	m_Value = value;
 }
 
-float Node::getPrior() {
+float Node::getPrior() const {
 	return m_Prior;
 }
 
@@ -61,11 +63,11 @@ void Node::setPrior(float prior) {
 	m_Prior = prior;
 }
 
-float Node::getQ() {
+float Node::getQ() const {
 	return m_Value / (float)(m_Visits + 1e-6);
 }
 
-float Node::getU() {
+float Node::getU() const {
 	if (m_Parent == nullptr){
 		LOG(FATAL) << "Parent is null";
 		exit(EXIT_FAILURE);

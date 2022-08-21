@@ -8,6 +8,7 @@ class Environment {
   public:
 	Environment(int rows = 6, int cols = 7);
 	Environment(torch::Tensor board, ePlayer currentPlayer);
+	Environment(const std::shared_ptr<Environment>& other);
 	~Environment();
 
 	void newEnvironment(int cols, int rows);

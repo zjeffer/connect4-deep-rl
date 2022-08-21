@@ -21,13 +21,13 @@ class Game {
 
 	bool saveMemoryToFile();
 
-	Environment* getEnvironment() const;
+	std::shared_ptr<Environment> getEnvironment() const;
 
 	
 
   private:
 	SelfPlaySettings* m_Settings = nullptr;
-	Environment* m_Env = nullptr;
+	std::shared_ptr<Environment> m_Env = nullptr;
 	std::string m_GameID = "";
 
 	std::vector<Agent*> m_Agents;

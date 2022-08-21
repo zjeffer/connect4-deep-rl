@@ -11,7 +11,7 @@
 
 Game::Game(SelfPlaySettings* selfPlaySettings){
 	m_Settings = selfPlaySettings;
-	m_Env = new Environment(m_Settings->getRows(), m_Settings->getCols());
+	m_Env = std::make_shared<Environment>(m_Settings->getRows(), m_Settings->getCols());
 	m_Agents = std::vector<Agent*>();
 	std::shared_ptr<NeuralNetwork> nn = std::make_shared<NeuralNetwork>(m_Settings);
 	for (auto &agentData : m_Settings->getAgents()){
@@ -25,13 +25,12 @@ Game::Game(SelfPlaySettings* selfPlaySettings){
 
 Game::~Game() {
 	// std::cout << "Game destructor" << std::endl;
-	delete m_Env;
 	for (auto &agent : m_Agents){
 		delete agent;
 	}
 }
 
-Environment* Game::getEnvironment() const{
+std::shared_ptr<Environment> Game::getEnvironment() const{
 	return m_Env;
 }
 
@@ -50,7 +49,7 @@ ePlayer Game::playGame() {
 	winner = m_Env->getWinner();
 
 	if (!g_running) {
-		std::cout << "Game stopped" << std::endl;
+		LOG(INFO) << "Game stopped";
 		exit(EXIT_SUCCESS);
 	}
 
@@ -94,10 +93,9 @@ bool Game::playMove() {
 	
 
 	// print moves and their q + u values
-	std::vector<Node*> children = agent->getMCTS()->getRoot()->getChildren();
-	// vector of moveprobs of size m_Env->getCols()
+	const std::vector<std::unique_ptr<Node>>& children = agent->getMCTS()->getRoot()->getChildren();
 	std::vector<float> moveProbs = std::vector<float>(m_Env->getCols(), 0.0f);
-	for (Node* child : children) {
+	for (auto& child : children) {
 		moveProbs[child->getMove()] = (float)child->getVisits() / (float)agent->getMCTS()->getRoot()->getVisits();
 		if (m_Settings->showMoves()) {
 			LOG(DEBUG) << "Move: " << child->getMove() << " Q: " << child->getQ() << " U: " << child->getU() << ". Visits: " << child->getVisits();
@@ -120,11 +118,11 @@ bool Game::playMove() {
 		}
 	}
 
-	// LOG(INFO) << "Playing best move: " << bestMove;
+	LOG(INFO) << "Playing best move: " << bestMove;
 
 	// make the best move
 	this->m_Env->makeMove(bestMove);
-	// m_Env->print();
+	m_Env->print();
 
 	return !m_Env->hasValidMoves() || m_Env->currentPlayerHasConnected4();
 }
