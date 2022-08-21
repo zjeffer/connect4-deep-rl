@@ -9,11 +9,11 @@ Cell::Cell(int row, int column, ePlayer player) :
 Cell::~Cell() {
 }
 
-int Cell::getRow() const {
+const int& Cell::getRow() const {
 	return m_Row;
 }
 
-int Cell::getCol() const {
+const int& Cell::getCol() const {
 	return m_Col;
 }
 
