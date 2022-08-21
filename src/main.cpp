@@ -57,13 +57,14 @@ class InputParser {
 	// print help and exit
 	std::cout << "Usage: " << filename << " [options]" << std::endl;
 	std::cout << "Options:" << std::endl;
-	std::cout << "  -h, --help\t\t\tPrint this help message" << std::endl;
-	std::cout << "  --sims\t\t\tAmount of simulations" << std::endl;
-	std::cout << "  --train\t\t\tTrain a new network" << std::endl;
+	std::cout << "  -h, --help\t\tPrint this help message" << std::endl;
+	std::cout << "  --sims\t\tAmount of simulations" << std::endl;
+	std::cout << "  --memory-folder\t\tFolder to save the games to or load the dataset from" << std::endl;
+	std::cout << "  --train\t\tTrain a new network" << std::endl;
 	std::cout << "  --pipeline\t\tRepeatedly run games and retrain the network" << std::endl;
-	std::cout << "  --model\t\t\tPath to model to use for selfplay or training" << std::endl;
-	std::cout << "  --lr\t\t\t\tLearning rate" << std::endl;
-	std::cout << "  --bs\t\t\t\tBatch size" << std::endl;
+	std::cout << "  --model\t\tPath to model to use for selfplay or training" << std::endl;
+	std::cout << "  --lr\t\t\tLearning rate" << std::endl;
+	std::cout << "  --bs\t\t\tBatch size" << std::endl;
 	exit(EXIT_SUCCESS);
 }
 
