@@ -2,6 +2,8 @@
 
 A deep reinforcement learning algorithm that plays Connect 4, based on AlphaZero. I'm creating this because [my chess algorithm](https://github.com/zjeffer/chess-deep-rl-cpp) learns too slowly, and I wanted to know if the problem is the amount of data needed, or my implementation of the algorithm itself.
 
+See https://zjeffer.github.io/connect4-deep-rl/ for Doxygen documentation.
+
 ## TODO
 
 * [X] Connect 4 environment
