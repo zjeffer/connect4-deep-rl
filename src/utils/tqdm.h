@@ -1,3 +1,13 @@
+/**
+ * @file tqdm.h
+ * @author aminnj (https://github.com/aminnj/)
+ * @brief Header-only (unofficial) progress bar based on tqdm
+ * @date 2020-03-28
+ * 
+ * @copyright https://github.com/aminnj/cpptqdm
+ * 
+ */
+
 #pragma once
 #include <unistd.h>
 #include <chrono>
