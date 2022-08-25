@@ -39,40 +39,28 @@ torch::Tensor moveListToOutputs(const std::vector<float>& moveList, const float&
 	return outputs;
 }
 
-
-void writeIntVector(std::vector<uint8_t>& vector, std::ofstream& file) {
-	typename std::vector<uint8_t>::size_type size = vector.size();
+template <typename T>
+void writeVectorToFile(std::vector<T>& vector, std::ofstream& file) {
+	typename std::vector<T>::size_type size = vector.size();
 	file.write((char*)&size, sizeof(size));
-	file.write((char*)vector.data(), sizeof(uint8_t) * size);
+	file.write((char*)vector.data(), sizeof(T) * size);
 }
 
-void writeFloatVector(std::vector<float>& vector, std::ofstream& file) {
-	typename std::vector<float>::size_type size = vector.size();
-	file.write((char*)&size, sizeof(size));
-	file.write((char*)vector.data(), sizeof(float) * size);
-}
-
-void readIntVector(std::vector<uint8_t>& vector, std::ifstream& file) {
-	typename std::vector<uint8_t>::size_type size = vector.size();
+template <typename T>
+void readVectorFromFile(std::vector<T>& vector, std::ifstream& file) {
+	typename std::vector<T>::size_type size = vector.size();
 	file.read((char*)&size, sizeof(size));
 	vector.resize(size);
-	file.read((char*)vector.data(), sizeof(uint8_t) * size);
-}
-
-void readFloatVector(std::vector<float>& vector, std::ifstream& file) {
-	typename std::vector<float>::size_type size = vector.size();
-	file.read((char*)&size, sizeof(size));
-	vector.resize(size);
-	file.read((char*)vector.data(), sizeof(float) * size);
+	file.read((char*)vector.data(), sizeof(T) * size);
 }
 
 bool writeMemoryElementsToFile(std::vector<MemoryElement>& elements, const std::filesystem::path& filepath) {
 	std::ofstream file(filepath, std::ios::out | std::ios::binary);
 	if (file.is_open()) {
 		for (MemoryElement &element : elements) {
-			writeIntVector(element.board, file);
+			writeVectorToFile<uint8_t>(element.board, file);
 			file.write((char*)&element.currentPlayer, sizeof(element.currentPlayer));			
-			writeFloatVector(element.moveList, file);
+			writeVectorToFile<float>(element.moveList, file);
 			file.write((char*)&element.winner, sizeof(element.winner));
 		}
 		file.close();
@@ -87,9 +75,9 @@ bool readMemoryElementsFromFile(std::vector<MemoryElement> &elements, const std:
 	if (file.is_open()) {
 		while(!file.eof()){
 			MemoryElement element;
-			readIntVector(element.board, file);
+			readVectorFromFile<uint8_t>(element.board, file);
 			file.read((char*)&element.currentPlayer, sizeof(element.currentPlayer));
-			readFloatVector(element.moveList, file);
+			readVectorFromFile<float>(element.moveList, file);
 			file.read((char*)&element.winner, sizeof(element.winner));
 			
 			elements.push_back(element);

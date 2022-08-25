@@ -5,7 +5,10 @@
 #include "../connect4/player.hpp"
 
 
-
+/**
+ * @brief Holds the data for one position in memory.
+ * 
+ */
 struct MemoryElement {
 	MemoryElement() {}
 	MemoryElement(const MemoryElement& other) {
@@ -22,6 +25,10 @@ struct MemoryElement {
 	uint8_t winner;
 };
 
+/**
+ * @brief Holds the info to create a new Agent.
+ * 
+ */
 struct AgentData {
 	~AgentData() {}
 
@@ -30,6 +37,10 @@ struct AgentData {
 	ePlayer player;
 };
 
+/**
+ * @brief Keeps history of the training process.
+ * 
+ */
 struct LossHistory {
 	~LossHistory() {}
 	
@@ -41,6 +52,10 @@ struct LossHistory {
 	std::vector<float> policies = std::vector<float>();
 };
 
+/**
+ * @brief Tally for counting wins when self-playing.
+ * 
+ */
 struct SelfPlayTally {
 	~SelfPlayTally() {}
 

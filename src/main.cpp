@@ -2,6 +2,7 @@
 #include <exception>
 #include <filesystem>
 #include <stdexcept>
+#include <string>
 #include <torch/jit.h>
 #include <torch/nn.h>
 #include <torch/script.h>
@@ -15,25 +16,25 @@
 #include "utils/selfPlaySettings.hpp"
 #include "utils/test.hpp"
 #include "utils/trainerSettings.hpp"
-#include "common.hpp"
 #include "utils/types.hpp"
+#include "common.hpp"
 
 void signal_handling(int signal) {
 	std::cerr << "Signal " << signal << " received. Quitting..." << std::endl;
-	g_running = false;
+	g_Running = false;
 }
 
 // argument parsing (https://stackoverflow.com/a/868894/10180569)
 class InputParser {
   public:
-	InputParser(int &argc, char **argv) {
+	InputParser(int& argc, char** argv) {
 		for (int i = 1; i < argc; ++i) {
 			this->tokens.push_back(std::string(argv[i]));
 		}
 	}
 
 	/// @author iain
-	const std::string &getCmdOption(const std::string &option) const {
+	const std::string& getCmdOption(const std::string& option) const {
 		std::vector<std::string>::const_iterator itr;
 		itr = std::find(this->tokens.begin(), this->tokens.end(), option);
 		if (itr != this->tokens.end() && ++itr != this->tokens.end()) {
@@ -44,9 +45,8 @@ class InputParser {
 	}
 
 	/// @author iain
-	bool cmdOptionExists(const std::string &option) const {
-		return std::find(this->tokens.begin(), this->tokens.end(), option) !=
-			   this->tokens.end();
+	bool cmdOptionExists(const std::string& option) const {
+		return std::find(this->tokens.begin(), this->tokens.end(), option) != this->tokens.end();
 	}
 
   private:
@@ -61,14 +61,18 @@ class InputParser {
 	std::cout << "  --sims\t\tAmount of simulations" << std::endl;
 	std::cout << "  --memory-folder\t\tFolder to save the games to or load the dataset from" << std::endl;
 	std::cout << "  --train\t\tTrain a new network" << std::endl;
-	std::cout << "  --pipeline\t\tRepeatedly run games and retrain the network" << std::endl;
+	std::cout << "  --pipeline\t\tRepeatedly run games and retrain the network. Append a number to specify amount of "
+				 "games per pipeline."
+			  << std::endl;
 	std::cout << "  --model\t\tPath to model to use for selfplay or training" << std::endl;
 	std::cout << "  --lr\t\t\tLearning rate" << std::endl;
 	std::cout << "  --bs\t\t\tBatch size" << std::endl;
+	std::cout << "  --test\t\tRun tests" << std::endl;
 	exit(EXIT_SUCCESS);
 }
 
-void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings *settings) {
+void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings* settings) {
+	// set AI model
 	if (inputParser->cmdOptionExists("--model")) {
 		settings->setModelPath(inputParser->getCmdOption("--model"));
 	}
@@ -76,30 +80,28 @@ void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings *settings) 
 	// create/load model
 	std::string modelPath = settings->getModelPath();
 	if (!std::filesystem::exists(modelPath)) {
-		NeuralNetwork *nn = new NeuralNetwork(settings);
-		nn->saveModel(modelPath);
-		delete nn;
+		NeuralNetwork nn = NeuralNetwork(settings);
+		nn.saveModel(modelPath);
 	}
 
-	// FOR DEBUGGING PURPOSES
-	// settings->setShowMoves(true);
+	// FOR DEBUGGING PURPOSES: show Q+U+visits for every possible action
+	settings->setShowMoves(true);
 
 	// add agents
 	settings->addAgent("Yellow", modelPath, ePlayer::YELLOW);
 	settings->addAgent("Red", modelPath, ePlayer::RED);
 
+	// set #simulations per move
 	if (inputParser->cmdOptionExists("--sims")) {
 		try {
 			int sims = std::stoi(inputParser->getCmdOption("--sims"));
 			settings->setSimulations(sims);
 			if (sims < 1) {
-				throw std::invalid_argument(
-					"Amount must be greater or equal "
-					"to 1");
+				throw std::invalid_argument("Amount must be greater or equal "
+											"to 1");
 			}
-		} catch (std::invalid_argument &e) {
-			std::cerr << "Invalid argument for --sims: " << e.what()
-						<< std::endl;
+		} catch (std::invalid_argument& e) {
+			std::cerr << "Invalid argument for --sims: " << e.what() << std::endl;
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -110,9 +112,22 @@ void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings *settings) 
 		if (inputParser->cmdOptionExists("--memory-folder")) {
 			settings->setMemoryFolder(inputParser->getCmdOption("--memory-folder"));
 		}
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		LOG(FATAL) << "Invalid memory folder: " << e.what();
 		exit(EXIT_FAILURE);
+	}
+
+	// set amount of pipeline games
+	if (inputParser->cmdOptionExists("--pipeline")) {
+		std::string games = inputParser->getCmdOption("--pipeline");
+		if (games.length() > 0 && !games.starts_with(("-"))) {
+			try {
+				settings->setPipelineGames(std::stoi(games));
+				LOG(INFO) << "Pipeline: " << settings->getPipelineGames() << " games.";
+			} catch (const std::invalid_argument& e) {
+				LOG(WARNING) << "Invalid amount of games: " << e.what();
+			}
+		}
 	}
 }
 
@@ -150,7 +165,7 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings) {
 		if (inputParser->cmdOptionExists("--bs")) {
 			settings->setBatchSize(std::stoi(inputParser->getCmdOption("--bs")));
 		}
-	} catch (const std::invalid_argument &e) {
+	} catch (const std::invalid_argument& e) {
 		LOG(FATAL) << "Invalid batch size: " << e.what();
 		exit(EXIT_FAILURE);
 	}
@@ -159,41 +174,39 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings) {
 		if (inputParser->cmdOptionExists("--lr")) {
 			settings->setLearningRate(std::stod(inputParser->getCmdOption("--lr")));
 		}
-	} catch (const std::invalid_argument &e) {
+	} catch (const std::invalid_argument& e) {
 		LOG(FATAL) << "Invalid learning rate: " << e.what();
 		exit(EXIT_FAILURE);
 	}
-	
 
 	try {
 		if (inputParser->cmdOptionExists("--memory-folder")) {
 			settings->setMemoryFolder(inputParser->getCmdOption("--memory-folder"));
 		}
-	} catch (const std::exception &e) {
+	} catch (const std::exception& e) {
 		LOG(FATAL) << "Invalid memory folder: " << e.what();
 		exit(EXIT_FAILURE);
 	}
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 	// signal handling
 	signal(SIGINT, signal_handling);
 	signal(SIGTERM, signal_handling);
 
 	// parse arguments
 	InputParser inputParser = InputParser(argc, argv);
-	if (inputParser.cmdOptionExists("-h") ||
-		inputParser.cmdOptionExists("--help")) {
+	if (inputParser.cmdOptionExists("-h") || inputParser.cmdOptionExists("--help")) {
 		printUsage(argv[0]);
 	}
 
 	// create logger
-	logger = std::make_shared<Logger>();
+	g_Logger = std::make_shared<Logger>();
 	LOG(DEBUG) << "Logger initialized!";
 
 	// set random seed
-	g_generator.seed(std::random_device{}());
-	// LOG(DEBUG) << "Test random value: " << g_generator();
+	g_Generator.seed(std::random_device{}());
+	// LOG(DEBUG) << "Test random value: " << g_Generator();
 
 	// test
 	if (inputParser.cmdOptionExists("--test")) {
@@ -220,20 +233,21 @@ int main(int argc, char *argv[]) {
 
 		if (inputParser.cmdOptionExists("--pipeline")) {
 			// run full pipeline with selfplay & training
-			LOG(INFO) << "Running full pipeline with 50 games...";
+
+			LOG(INFO) << "Running full pipeline with " << selfPlaySettings.getPipelineGames() << " games...";
 			TrainerSettings trainerSettings = TrainerSettings();
 			parseTrainingOptions(&inputParser, &trainerSettings);
-			
-			while (g_running) {	
+
+			while (g_Running) {
 				LOG(INFO) << "Running selfplay...";
 				SelfPlayTally tally = SelfPlayTally();
-				for (int gameCount = 1; gameCount <= 50; gameCount++) {
+				for (int gameCount = 1; gameCount <= selfPlaySettings.getPipelineGames(); gameCount++) {
 					LOG(INFO) << "\n\n\tStarting game " << gameCount << "...\n";
 					runGame(&selfPlaySettings, &tally);
 				}
 				LOG(INFO) << "Training new model...";
 				// train with these games
-				
+
 				Trainer trainer = Trainer(&trainerSettings);
 				std::filesystem::path trainedModelName = trainer.train();
 
@@ -264,7 +278,8 @@ int main(int argc, char *argv[]) {
 					modelPath = modelPath.string().substr(2);
 				}
 				std::filesystem::path modelFolder = modelPath.parent_path();
-				std::filesystem::path oldModelPath = std::filesystem::path(modelFolder).append("old").append(modelPath.filename().string());
+				std::filesystem::path oldModelPath =
+					std::filesystem::path(modelFolder).append("old").append(modelPath.filename().string());
 				if (!std::filesystem::exists(oldModelPath.parent_path())) {
 					std::filesystem::create_directory(oldModelPath.parent_path());
 				}
@@ -276,12 +291,11 @@ int main(int argc, char *argv[]) {
 				selfPlaySettings.setModelPath(trainedModelName);
 				// save new model
 				LOG(INFO) << "Saving new model...";
-				
 			}
 		} else {
 			// run games infinitely
 			SelfPlayTally tally;
-			while (g_running) {
+			while (g_Running) {
 				runGame(&selfPlaySettings, &tally);
 			}
 		}

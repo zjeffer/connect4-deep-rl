@@ -4,13 +4,13 @@
 Trainer::Trainer(TrainerSettings *settings) { 
 	m_Settings = settings; 
 
-	if (m_Settings->useGPU()) {
+    // if useCUDA is false, it will use the CPU instead.
+	if (m_Settings->useCUDA()) {
 		m_Device = torch::Device(torch::kCUDA);
 	}
 
-	// NN
+	// load the neural network based on the given settings
 	m_NN = std::make_shared<NeuralNetwork>(m_Settings);
-	
 }
 
 Trainer::~Trainer() {
@@ -74,7 +74,7 @@ std::filesystem::path Trainer::train() {
 	LOG(INFO) << "Starting training with " << train_set_size << " samples. Learning rate: " << m_Settings->getLearningRate();
 	int index = 0;
 	for (auto batch : *data_loader) {
-        if (!g_running) {
+        if (!g_Running) {
             exit(EXIT_FAILURE);
         }
 

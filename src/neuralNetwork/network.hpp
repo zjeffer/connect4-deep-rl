@@ -1,16 +1,29 @@
 #pragma once
 
-
 #include <torch/torch.h>
 #include <tuple>
 
 #include "convBlock.hpp"
+#include "policyHead.hpp"
 #include "residualBlock.hpp"
 #include "valueHead.hpp"
-#include "policyHead.hpp"
 
-
+/**
+ * @brief The full neural network architecture based on AlphaZero
+ *
+ */
 struct NetworkImpl : public torch::nn::Module {
+	/**
+	 * @brief Construct a new Network
+	 *
+	 * @param planes the amount of input planes
+	 * @param width the width of each plane
+	 * @param height the height of each plane
+	 * @param outputs the amount of policy outputs
+	 * @param filters the amount of convolutional filters each layer
+	 * @param policyFilters the amount of filters in the policy layers
+	 * @param valueFilters the amount of filters in the value layers
+	 */
 	NetworkImpl(int planes, int width, int height, int outputs, int filters, int policyFilters, int valueFilters) {
 		convInput = register_module("convInput", ConvBlock(planes, filters));
 
@@ -36,11 +49,12 @@ struct NetworkImpl : public torch::nn::Module {
 
 		valueHead = register_module("valueHead", ValueHead(filters, valueFilters, width, height, filters));
 		policyHead = register_module("policyHead", PolicyHead(filters, policyFilters, width, height, outputs));
-
 	}
 
-	std::pair<torch::Tensor, torch::Tensor> forward(const torch::Tensor& input) {
+	std::pair<torch::Tensor, torch::Tensor> forward(const torch::Tensor &input) {
+		// the first convolutional layer
 		auto x = convInput(input);
+		// all residual blocks
 		x = resBlock1(x);
 		x = resBlock2(x);
 		x = resBlock3(x);
@@ -60,10 +74,8 @@ struct NetworkImpl : public torch::nn::Module {
 		x = resBlock17(x);
 		x = resBlock18(x);
 		x = resBlock19(x);
-		auto policy = policyHead(x);
-		auto value = valueHead(x);
-
-		return std::make_pair(policy, value);
+		// return the two outputs
+		return std::make_pair(policyHead(x), valueHead(x));
 	}
 
 	ConvBlock convInput = nullptr;
@@ -89,7 +101,6 @@ struct NetworkImpl : public torch::nn::Module {
 
 	PolicyHead policyHead = nullptr;
 	ValueHead valueHead = nullptr;
-
 };
 
 TORCH_MODULE(Network);

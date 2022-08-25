@@ -84,7 +84,7 @@ void testEasyPuzzle() {
 	torch::Tensor board = torch::from_blob(
 		data.data(), {settings->getRows(), settings->getCols()}, options);
 	game.getEnvironment()->setBoard(board);
-	// game.getEnvironment()->setPlayer(ePlayer::RED);
+	// game.getEnvironment()->setCurrentPlayer(ePlayer::RED);
 
 	assert(game.playGame() == ePlayer::YELLOW);
 }
@@ -96,7 +96,7 @@ void testStochasticDistribution() {
 												 choices.end());
 
 	for (int i = 0; i < 100000; i++) {
-		counters[distribution(g_generator)]++;
+		counters[distribution(g_Generator)]++;
 	}
 
 	for (int i = 0; i < (int)counters.size(); i++) {
