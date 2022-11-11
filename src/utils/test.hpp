@@ -5,7 +5,8 @@
 #include "../game.hpp"
 #include "selfPlaySettings.hpp"
 
-namespace Test {
+namespace Test
+{
 
 void testHorizontalWin();
 

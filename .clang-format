@@ -1,8 +1,72 @@
-Language: Cpp
+# See https://clang.llvm.org/docs/ClangFormatStyleOptions.html for more explanation of each parameter.
+
+AlignAfterOpenBracket: Align # use ContinuationIndentWidth
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignEscapedNewlines: Right
+AlignOperands: true
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: false  # When the line is too long, align all parameters on the open bracket
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Allman
+BreakBeforeInheritanceComma: true
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeColon
+BreakConstructorInitializersBeforeComma: true
+ColumnLimit: 160
+CompactNamespaces: true
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+EmptyLineBeforeAccessModifier: LogicalBlock
+FixNamespaceComments: true
+IncludeBlocks: Regroup # Regroup to include order defined in IncludeCategories
+IncludeCategories:
+  # Test framework
+  - Regex: "^<[gtest|gmock].*.h>"
+    Priority: 1
+  # System headers
+  - Regex: "^<[a-z0-9_]*.h>"
+    Priority: 2
+  # C++ headers
+  - Regex: "^<[a-z0-9_]*>"
+    Priority: 3
+  - Regex: ".*"
+    Priority: 4
+IndentCaseLabels: false
 IndentWidth: 4
-UseTab: true
-TabWidth: 4
-ColumnLimit: 120
-DerivePointerAlignment: false
+Language: Cpp
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
+# from Mozilla
+PenaltyBreakAssignment: 40
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 300
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakString: 1000
+PenaltyExcessCharacter: 1000000
+PenaltyReturnTypeOnItsOwnLine: 200 # set higher
 PointerAlignment: Left
-SortIncludes: false
+QualifierAlignment: Custom
+QualifierOrder: ['inline', 'static', 'type', 'const', 'constexpr', 'volatile' ]
+SortIncludes: CaseInsensitive
+SortUsingDeclarations: true
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+UseTab: Never

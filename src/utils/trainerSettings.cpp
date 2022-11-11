@@ -2,10 +2,22 @@
 
 TrainerSettings::TrainerSettings() {}
 
-void TrainerSettings::setLearningRate(float learningRate) { m_LearningRate = learningRate; }
+void TrainerSettings::setLearningRate(float learningRate)
+{
+    m_LearningRate = learningRate;
+}
 
-float TrainerSettings::getLearningRate() const { return m_LearningRate; }
+float TrainerSettings::getLearningRate() const
+{
+    return m_LearningRate;
+}
 
-void TrainerSettings::setBatchSize(int batchSize) { m_BatchSize = batchSize; }
+void TrainerSettings::setBatchSize(int batchSize)
+{
+    m_BatchSize = batchSize;
+}
 
-int TrainerSettings::getBatchSize() const { return m_BatchSize; }
+int TrainerSettings::getBatchSize() const
+{
+    return m_BatchSize;
+}

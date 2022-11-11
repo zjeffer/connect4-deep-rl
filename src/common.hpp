@@ -1,10 +1,8 @@
 #pragma once
 
-// torch also has LOG defined, undef it before including the logger
-#undef LOG
-#include "logger/logger.hpp"
-
 #include <random>
+
+#include "logger/logger.hpp"
 
 // global variable to indicate the program is running
 inline bool g_Running = true;

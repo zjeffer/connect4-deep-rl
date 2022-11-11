@@ -2,9 +2,10 @@
 
 #include "customSink.hpp"
 
-class StdoutSink : public CustomSink {
+class StdoutSink : public CustomSink
+{
   public:
-	void callback(g3::LogMessageMover log) override;
+    void callback(g3::LogMessageMover log) override;
 
-	static std::string FormatMsg(const g3::LogMessage& msg);
+    static std::string FormatMsg(g3::LogMessage const& msg);
 };
