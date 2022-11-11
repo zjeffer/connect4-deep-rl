@@ -78,28 +78,28 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3d1d465207edfdc0cb12405476c4f7f6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#a3d1d465207edfdc0cb12405476c4f7f6">MCTS</a> (<a class="el" href="class_self_play_settings.html">SelfPlaySettings</a> *selfPlaySettings, <a class="el" href="class_node.html">Node</a> *root, const std::shared_ptr&lt; <a class="el" href="class_neural_network.html">NeuralNetwork</a> &gt; &amp;nn)</td></tr>
-<tr class="memdesc:a3d1d465207edfdc0cb12405476c4f7f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> tree.  <a href="class_m_c_t_s.html#a3d1d465207edfdc0cb12405476c4f7f6">More...</a><br /></td></tr>
-<tr class="separator:a3d1d465207edfdc0cb12405476c4f7f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16a7d6b8e4036832c3938b24f514af50"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#a16a7d6b8e4036832c3938b24f514af50">MCTS</a> (<a class="el" href="class_self_play_settings.html">SelfPlaySettings</a> *selfPlaySettings, std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; root, std::shared_ptr&lt; <a class="el" href="class_neural_network.html">NeuralNetwork</a> &gt; const &amp;nn)</td></tr>
+<tr class="memdesc:a16a7d6b8e4036832c3938b24f514af50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> tree.  <a href="class_m_c_t_s.html#a16a7d6b8e4036832c3938b24f514af50">More...</a><br /></td></tr>
+<tr class="separator:a16a7d6b8e4036832c3938b24f514af50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2a9ae4499a1dcb5f315abc637cc0751"><td class="memItemLeft" align="right" valign="top"><a id="ab2a9ae4499a1dcb5f315abc637cc0751"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#ab2a9ae4499a1dcb5f315abc637cc0751">run_simulations</a> ()</td></tr>
 <tr class="memdesc:ab2a9ae4499a1dcb5f315abc637cc0751"><td class="mdescLeft">&#160;</td><td class="mdescRight">Continuously run the 4 steps of the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> algorithm. The amount of simulations is taken from the given selfPlaySettings. <br /></td></tr>
 <tr class="separator:ab2a9ae4499a1dcb5f315abc637cc0751"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abaf7010d8d6d4b9df9380150d16f5951"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#abaf7010d8d6d4b9df9380150d16f5951">select</a> (<a class="el" href="class_node.html">Node</a> *root)</td></tr>
-<tr class="memdesc:abaf7010d8d6d4b9df9380150d16f5951"><td class="mdescLeft">&#160;</td><td class="mdescRight">The first step of the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> algorithm: keep selecting actions until a position (<a class="el" href="class_node.html" title="A Node represents a position in the MCTS tree.">Node</a>) has been reached that has not yet been visited (expanded)  <a href="class_m_c_t_s.html#abaf7010d8d6d4b9df9380150d16f5951">More...</a><br /></td></tr>
-<tr class="separator:abaf7010d8d6d4b9df9380150d16f5951"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48888fc800d4e86b3acf3db2613d0235"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#a48888fc800d4e86b3acf3db2613d0235">expand</a> (<a class="el" href="class_node.html">Node</a> *leaf)</td></tr>
-<tr class="memdesc:a48888fc800d4e86b3acf3db2613d0235"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 2nd and 3rd steps of the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> algorithm: Expand the given leaf node and evaluate the value of the leaf node.  <a href="class_m_c_t_s.html#a48888fc800d4e86b3acf3db2613d0235">More...</a><br /></td></tr>
-<tr class="separator:a48888fc800d4e86b3acf3db2613d0235"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ccf37bef11dec9425bd0ea0f905d11b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#a3ccf37bef11dec9425bd0ea0f905d11b">backpropagate</a> (<a class="el" href="class_node.html">Node</a> *leaf, float result)</td></tr>
-<tr class="memdesc:a3ccf37bef11dec9425bd0ea0f905d11b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 4th and final step of the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> algorithm: Backpropagate the value through the tree, up to the root node.  <a href="class_m_c_t_s.html#a3ccf37bef11dec9425bd0ea0f905d11b">More...</a><br /></td></tr>
-<tr class="separator:a3ccf37bef11dec9425bd0ea0f905d11b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a77a67817c533d02118ad4adaeae2cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#a1a77a67817c533d02118ad4adaeae2cc">getRoot</a> () const</td></tr>
-<tr class="memdesc:a1a77a67817c533d02118ad4adaeae2cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the root node of the tree.  <a href="class_m_c_t_s.html#a1a77a67817c533d02118ad4adaeae2cc">More...</a><br /></td></tr>
-<tr class="separator:a1a77a67817c533d02118ad4adaeae2cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7293934372111729213dfecd03ee3ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#ad7293934372111729213dfecd03ee3ff">setRoot</a> (<a class="el" href="class_node.html">Node</a> *root)</td></tr>
-<tr class="memdesc:ad7293934372111729213dfecd03ee3ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a new root <a class="el" href="class_node.html" title="A Node represents a position in the MCTS tree.">Node</a>.  <a href="class_m_c_t_s.html#ad7293934372111729213dfecd03ee3ff">More...</a><br /></td></tr>
-<tr class="separator:ad7293934372111729213dfecd03ee3ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6efb7be57636f91a1299c403db6e971"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#ac6efb7be57636f91a1299c403db6e971">select</a> (std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; root)</td></tr>
+<tr class="memdesc:ac6efb7be57636f91a1299c403db6e971"><td class="mdescLeft">&#160;</td><td class="mdescRight">The first step of the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> algorithm: keep selecting actions until a position (<a class="el" href="class_node.html" title="A Node represents a position in the MCTS tree.">Node</a>) has been reached that has not yet been visited (expanded)  <a href="class_m_c_t_s.html#ac6efb7be57636f91a1299c403db6e971">More...</a><br /></td></tr>
+<tr class="separator:ac6efb7be57636f91a1299c403db6e971"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8eec14c190b979b45140dc838e10d4a"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#aa8eec14c190b979b45140dc838e10d4a">expand</a> (std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; leaf)</td></tr>
+<tr class="memdesc:aa8eec14c190b979b45140dc838e10d4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 2nd and 3rd steps of the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> algorithm: Expand the given leaf node and evaluate the value of the leaf node.  <a href="class_m_c_t_s.html#aa8eec14c190b979b45140dc838e10d4a">More...</a><br /></td></tr>
+<tr class="separator:aa8eec14c190b979b45140dc838e10d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a31c39fd67c62a0983eb72e3aabe1e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#a3a31c39fd67c62a0983eb72e3aabe1e6">backpropagate</a> (std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; leaf, float result)</td></tr>
+<tr class="memdesc:a3a31c39fd67c62a0983eb72e3aabe1e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 4th and final step of the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> algorithm: Backpropagate the value through the tree, up to the root node.  <a href="class_m_c_t_s.html#a3a31c39fd67c62a0983eb72e3aabe1e6">More...</a><br /></td></tr>
+<tr class="separator:a3a31c39fd67c62a0983eb72e3aabe1e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad9d3a5e867810921a0422e6597f6835"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#aad9d3a5e867810921a0422e6597f6835">getRoot</a> () const</td></tr>
+<tr class="memdesc:aad9d3a5e867810921a0422e6597f6835"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the root node of the tree.  <a href="class_m_c_t_s.html#aad9d3a5e867810921a0422e6597f6835">More...</a><br /></td></tr>
+<tr class="separator:aad9d3a5e867810921a0422e6597f6835"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf1dbd5efe1c44df5400a279c0228133"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#aaf1dbd5efe1c44df5400a279c0228133">setRoot</a> (std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; root)</td></tr>
+<tr class="memdesc:aaf1dbd5efe1c44df5400a279c0228133"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a new root <a class="el" href="class_node.html" title="A Node represents a position in the MCTS tree.">Node</a>.  <a href="class_m_c_t_s.html#aaf1dbd5efe1c44df5400a279c0228133">More...</a><br /></td></tr>
+<tr class="separator:aaf1dbd5efe1c44df5400a279c0228133"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22f9a6f050163cab16f40f6380689e19"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_t_s.html#a22f9a6f050163cab16f40f6380689e19">getBestMoveDeterministic</a> () const</td></tr>
 <tr class="memdesc:a22f9a6f050163cab16f40f6380689e19"><td class="mdescLeft">&#160;</td><td class="mdescRight">After running simulations, get the root's best child node (deterministically).  <a href="class_m_c_t_s.html#a22f9a6f050163cab16f40f6380689e19">More...</a><br /></td></tr>
 <tr class="separator:a22f9a6f050163cab16f40f6380689e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,8 +116,8 @@ Static Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> class is responsible for running the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> simulations, and keeping the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> tree. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3d1d465207edfdc0cb12405476c4f7f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d1d465207edfdc0cb12405476c4f7f6">&#9670;&nbsp;</a></span>MCTS()</h2>
+<a id="a16a7d6b8e4036832c3938b24f514af50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16a7d6b8e4036832c3938b24f514af50">&#9670;&nbsp;</a></span>MCTS()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -131,13 +131,13 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_node.html">Node</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt;&#160;</td>
           <td class="paramname"><em>root</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_neural_network.html">NeuralNetwork</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_neural_network.html">NeuralNetwork</a> &gt; const &amp;&#160;</td>
           <td class="paramname"><em>nn</em>&#160;</td>
         </tr>
         <tr>
@@ -153,7 +153,7 @@ Static Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">selfPlaySettings</td><td></td></tr>
     <tr><td class="paramname">root</td><td>the <a class="el" href="class_node.html" title="A Node represents a position in the MCTS tree.">Node</a> where the tree starts from </td></tr>
-    <tr><td class="paramname">nn</td><td>the neural network to use in the <a class="el" href="class_m_c_t_s.html#a48888fc800d4e86b3acf3db2613d0235" title="The 2nd and 3rd steps of the MCTS algorithm: Expand the given leaf node and evaluate the value of the...">expand()</a> method </td></tr>
+    <tr><td class="paramname">nn</td><td>the neural network to use in the <a class="el" href="class_m_c_t_s.html#aa8eec14c190b979b45140dc838e10d4a" title="The 2nd and 3rd steps of the MCTS algorithm: Expand the given leaf node and evaluate the value of the...">expand()</a> method </td></tr>
   </table>
   </dd>
 </dl>
@@ -161,8 +161,8 @@ Static Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3ccf37bef11dec9425bd0ea0f905d11b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ccf37bef11dec9425bd0ea0f905d11b">&#9670;&nbsp;</a></span>backpropagate()</h2>
+<a id="a3a31c39fd67c62a0983eb72e3aabe1e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a31c39fd67c62a0983eb72e3aabe1e6">&#9670;&nbsp;</a></span>backpropagate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -170,7 +170,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void MCTS::backpropagate </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_node.html">Node</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt;&#160;</td>
           <td class="paramname"><em>leaf</em>, </td>
         </tr>
         <tr>
@@ -198,8 +198,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a48888fc800d4e86b3acf3db2613d0235"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48888fc800d4e86b3acf3db2613d0235">&#9670;&nbsp;</a></span>expand()</h2>
+<a id="aa8eec14c190b979b45140dc838e10d4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8eec14c190b979b45140dc838e10d4a">&#9670;&nbsp;</a></span>expand()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -207,7 +207,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">float MCTS::expand </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_node.html">Node</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt;&#160;</td>
           <td class="paramname"><em>leaf</em></td><td>)</td>
           <td></td>
         </tr>
@@ -217,7 +217,7 @@ Static Public Member Functions</h2></td></tr>
 <p>The 2nd and 3rd steps of the <a class="el" href="class_m_c_t_s.html" title="The MCTS class is responsible for running the MCTS simulations, and keeping the MCTS tree.">MCTS</a> algorithm: Expand the given leaf node and evaluate the value of the leaf node. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">leaf</td><td>the leaf node found by the <a class="el" href="class_m_c_t_s.html#abaf7010d8d6d4b9df9380150d16f5951" title="The first step of the MCTS algorithm: keep selecting actions until a position (Node) has been reached...">select()</a> method </td></tr>
+    <tr><td class="paramname">leaf</td><td>the leaf node found by the <a class="el" href="class_m_c_t_s.html#ac6efb7be57636f91a1299c403db6e971" title="The first step of the MCTS algorithm: keep selecting actions until a position (Node) has been reached...">select()</a> method </td></tr>
   </table>
   </dd>
 </dl>
@@ -265,14 +265,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a1a77a67817c533d02118ad4adaeae2cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a77a67817c533d02118ad4adaeae2cc">&#9670;&nbsp;</a></span>getRoot()</h2>
+<a id="aad9d3a5e867810921a0422e6597f6835"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad9d3a5e867810921a0422e6597f6835">&#9670;&nbsp;</a></span>getRoot()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_node.html">Node</a> * MCTS::getRoot </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; const  &amp; MCTS::getRoot </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -320,16 +320,16 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="abaf7010d8d6d4b9df9380150d16f5951"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abaf7010d8d6d4b9df9380150d16f5951">&#9670;&nbsp;</a></span>select()</h2>
+<a id="ac6efb7be57636f91a1299c403db6e971"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6efb7be57636f91a1299c403db6e971">&#9670;&nbsp;</a></span>select()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_node.html">Node</a> * MCTS::select </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; MCTS::select </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_node.html">Node</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt;&#160;</td>
           <td class="paramname"><em>root</em></td><td>)</td>
           <td></td>
         </tr>
@@ -347,8 +347,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ad7293934372111729213dfecd03ee3ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7293934372111729213dfecd03ee3ff">&#9670;&nbsp;</a></span>setRoot()</h2>
+<a id="aaf1dbd5efe1c44df5400a279c0228133"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf1dbd5efe1c44df5400a279c0228133">&#9670;&nbsp;</a></span>setRoot()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -356,7 +356,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void MCTS::setRoot </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_node.html">Node</a> *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt;&#160;</td>
           <td class="paramname"><em>root</em></td><td>)</td>
           <td></td>
         </tr>

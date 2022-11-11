@@ -72,38 +72,40 @@ $(function() {
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;torch/torch.h&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;neuralNetwork.hpp&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;utils/trainerSettings.hpp&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;utils/types.hpp&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// represent one sample of data</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">using</span> Data = std::pair&lt;torch::Tensor, torch::Tensor&gt;;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="class_c4_dataset.html">   18</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_c4_dataset.html">C4Dataset</a> : <span class="keyword">public</span> torch::data::datasets::Dataset&lt;C4Dataset&gt; {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_c4_dataset.html#a22aaf5b854c87cb87a75e33155b13233">C4Dataset</a>(<a class="code" href="class_trainer_settings.html">TrainerSettings</a>* settings);</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_c4_dataset.html#a748cad14324ceb76c60c272bffcfe5af">loadData</a>(std::string folder);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    torch::data::Example&lt;&gt; <a class="code" href="class_c4_dataset.html#a7d1705e905b5349a1437adb856364a5f">get</a>(<span class="keywordtype">size_t</span> index) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    torch::optional&lt;size_t&gt; <a class="code" href="class_c4_dataset.html#a364352a21bec74f9888d587209d9ff41">size</a>() <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    std::vector&lt;Data&gt; m_Data;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="class_trainer_settings.html">TrainerSettings</a>* m_Settings;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;};</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;torch/torch.h&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;filesystem&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;neuralNetwork.hpp&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;utils/trainerSettings.hpp&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;utils/types.hpp&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">// represent one sample of data</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">using</span> Data = std::pair&lt;torch::Tensor, torch::Tensor&gt;;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="class_c4_dataset.html">   19</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_c4_dataset.html">C4Dataset</a> : <span class="keyword">public</span> torch::data::datasets::Dataset&lt;C4Dataset&gt;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="class_c4_dataset.html#a22aaf5b854c87cb87a75e33155b13233">C4Dataset</a>(<a class="code" href="class_trainer_settings.html">TrainerSettings</a>* settings);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_c4_dataset.html#a748cad14324ceb76c60c272bffcfe5af">loadData</a>(std::string folder);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    torch::data::Example&lt;&gt; <a class="code" href="class_c4_dataset.html#a7d1705e905b5349a1437adb856364a5f">get</a>(<span class="keywordtype">size_t</span> index) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    torch::optional&lt;size_t&gt; <a class="code" href="class_c4_dataset.html#a364352a21bec74f9888d587209d9ff41">size</a>() <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    std::vector&lt;Data&gt; m_Data;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="class_trainer_settings.html">TrainerSettings</a>*  m_Settings;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclass_c4_dataset_html_a748cad14324ceb76c60c272bffcfe5af"><div class="ttname"><a href="class_c4_dataset.html#a748cad14324ceb76c60c272bffcfe5af">C4Dataset::loadData</a></div><div class="ttdeci">bool loadData(std::string folder)</div><div class="ttdoc">Load data into the dataset from a given folder.</div><div class="ttdef"><b>Definition:</b> dataset.cpp:15</div></div>
-<div class="ttc" id="aclass_c4_dataset_html"><div class="ttname"><a href="class_c4_dataset.html">C4Dataset</a></div><div class="ttdoc">The dataset to load Connect4 games into.</div><div class="ttdef"><b>Definition:</b> dataset.hpp:18</div></div>
-<div class="ttc" id="aclass_c4_dataset_html_a7d1705e905b5349a1437adb856364a5f"><div class="ttname"><a href="class_c4_dataset.html#a7d1705e905b5349a1437adb856364a5f">C4Dataset::get</a></div><div class="ttdeci">torch::data::Example get(size_t index) override</div><div class="ttdoc">Override the torch getter to get a single data sample.</div><div class="ttdef"><b>Definition:</b> dataset.cpp:55</div></div>
-<div class="ttc" id="aclass_trainer_settings_html"><div class="ttname"><a href="class_trainer_settings.html">TrainerSettings</a></div><div class="ttdef"><b>Definition:</b> trainerSettings.hpp:6</div></div>
-<div class="ttc" id="aclass_c4_dataset_html_a22aaf5b854c87cb87a75e33155b13233"><div class="ttname"><a href="class_c4_dataset.html#a22aaf5b854c87cb87a75e33155b13233">C4Dataset::C4Dataset</a></div><div class="ttdeci">C4Dataset(TrainerSettings *settings)</div><div class="ttdoc">Construct a new dataset.</div><div class="ttdef"><b>Definition:</b> dataset.cpp:6</div></div>
-<div class="ttc" id="aclass_c4_dataset_html_a364352a21bec74f9888d587209d9ff41"><div class="ttname"><a href="class_c4_dataset.html#a364352a21bec74f9888d587209d9ff41">C4Dataset::size</a></div><div class="ttdeci">torch::optional&lt; size_t &gt; size() const override</div><div class="ttdoc">Size of the dataset.</div><div class="ttdef"><b>Definition:</b> dataset.cpp:57</div></div>
+<div class="ttc" id="aclass_c4_dataset_html_a748cad14324ceb76c60c272bffcfe5af"><div class="ttname"><a href="class_c4_dataset.html#a748cad14324ceb76c60c272bffcfe5af">C4Dataset::loadData</a></div><div class="ttdeci">bool loadData(std::string folder)</div><div class="ttdoc">Load data into the dataset from a given folder.</div><div class="ttdef"><b>Definition:</b> dataset.cpp:18</div></div>
+<div class="ttc" id="aclass_c4_dataset_html"><div class="ttname"><a href="class_c4_dataset.html">C4Dataset</a></div><div class="ttdoc">The dataset to load Connect4 games into.</div><div class="ttdef"><b>Definition:</b> dataset.hpp:19</div></div>
+<div class="ttc" id="aclass_c4_dataset_html_a7d1705e905b5349a1437adb856364a5f"><div class="ttname"><a href="class_c4_dataset.html#a7d1705e905b5349a1437adb856364a5f">C4Dataset::get</a></div><div class="ttdeci">torch::data::Example get(size_t index) override</div><div class="ttdoc">Override the torch getter to get a single data sample.</div><div class="ttdef"><b>Definition:</b> dataset.cpp:65</div></div>
+<div class="ttc" id="aclass_trainer_settings_html"><div class="ttname"><a href="class_trainer_settings.html">TrainerSettings</a></div><div class="ttdef"><b>Definition:</b> trainerSettings.hpp:5</div></div>
+<div class="ttc" id="aclass_c4_dataset_html_a22aaf5b854c87cb87a75e33155b13233"><div class="ttname"><a href="class_c4_dataset.html#a22aaf5b854c87cb87a75e33155b13233">C4Dataset::C4Dataset</a></div><div class="ttdeci">C4Dataset(TrainerSettings *settings)</div><div class="ttdoc">Construct a new dataset.</div><div class="ttdef"><b>Definition:</b> dataset.cpp:7</div></div>
+<div class="ttc" id="aclass_c4_dataset_html_a364352a21bec74f9888d587209d9ff41"><div class="ttname"><a href="class_c4_dataset.html#a364352a21bec74f9888d587209d9ff41">C4Dataset::size</a></div><div class="ttdeci">torch::optional&lt; size_t &gt; size() const override</div><div class="ttdoc">Size of the dataset.</div><div class="ttdef"><b>Definition:</b> dataset.cpp:70</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

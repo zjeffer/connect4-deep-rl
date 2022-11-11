@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['toggleplayer_100',['togglePlayer',['../class_environment.html#aba6a7a2dc2974d08c6dd03683376aede',1,'Environment']]],
-  ['tqdm_101',['tqdm',['../classtqdm.html',1,'']]],
-  ['tqdm_2eh_102',['tqdm.h',['../tqdm_8h.html',1,'']]],
-  ['train_103',['train',['../class_trainer.html#a4e80af362519928e62a2220d5e906200',1,'Trainer']]],
-  ['trainer_104',['Trainer',['../class_trainer.html',1,'Trainer'],['../class_trainer.html#aca26ae1a2050868beb86d9a905c09b6d',1,'Trainer::Trainer()']]],
-  ['trainersettings_105',['TrainerSettings',['../class_trainer_settings.html',1,'TrainerSettings'],['../class_trainer_settings.html#aa89eaec0ed44a8044f7740e431ac7623',1,'TrainerSettings::TrainerSettings()']]]
+  ['toggleplayer_101',['togglePlayer',['../class_environment.html#aba6a7a2dc2974d08c6dd03683376aede',1,'Environment']]],
+  ['tqdm_102',['tqdm',['../classtqdm.html',1,'']]],
+  ['tqdm_2eh_103',['tqdm.h',['../tqdm_8h.html',1,'']]],
+  ['train_104',['train',['../class_trainer.html#a4e80af362519928e62a2220d5e906200',1,'Trainer']]],
+  ['trainer_105',['Trainer',['../class_trainer.html',1,'Trainer'],['../class_trainer.html#aca26ae1a2050868beb86d9a905c09b6d',1,'Trainer::Trainer()']]],
+  ['trainersettings_106',['TrainerSettings',['../class_trainer_settings.html',1,'TrainerSettings'],['../class_trainer_settings.html#aa89eaec0ed44a8044f7740e431ac7623',1,'TrainerSettings::TrainerSettings()']]]
 ];

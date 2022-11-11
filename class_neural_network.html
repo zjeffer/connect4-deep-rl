@@ -81,9 +81,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a34d16fb480e37a216be2f1de0d614d71"><td class="memItemLeft" align="right" valign="top"><a id="a34d16fb480e37a216be2f1de0d614d71"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>NeuralNetwork</b> (<a class="el" href="class_settings.html">Settings</a> *selfPlaySettings)</td></tr>
 <tr class="separator:a34d16fb480e37a216be2f1de0d614d71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2023b7a05ccbb35f12af98157445e0d"><td class="memItemLeft" align="right" valign="top">torch::Tensor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neural_network.html#af2023b7a05ccbb35f12af98157445e0d">boardToInput</a> (const std::shared_ptr&lt; <a class="el" href="class_environment.html">Environment</a> &gt; &amp;env)</td></tr>
-<tr class="memdesc:af2023b7a05ccbb35f12af98157445e0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the given environment's board to an input state.  <a href="class_neural_network.html#af2023b7a05ccbb35f12af98157445e0d">More...</a><br /></td></tr>
-<tr class="separator:af2023b7a05ccbb35f12af98157445e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a021b6323cfc357894fb964e253a5bda9"><td class="memItemLeft" align="right" valign="top">torch::Tensor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neural_network.html#a021b6323cfc357894fb964e253a5bda9">boardToInput</a> (std::shared_ptr&lt; <a class="el" href="class_environment.html">Environment</a> &gt; const &amp;env)</td></tr>
+<tr class="memdesc:a021b6323cfc357894fb964e253a5bda9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the given environment's board to an input state.  <a href="class_neural_network.html#a021b6323cfc357894fb964e253a5bda9">More...</a><br /></td></tr>
+<tr class="separator:a021b6323cfc357894fb964e253a5bda9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3623f75f603f53ffafae275ce0b1e1df"><td class="memItemLeft" align="right" valign="top">std::pair&lt; torch::Tensor, torch::Tensor &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neural_network.html#a3623f75f603f53ffafae275ce0b1e1df">predict</a> (torch::Tensor &amp;input)</td></tr>
 <tr class="memdesc:a3623f75f603f53ffafae275ce0b1e1df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run inference on the network.  <a href="class_neural_network.html#a3623f75f603f53ffafae275ce0b1e1df">More...</a><br /></td></tr>
 <tr class="separator:a3623f75f603f53ffafae275ce0b1e1df"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -106,8 +106,8 @@ Static Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="class_neural_network.html" title="The NeuralNetwork class holds the torch Network to run inference with. It also features some methods ...">NeuralNetwork</a> class holds the torch Network to run inference with. It also features some methods to load &amp; save the model, and convert a board to an input state for use with the network. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="af2023b7a05ccbb35f12af98157445e0d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2023b7a05ccbb35f12af98157445e0d">&#9670;&nbsp;</a></span>boardToInput() <span class="overload">[1/2]</span></h2>
+<a id="a021b6323cfc357894fb964e253a5bda9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a021b6323cfc357894fb964e253a5bda9">&#9670;&nbsp;</a></span>boardToInput() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -115,7 +115,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">torch::Tensor NeuralNetwork::boardToInput </td>
           <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_environment.html">Environment</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_environment.html">Environment</a> &gt; const &amp;&#160;</td>
           <td class="paramname"><em>env</em></td><td>)</td>
           <td></td>
         </tr>

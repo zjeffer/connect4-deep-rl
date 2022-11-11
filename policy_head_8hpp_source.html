@@ -74,45 +74,47 @@ $(function() {
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;torch/torch.h&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="struct_policy_head_impl.html">    9</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_policy_head_impl.html">PolicyHeadImpl</a> : <span class="keyword">public</span> torch::nn::Module {</div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="struct_policy_head_impl.html#a08b50c8f3604e2baf1b06b4dcff2f797">   19</a></span>&#160;    <a class="code" href="struct_policy_head_impl.html#a08b50c8f3604e2baf1b06b4dcff2f797">PolicyHeadImpl</a>(<span class="keywordtype">int</span> inputFilters, <span class="keywordtype">int</span> policyFilters, <span class="keywordtype">int</span> width, <span class="keywordtype">int</span> height, <span class="keywordtype">int</span> outputs) {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordtype">int</span> policyArraySize = width * height * policyFilters;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        convPolicy = register_module(</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            <span class="stringliteral">&quot;convPolicy&quot;</span>, torch::nn::Conv2d(torch::nn::Conv2dOptions(inputFilters, policyFilters, 1).stride(1)));</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        batchNormPolicy = register_module(<span class="stringliteral">&quot;batchNormPolicy&quot;</span>, torch::nn::BatchNorm2d(policyFilters));</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        linearPolicy = register_module(<span class="stringliteral">&quot;linearPolicy&quot;</span>, torch::nn::Linear(policyArraySize, outputs));</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    }</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="struct_policy_head_impl.html#a83817aadefe17ef7aa26c1ee41158511">   34</a></span>&#160;    torch::Tensor <a class="code" href="struct_policy_head_impl.html#a83817aadefe17ef7aa26c1ee41158511">forward</a>(<span class="keyword">const</span> torch::Tensor&amp; input) {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        int64_t batch_size = input.size(0);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="comment">// conv block</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keyword">auto</span> pol = convPolicy(input);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        pol = batchNormPolicy(pol);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        pol = torch::relu(pol);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">// flatten</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        pol = pol.view({batch_size, -1});</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="comment">// linear</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        pol = linearPolicy(pol);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="comment">// softmax activation</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        pol = torch::softmax(pol, 1);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordflow">return</span> pol;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    torch::nn::Conv2d convPolicy = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    torch::nn::BatchNorm2d batchNormPolicy = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    torch::nn::Linear linearPolicy = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;};</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;TORCH_MODULE(PolicyHead);</div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="struct_policy_head_impl.html">    9</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_policy_head_impl.html">PolicyHeadImpl</a> : <span class="keyword">public</span> torch::nn::Module</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="struct_policy_head_impl.html#a08b50c8f3604e2baf1b06b4dcff2f797">   20</a></span>&#160;    <a class="code" href="struct_policy_head_impl.html#a08b50c8f3604e2baf1b06b4dcff2f797">PolicyHeadImpl</a>(<span class="keywordtype">int</span> inputFilters, <span class="keywordtype">int</span> policyFilters, <span class="keywordtype">int</span> width, <span class="keywordtype">int</span> height, <span class="keywordtype">int</span> outputs)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keywordtype">int</span> policyArraySize = width * height * policyFilters;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        convPolicy      = register_module(<span class="stringliteral">&quot;convPolicy&quot;</span>, torch::nn::Conv2d(torch::nn::Conv2dOptions(inputFilters, policyFilters, 1).stride(1)));</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        batchNormPolicy = register_module(<span class="stringliteral">&quot;batchNormPolicy&quot;</span>, torch::nn::BatchNorm2d(policyFilters));</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        linearPolicy    = register_module(<span class="stringliteral">&quot;linearPolicy&quot;</span>, torch::nn::Linear(policyArraySize, outputs));</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    }</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="struct_policy_head_impl.html#a7217d58dab669f6190a2e2cb9e9f17c3">   35</a></span>&#160;    torch::Tensor <a class="code" href="struct_policy_head_impl.html#a7217d58dab669f6190a2e2cb9e9f17c3">forward</a>(torch::Tensor <span class="keyword">const</span>&amp; input)</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        int64_t batch_size = input.size(0);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment">// conv block</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keyword">auto</span> pol = convPolicy(input);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        pol      = batchNormPolicy(pol);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        pol      = torch::relu(pol);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="comment">// flatten</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        pol = pol.view({batch_size, -1});</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">// linear</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        pol = linearPolicy(pol);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="comment">// softmax activation</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        pol = torch::softmax(pol, 1);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">return</span> pol;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    torch::nn::Conv2d      convPolicy      = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    torch::nn::BatchNorm2d batchNormPolicy = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    torch::nn::Linear      linearPolicy    = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;};</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;TORCH_MODULE(PolicyHead);</div>
 </div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="astruct_policy_head_impl_html_a7217d58dab669f6190a2e2cb9e9f17c3"><div class="ttname"><a href="struct_policy_head_impl.html#a7217d58dab669f6190a2e2cb9e9f17c3">PolicyHeadImpl::forward</a></div><div class="ttdeci">torch::Tensor forward(torch::Tensor const &amp;input)</div><div class="ttdoc">Method to make a forward pass through the neural network.</div><div class="ttdef"><b>Definition:</b> policyHead.hpp:35</div></div>
 <div class="ttc" id="astruct_policy_head_impl_html"><div class="ttname"><a href="struct_policy_head_impl.html">PolicyHeadImpl</a></div><div class="ttdoc">The policy output architecture of the AlphaZero network.</div><div class="ttdef"><b>Definition:</b> policyHead.hpp:9</div></div>
-<div class="ttc" id="astruct_policy_head_impl_html_a08b50c8f3604e2baf1b06b4dcff2f797"><div class="ttname"><a href="struct_policy_head_impl.html#a08b50c8f3604e2baf1b06b4dcff2f797">PolicyHeadImpl::PolicyHeadImpl</a></div><div class="ttdeci">PolicyHeadImpl(int inputFilters, int policyFilters, int width, int height, int outputs)</div><div class="ttdoc">Construct a new policy head.</div><div class="ttdef"><b>Definition:</b> policyHead.hpp:19</div></div>
-<div class="ttc" id="astruct_policy_head_impl_html_a83817aadefe17ef7aa26c1ee41158511"><div class="ttname"><a href="struct_policy_head_impl.html#a83817aadefe17ef7aa26c1ee41158511">PolicyHeadImpl::forward</a></div><div class="ttdeci">torch::Tensor forward(const torch::Tensor &amp;input)</div><div class="ttdoc">Method to make a forward pass through the neural network.</div><div class="ttdef"><b>Definition:</b> policyHead.hpp:34</div></div>
+<div class="ttc" id="astruct_policy_head_impl_html_a08b50c8f3604e2baf1b06b4dcff2f797"><div class="ttname"><a href="struct_policy_head_impl.html#a08b50c8f3604e2baf1b06b4dcff2f797">PolicyHeadImpl::PolicyHeadImpl</a></div><div class="ttdeci">PolicyHeadImpl(int inputFilters, int policyFilters, int width, int height, int outputs)</div><div class="ttdoc">Construct a new policy head.</div><div class="ttdef"><b>Definition:</b> policyHead.hpp:20</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
