@@ -11,6 +11,16 @@
  */
 class Game
 {
+  private:
+    SelfPlaySettings*            m_Settings      = nullptr;
+    std::shared_ptr<Environment> m_Env           = nullptr;
+    std::string                  m_GameID        = "";
+    std::pair<int, int>          m_PreviousMoves = std::make_pair<int, int>(-1, -1);
+
+    std::vector<std::shared_ptr<Agent>> m_Agents = std::vector<std::shared_ptr<Agent>>();
+
+    std::vector<MemoryElement> m_Memory;
+
   public:
     /**
      * @brief Construct a new Game based on the givenselfplay settings
@@ -67,13 +77,4 @@ class Game
      * @return std::shared_ptr<Environment>
      */
     std::shared_ptr<Environment> getEnvironment() const;
-
-  private:
-    SelfPlaySettings*            m_Settings = nullptr;
-    std::shared_ptr<Environment> m_Env      = nullptr;
-    std::string                  m_GameID   = "";
-
-    std::vector<Agent*> m_Agents = std::vector<Agent*>();
-
-    std::vector<MemoryElement> m_Memory;
 };

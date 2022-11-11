@@ -35,7 +35,7 @@ std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor,
     if (!torch::nan_to_num(policy_output).equal(policy_output))
     {
         LWARN << policy_output;
-        LOG(FATAL) << "Policy output contains nans";
+        LFATAL << "Policy output contains nans";
         exit(EXIT_FAILURE);
     }
 
@@ -76,7 +76,7 @@ std::filesystem::path Trainer::train()
     loss_history.batch_size = batch_size;
     loss_history.data_size  = train_set_size;
 
-    LOG(INFO) << "Starting training with " << train_set_size << " samples. Learning rate: " << m_Settings->getLearningRate();
+    LINFO << "Starting training with " << train_set_size << " samples. Learning rate: " << m_Settings->getLearningRate();
     int index = 0;
     for (auto batch: *data_loader)
     {
@@ -127,7 +127,7 @@ std::filesystem::path Trainer::train()
         // calculate average accuracy
         Acc += (float)amountCorrect / (float)size;
 
-        LOG(INFO) << "Epoch: " << index << ". Batch size: " << size << " => Average loss: " << Loss / end << ". Policy loss: " << policy_loss.item<float>()
+        LINFO << "Epoch: " << index << ". Batch size: " << size << " => Average loss: " << Loss / end << ". Policy loss: " << policy_loss.item<float>()
                   << ". Value loss: " << value_loss.item<float>() << ". Value accuracy: " << Acc / (index + 1);
 
         // add loss to history
@@ -138,7 +138,7 @@ std::filesystem::path Trainer::train()
 
         index++;
     }
-    LOG(INFO) << "Training finished. Saving model...";
+    LINFO << "Training finished. Saving model...";
 
     std::string timeString = utils::getTimeString();
     // save loss history to csv, to make graphs with

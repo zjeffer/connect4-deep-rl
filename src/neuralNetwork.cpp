@@ -67,7 +67,7 @@ bool NeuralNetwork::loadModel(std::string path)
     try
     {
         // load model from path
-        LOG(INFO) << "Loading model from: " << path;
+        LINFO << "Loading model from: " << path;
         torch::load(this->m_Net, path);
     }
     catch (std::exception const& e)
@@ -97,7 +97,7 @@ std::filesystem::path NeuralNetwork::saveModel(std::filesystem::path path)
         }
         // save model to path
         torch::save(this->m_Net, path);
-        LOG(INFO) << "Saved model to: " << path;
+        LINFO << "Saved model to: " << path;
     }
     catch (std::exception const& e)
     {

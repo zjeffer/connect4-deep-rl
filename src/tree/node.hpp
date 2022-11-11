@@ -17,7 +17,7 @@ class Node
      * @param move: The action the previous Node made to get here
      * @param prior: The probability of the action
      */
-    Node(Node* parent, std::shared_ptr<Environment> env, int move, float prior);
+    Node(std::shared_ptr<Node> parent, std::shared_ptr<Environment> env, int move, float prior);
     /**
      * @brief Construct a new root node: no parent/move/prior.
      *
@@ -42,13 +42,13 @@ class Node
      *
      * @return Node*
      */
-    Node* getParent() const;
+    std::shared_ptr<Node> getParent() const;
     /**
      * @brief Change the Node's parent parent
      *
      * @param parent
      */
-    void setParent(Node* parent);
+    void setParent(std::shared_ptr<Node> parent);
 
     /**
      * @brief Get a vector of child nodes for this Node.
@@ -56,13 +56,22 @@ class Node
      *
      * @return const std::vector<std::unique_ptr<Node>>&
      */
-    std::vector<std::unique_ptr<Node>> const& getChildren() const;
+    std::vector<std::shared_ptr<Node>> const& getChildren() const;
+
+    /**
+     * @brief Get the child that made the given move
+     *
+     * @param move: the move which resulted in the child
+     * @return std::shared_ptr<Node> const&: the child
+     */
+    std::shared_ptr<Node> getChildAfterMove(int move);
+
     /**
      * @brief Add a new child to this Node. Moves unique_ptr's ownership.
      *
      * @param child
      */
-    void addChild(std::unique_ptr<Node> child);
+    void addChild(std::shared_ptr<Node> child);
 
     /**
      * @brief Get this Node's environment.
@@ -131,8 +140,8 @@ class Node
     int getMove();
 
   private:
-    Node*                              m_Parent      = nullptr;
-    std::vector<std::unique_ptr<Node>> m_Children    = {};
+    std::shared_ptr<Node>              m_Parent      = nullptr;
+    std::vector<std::shared_ptr<Node>> m_Children    = {};
     std::shared_ptr<Environment>       m_Environment = nullptr;
     int                                m_Move        = -1;
     float                              m_Prior       = 0.0f;

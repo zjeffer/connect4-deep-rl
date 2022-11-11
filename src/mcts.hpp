@@ -21,7 +21,7 @@ class MCTS
      * @param root: the Node where the tree starts from
      * @param nn: the neural network to use in the expand() method
      */
-    MCTS(SelfPlaySettings* selfPlaySettings, Node* root, std::shared_ptr<NeuralNetwork> const& nn);
+    MCTS(SelfPlaySettings* selfPlaySettings, std::shared_ptr<Node> root, std::shared_ptr<NeuralNetwork> const& nn);
     ~MCTS();
 
     /**
@@ -37,7 +37,7 @@ class MCTS
      * @param root: the root node of the tree, where the selection will start.
      * @return Node*: the leaf node that has not yet been expanded
      */
-    Node* select(Node* root);
+    std::shared_ptr<Node> select(std::shared_ptr<Node> root);
 
     /**
      * @brief The 2nd and 3rd steps of the MCTS algorithm: Expand the given leaf node
@@ -46,7 +46,7 @@ class MCTS
      * @param leaf: the leaf node found by the select() method
      * @return float: the value of the leaf node (from the NN)
      */
-    float expand(Node* leaf);
+    float expand(std::shared_ptr<Node> leaf);
 
     /**
      * @brief The 4th and final step of the MCTS algorithm: Backpropagate the value
@@ -55,20 +55,20 @@ class MCTS
      * @param leaf: the bottom node to start from
      * @param result: the value to backpropagate
      */
-    void backpropagate(Node* leaf, float result);
+    void backpropagate(std::shared_ptr<Node> leaf, float result);
 
     /**
      * @brief Get the root node of the tree
      *
      * @return Node*
      */
-    Node* getRoot() const;
+    std::shared_ptr<Node> const& getRoot() const;
     /**
      * @brief Set a new root Node
      *
      * @param root
      */
-    void setRoot(Node* root);
+    void setRoot(std::shared_ptr<Node> root);
 
     /**
      * @brief After running simulations, get the root's best child node (deterministically).
@@ -93,8 +93,9 @@ class MCTS
     static int getTreeDepth(Node* root);
 
   private:
-    SelfPlaySettings*              m_Settings = nullptr;
-    Node*                          m_Root     = nullptr;
-    std::shared_ptr<NeuralNetwork> m_NN       = nullptr;
-    torch::Device                  m_Device   = torch::kCPU;
+    SelfPlaySettings*              m_Settings     = nullptr;
+    std::shared_ptr<Node>          m_Root         = nullptr;
+    std::shared_ptr<Node>          m_PreviousRoot = nullptr;
+    std::shared_ptr<NeuralNetwork> m_NN           = nullptr;
+    torch::Device                  m_Device       = torch::kCPU;
 };

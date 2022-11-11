@@ -5,7 +5,7 @@ namespace Test
 
 void testHorizontalWin()
 {
-    LOG(INFO) << "Testing horizontal win";
+    LINFO << "Testing horizontal win";
     Environment env(6, 7);
     env.makeMove(0);
     env.makeMove(0);
@@ -21,7 +21,7 @@ void testHorizontalWin()
 
 void testVerticalWin()
 {
-    LOG(INFO) << "Testing vertical win";
+    LINFO << "Testing vertical win";
     Environment env(6, 7);
     env.makeMove(0);
     env.makeMove(1);
@@ -36,7 +36,7 @@ void testVerticalWin()
 
 void testDiagonalWin()
 {
-    LOG(INFO) << "Testing diagonal win (from bottom left to top right)";
+    LINFO << "Testing diagonal win (from bottom left to top right)";
     Environment env(6, 7);
     env.makeMove(0);
     env.makeMove(1);
@@ -52,7 +52,7 @@ void testDiagonalWin()
     env.print();
     assert(env.currentPlayerHasConnected4());
 
-    LOG(INFO) << "Testing diagonal win (from top left to bottom right)";
+    LINFO << "Testing diagonal win (from top left to bottom right)";
     env.newEnvironment(6, 7);
     env.makeMove(0);
     env.makeMove(0);
@@ -105,7 +105,7 @@ void testStochasticDistribution()
 
     for (int i = 0; i < (int)counters.size(); i++)
     {
-        LOG(INFO) << "Choice " << i << ": " << counters[i];
+        LINFO << "Choice " << i << ": " << counters[i];
     }
 }
 } // namespace Test

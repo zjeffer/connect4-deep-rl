@@ -8,7 +8,7 @@ Game::Game(SelfPlaySettings* selfPlaySettings)
     std::shared_ptr<NeuralNetwork> nn = std::make_shared<NeuralNetwork>(m_Settings);
     for (auto& agentData: m_Settings->getAgents())
     {
-        m_Agents.push_back(new Agent(agentData.name, nn, m_Settings));
+        m_Agents.push_back(std::make_shared<Agent>(agentData.name, nn, m_Settings));
     }
 
     // create a random id
@@ -16,14 +16,7 @@ Game::Game(SelfPlaySettings* selfPlaySettings)
     m_GameID                 = "game-" + current_date + "-" + std::to_string(g_UniformIntDist(g_Generator));
 }
 
-Game::~Game()
-{
-    // std::cout << "Game destructor" << std::endl;
-    for (auto& agent: m_Agents)
-    {
-        delete agent;
-    }
-}
+Game::~Game() {}
 
 std::shared_ptr<Environment> Game::getEnvironment() const
 {
@@ -49,7 +42,7 @@ ePlayer Game::playGame()
 
     if (!g_Running)
     {
-        LOG(INFO) << "Game stopped";
+        LINFO << "Game stopped";
         exit(EXIT_SUCCESS);
     }
 
@@ -58,7 +51,7 @@ ePlayer Game::playGame()
         updateMemoryWithWinner(winner);
         if (!saveMemoryToFile())
         {
-            LOG(FATAL) << "Could not save memory to file";
+            LFATAL << "Could not save memory to file";
             exit(EXIT_FAILURE);
         }
     }
@@ -72,36 +65,50 @@ bool Game::playMove()
     std::cout << std::endl;
 
     // get agent
-    Agent* agent = m_Agents.at(static_cast<int>(m_Env->getCurrentPlayer()) - 1);
-    MCTS*  mcts  = agent->getMCTS();
+    std::shared_ptr<Agent> agent = m_Agents.at(static_cast<int>(m_Env->getCurrentPlayer()) - 1);
+    MCTS*                  mcts  = agent->getMCTS();
 
-    // TODO: get new node from old tree
-    Node* currentNode = new Node(m_Env);
-    mcts->setRoot(currentNode);
+    if (m_PreviousMoves.first != -1 && m_PreviousMoves.second != -1)
+    {
+        std::shared_ptr<Node> oldRoot = mcts->getRoot();
+        std::shared_ptr<Node> newRoot = oldRoot->getChildAfterMove(m_PreviousMoves.first);
+        if (newRoot == nullptr){
+            LFATAL << "NewRoot after getting first child is null!";
+        }
+        newRoot = newRoot->getChildAfterMove(m_PreviousMoves.second);
+        if (newRoot == nullptr){
+            LFATAL << "NewRoot after getting second child is null!";
+        }
+        mcts->setRoot(newRoot);
+    }
+    else
+    {
+        mcts->setRoot(std::make_shared<Node>(m_Env));
+    }
 
     mcts->run_simulations();
+
+    std::shared_ptr<Node> currentRoot = mcts->getRoot();
     // calculate average action-value of all actions in the root node
     float value = 0.0f;
-    for (auto& node: mcts->getRoot()->getChildren())
+    for (auto& node: currentRoot->getChildren())
     {
-        float weight = (float)node->getVisits() / (float)mcts->getRoot()->getVisits();
+        float weight = (float)node->getVisits() / (float)currentRoot->getVisits();
         value += node->getQ() * weight;
     }
-    LOG(INFO) << "Average action-value according to current player (" << agent->getName() << "): " << value;
+    LINFO << "Average action-value according to current player (" << agent->getName() << "): " << value;
 
     // get best move from mcts tree
-    int bestMove = -1;
-    bestMove     = m_Settings->isStochastic() ? mcts->getBestMoveStochastic() : mcts->getBestMoveDeterministic();
+    int bestMove = m_Settings->isStochastic() ? mcts->getBestMoveStochastic() : mcts->getBestMoveDeterministic();
 
     // print moves and their q + u values
-    std::vector<std::unique_ptr<Node>> const& children  = mcts->getRoot()->getChildren();
-    std::vector<float>                        moveProbs = std::vector<float>(m_Env->getCols(), 0.0f);
-    for (auto& child: children)
+    std::vector<float> moveProbs = std::vector<float>(m_Env->getCols(), 0.0f);
+    for (auto& child: currentRoot->getChildren())
     {
-        moveProbs[child->getMove()] = (float)child->getVisits() / (float)mcts->getRoot()->getVisits();
+        moveProbs[child->getMove()] = (float)child->getVisits() / (float)currentRoot->getVisits();
         if (m_Settings->showMoves())
         {
-            LOG(DEBUG) << "Move: " << child->getMove() << " Q: " << child->getQ() << " U: " << child->getU() << ". Visits: " << child->getVisits();
+            LDEBUG << "Move: " << child->getMove() << " Q: " << child->getQ() << " U: " << child->getU() << ". Visits: " << child->getVisits();
         }
     }
 
@@ -118,16 +125,20 @@ bool Game::playMove()
 
         if ((int)element.board.size() != m_Env->getRows() * m_Env->getCols())
         {
-            LOG(FATAL) << "Memory element has no board";
+            LFATAL << "Memory element has no board";
             exit(EXIT_FAILURE);
         }
     }
 
-    LOG(INFO) << "Playing best move: " << bestMove;
+    LINFO << "Playing best move: " << bestMove;
 
     // make the best move
     m_Env->makeMove(bestMove);
     m_Env->print();
+
+    m_PreviousMoves.first  = m_PreviousMoves.second;
+    m_PreviousMoves.second = bestMove;
+    LDEBUG << "Previous moves: " << m_PreviousMoves.first << ", " << m_PreviousMoves.second;
 
     return !m_Env->hasValidMoves() || m_Env->currentPlayerHasConnected4();
 }

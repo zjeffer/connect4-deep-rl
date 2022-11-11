@@ -33,7 +33,7 @@ void Environment::newEnvironment(int rows, int cols)
 {
     if (cols < 4 || rows < 4)
     {
-        LOG(FATAL) << "Invalid width and/or height. Must both be greater or "
+        LFATAL << "Invalid width and/or height. Must both be greater or "
                       "equal to 4.";
         exit(EXIT_FAILURE);
     }
@@ -61,6 +61,10 @@ void Environment::togglePlayer()
 
 void Environment::makeMove(int column)
 {
+    if (column < 0 || column >= m_Cols){
+        LFATAL << "Column not in range 0 <= col < m_Cols";
+    }
+
     // go down the column until we find an non-empty cell
     int row = m_Rows - 1;
     try
@@ -74,14 +78,14 @@ void Environment::makeMove(int column)
     {
         // out of bounds
         LWARN << m_Board;
-        LOG(FATAL) << "Out of bounds: " << e.what();
+        LFATAL << "Out of bounds: " << e.what();
         exit(EXIT_FAILURE);
     }
 
     // fill cell with currentPlayer's piece
     if (m_Board[row][column].item<int>() != 0)
     {
-        LOG(FATAL) << "Error: cell is already filled";
+        LFATAL << "Error: cell is already filled";
         exit(EXIT_FAILURE);
     }
     m_Board[row][column] = static_cast<int>(m_CurrentPlayer);
@@ -320,20 +324,20 @@ void Environment::print()
     }
     catch (std::runtime_error& e)
     {
-        LOG(FATAL) << "Error in Environment::print(): " << e.what();
+        LFATAL << "Error in Environment::print(): " << e.what();
         exit(EXIT_FAILURE);
     }
-    LOG(INFO) << ss.str();
+    LINFO << ss.str();
 }
 
 void Environment::printHistory()
 {
     if (m_BoardHistory.size() == 0)
     {
-        LOG(INFO) << "History: no moves played yet.";
+        LINFO << "History: no moves played yet.";
         return;
     }
-    LOG(INFO) << "History: ";
+    LINFO << "History: ";
     std::stringstream ss;
     ss << "\n";
     for (int i = 0; i < (int)m_BoardHistory.size(); i++)
@@ -341,5 +345,5 @@ void Environment::printHistory()
         Cell cell = m_BoardHistory[i];
         ss << cell.getRow() << " " << cell.getCol() << " " << static_cast<int>(cell.getPlayer()) << std::endl;
     }
-    LOG(INFO) << ss.str();
+    LINFO << ss.str();
 }

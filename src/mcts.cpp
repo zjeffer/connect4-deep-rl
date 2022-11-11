@@ -1,15 +1,15 @@
 #include "mcts.hpp"
 
-MCTS::MCTS(SelfPlaySettings* selfPlaySettings, Node* root, std::shared_ptr<NeuralNetwork> const& nn)
+MCTS::MCTS(SelfPlaySettings* selfPlaySettings, std::shared_ptr<Node> root, std::shared_ptr<NeuralNetwork> const& nn)
   : m_Settings(selfPlaySettings)
   , m_NN(nn)
 {
 
     if (root == nullptr)
     {
-        root = new Node(std::make_shared<Environment>(selfPlaySettings->getRows(), selfPlaySettings->getCols()));
+        root = std::make_shared<Node>(std::make_shared<Environment>(selfPlaySettings->getRows(), selfPlaySettings->getCols()));
     }
-    m_Root = root;
+    setRoot(root);
 
     // uses torch::kCPU if useCUDA is false
     if (m_Settings->useCUDA())
@@ -18,33 +18,30 @@ MCTS::MCTS(SelfPlaySettings* selfPlaySettings, Node* root, std::shared_ptr<Neura
     }
 }
 
-MCTS::~MCTS()
-{
-    delete m_Root;
-}
+MCTS::~MCTS() {}
 
-Node* MCTS::getRoot() const
+std::shared_ptr<Node> const& MCTS::getRoot() const
 {
     return m_Root;
 }
 
-void MCTS::setRoot(Node* root)
+void MCTS::setRoot(std::shared_ptr<Node> root)
 {
     m_Root = root;
 }
 
 void MCTS::run_simulations()
 {
-    Node* root = getRoot();
+    std::shared_ptr<Node> root = getRoot();
 
     int sims = m_Settings->getSimulations();
-    LOG(INFO) << "Running " << sims << " simulations...\n";
+    LINFO << "Running " << sims << " simulations...\n";
     tqdm bar;
     for (int i = 0; i < sims && g_Running; i++)
     {
         bar.progress(i, sims);
         // step 1: selection
-        Node* selected = select(root);
+        std::shared_ptr<Node> selected = select(root);
         // step 2 and 3: expansion and evaluation
         float result = expand(selected);
         // step 4: backpropagation
@@ -54,28 +51,27 @@ void MCTS::run_simulations()
     std::cout << std::endl;
 }
 
-Node* MCTS::select(Node* root)
+std::shared_ptr<Node> MCTS::select(std::shared_ptr<Node> root)
 {
     // keep selecting nodes using the Q+U formula
     // until we reach a node not yet expanded
-    Node* current = root;
+    std::shared_ptr<Node> current = root;
     while (current->getChildren().size() > 0)
     {
-        std::vector<std::unique_ptr<Node>> const& children   = current->getChildren();
-        Node*                                     best_child = nullptr;
-        float                                     best_score = -1;
-        for (auto& child: children)
+        std::shared_ptr<Node> best_child = std::shared_ptr<Node>(nullptr);
+        float                 best_score = -1;
+        for (auto& child: current->getChildren())
         {
             float score = child->getQ() + child->getU();
             if (score > best_score)
             {
-                best_child = child.get();
+                best_child = child;
                 best_score = score;
             }
         }
         if (best_child == nullptr)
         {
-            LOG(FATAL) << "Error: best child is null";
+            LFATAL << "Error: best child is null";
             exit(EXIT_FAILURE);
         }
         current = best_child;
@@ -83,7 +79,7 @@ Node* MCTS::select(Node* root)
     return current;
 }
 
-float MCTS::expand(Node* node)
+float MCTS::expand(std::shared_ptr<Node> node)
 {
     // expand the node by adding a child for each possible move
     std::shared_ptr<Environment> env = node->getEnvironment();
@@ -114,17 +110,17 @@ float MCTS::expand(Node* node)
         std::shared_ptr<Environment> new_env = std::make_shared<Environment>(env);
         new_env->makeMove(move);
 
-        node->addChild(std::make_unique<Node>(node, std::move(new_env), move, policy[move].item<float>()));
+        node->addChild(std::make_shared<Node>(node, std::move(new_env), move, policy[move].item<float>()));
     }
 
     return value;
 }
 
-void MCTS::backpropagate(Node* leaf, float result)
+void MCTS::backpropagate(std::shared_ptr<Node> leaf, float result)
 {
     ePlayer player = leaf->getEnvironment()->getCurrentPlayer();
     // backpropagate the result to the root
-    Node* current = leaf;
+    std::shared_ptr<Node> current = leaf;
     while (current != nullptr)
     {
         current->incrementVisit();
@@ -147,7 +143,7 @@ int MCTS::getBestMoveDeterministic() const
     // get move where visits is highest
     float                                     max_visits = 0;
     int                                       max_index  = 0;
-    std::vector<std::unique_ptr<Node>> const& moves      = m_Root->getChildren();
+    std::vector<std::shared_ptr<Node>> const& moves      = m_Root->getChildren();
     for (int i = 0; i < (int)moves.size(); i++)
     {
         if (moves[i]->getVisits() > max_visits)
@@ -161,7 +157,7 @@ int MCTS::getBestMoveDeterministic() const
 
 int MCTS::getBestMoveStochastic() const
 {
-    std::vector<std::unique_ptr<Node>> const& children = m_Root->getChildren();
+    std::vector<std::shared_ptr<Node>> const& children = m_Root->getChildren();
     std::vector<int>                          moves;
     for (auto const& node: children)
     {
@@ -170,7 +166,7 @@ int MCTS::getBestMoveStochastic() const
     // create a discrete distribution to pick from
     std::discrete_distribution<int> distribution(moves.begin(), moves.end());
     int                             index = distribution(g_Generator);
-    return children[index]->getMove();
+    return children.at(index)->getMove();
 }
 
 int MCTS::getTreeDepth(Node* root)

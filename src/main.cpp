@@ -134,7 +134,7 @@ void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings* settings)
     }
     catch (std::exception const& e)
     {
-        LOG(FATAL) << "Invalid memory folder: " << e.what();
+        LFATAL << "Invalid memory folder: " << e.what();
         exit(EXIT_FAILURE);
     }
 
@@ -147,7 +147,7 @@ void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings* settings)
             try
             {
                 settings->setPipelineGames(std::stoi(games));
-                LOG(INFO) << "Pipeline: " << settings->getPipelineGames() << " games.";
+                LINFO << "Pipeline: " << settings->getPipelineGames() << " games.";
             }
             catch (std::invalid_argument const& e)
             {
@@ -173,13 +173,13 @@ void runGame(SelfPlaySettings* settings, SelfPlayTally* tally)
     {
         tally->red++;
     }
-    LOG(INFO) << "Winner: " << static_cast<int>(winner) << "\n";
-    LOG(INFO) << "========= Tally:";
-    LOG(INFO) << "===== Yellow: " << tally->yellow;
-    LOG(INFO) << "===== Red: " << tally->red;
-    LOG(INFO) << "===== Draws: " << tally->draws;
-    LOG(INFO) << "===============  \n";
-    LOG(INFO) << "\n\n\n";
+    LINFO << "Winner: " << static_cast<int>(winner) << "\n";
+    LINFO << "========= Tally:";
+    LINFO << "===== Yellow: " << tally->yellow;
+    LINFO << "===== Red: " << tally->red;
+    LINFO << "===== Draws: " << tally->draws;
+    LINFO << "===============  \n";
+    LINFO << "\n\n\n";
 }
 
 void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
@@ -193,7 +193,7 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
         }
         else
         {
-            LOG(FATAL) << "Model file invalid: " << modelPath;
+            LFATAL << "Model file invalid: " << modelPath;
             exit(EXIT_FAILURE);
         }
     }
@@ -207,7 +207,7 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
     }
     catch (std::invalid_argument const& e)
     {
-        LOG(FATAL) << "Invalid batch size: " << e.what();
+        LFATAL << "Invalid batch size: " << e.what();
         exit(EXIT_FAILURE);
     }
 
@@ -220,7 +220,7 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
     }
     catch (std::invalid_argument const& e)
     {
-        LOG(FATAL) << "Invalid learning rate: " << e.what();
+        LFATAL << "Invalid learning rate: " << e.what();
         exit(EXIT_FAILURE);
     }
 
@@ -233,7 +233,7 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
     }
     catch (std::exception const& e)
     {
-        LOG(FATAL) << "Invalid memory folder: " << e.what();
+        LFATAL << "Invalid memory folder: " << e.what();
         exit(EXIT_FAILURE);
     }
 }
@@ -253,11 +253,11 @@ int main(int argc, char* argv[])
 
     // create logger
     g_Logger = std::make_shared<Logger>();
-    LOG(DEBUG) << "Logger initialized!";
+    LDEBUG << "Logger initialized!";
 
     // set random seed
     g_Generator.seed(std::random_device{}());
-    // LOG(DEBUG) << "Test random value: " << g_Generator();
+    // LDEBUG << "Test random value: " << g_Generator();
 
     // test
     if (inputParser.cmdOptionExists("--test"))
@@ -290,27 +290,27 @@ int main(int argc, char* argv[])
         {
             // run full pipeline with selfplay & training
 
-            LOG(INFO) << "Running full pipeline with " << selfPlaySettings.getPipelineGames() << " games...";
+            LINFO << "Running full pipeline with " << selfPlaySettings.getPipelineGames() << " games...";
             TrainerSettings trainerSettings = TrainerSettings();
             parseTrainingOptions(&inputParser, &trainerSettings);
 
             while (g_Running)
             {
-                LOG(INFO) << "Running selfplay...";
+                LINFO << "Running selfplay...";
                 SelfPlayTally tally = SelfPlayTally();
                 for (int gameCount = 1; gameCount <= selfPlaySettings.getPipelineGames(); gameCount++)
                 {
-                    LOG(INFO) << "\n\n\tStarting game " << gameCount << "...\n";
+                    LINFO << "\n\n\tStarting game " << gameCount << "...\n";
                     runGame(&selfPlaySettings, &tally);
                 }
-                LOG(INFO) << "Training new model...";
+                LINFO << "Training new model...";
                 // train with these games
 
                 Trainer               trainer          = Trainer(&trainerSettings);
                 std::filesystem::path trainedModelName = trainer.train();
 
                 // move memory to old/ folder
-                LOG(INFO) << "Moving old games...";
+                LINFO << "Moving old games...";
                 std::filesystem::path memoryFolder = selfPlaySettings.getMemoryFolder();
                 std::filesystem::path oldFolder    = std::filesystem::path(memoryFolder).append("old");
                 assert(memoryFolder.string() != oldFolder.string());
@@ -329,11 +329,11 @@ int main(int argc, char* argv[])
                 }
 
                 // TODO: evaluate with older model
-                // LOG(INFO) << "Evaluating against old model...";
+                // LINFO << "Evaluating against old model...";
                 // TODO: keep model with best performance
 
                 // move old model to old/ folder
-                LOG(INFO) << "Moving old model...";
+                LINFO << "Moving old model...";
                 std::filesystem::path modelPath = std::filesystem::path(selfPlaySettings.getModelPath());
                 if (modelPath.string().starts_with("./"))
                 {
@@ -345,14 +345,14 @@ int main(int argc, char* argv[])
                 {
                     std::filesystem::create_directory(oldModelPath.parent_path());
                 }
-                LOG(INFO) << "Moving " << modelPath << " to " << oldModelPath;
+                LINFO << "Moving " << modelPath << " to " << oldModelPath;
                 std::filesystem::rename(modelPath, oldModelPath);
 
-                LOG(INFO) << "Setting new model path to " << trainedModelName;
+                LINFO << "Setting new model path to " << trainedModelName;
                 trainerSettings.setModelPath(trainedModelName);
                 selfPlaySettings.setModelPath(trainedModelName);
                 // save new model
-                LOG(INFO) << "Saving new model...";
+                LINFO << "Saving new model...";
             }
         }
         else

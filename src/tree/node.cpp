@@ -2,7 +2,7 @@
 
 #include <memory>
 
-Node::Node(Node* parent, std::shared_ptr<Environment> env, int move, float prior)
+Node::Node(std::shared_ptr<Node> parent, std::shared_ptr<Environment> env, int move, float prior)
   : m_Parent(parent)
   , m_Environment(env)
   , m_Move(move)
@@ -16,13 +16,7 @@ Node::Node(std::shared_ptr<Environment> env)
     // root node, no parent, move or prior
 }
 
-Node::~Node()
-{
-    for (auto& node: m_Children)
-    {
-        delete node.release();
-    }
-}
+Node::~Node() {}
 
 Node::Node(Node const& node)
 {
@@ -34,19 +28,35 @@ Node::Node(Node const& node)
     m_Visits      = node.m_Visits;
 }
 
-std::vector<std::unique_ptr<Node>> const& Node::getChildren() const
+std::vector<std::shared_ptr<Node>> const& Node::getChildren() const
 {
     return m_Children;
 }
 
-void Node::addChild(std::unique_ptr<Node> child)
+std::shared_ptr<Node> Node::getChildAfterMove(int move)
+{
+    for (auto const& node: m_Children)
+    {
+        if (node->getMove() == move)
+        {
+            return node;
+        }
+    }
+    return std::shared_ptr<Node>(nullptr);
+}
+
+void Node::addChild(std::shared_ptr<Node> child)
 {
     m_Children.push_back(std::move(child));
 }
 
-Node* Node::getParent() const
+std::shared_ptr<Node> Node::getParent() const
 {
     return m_Parent;
+}
+
+void Node::setParent(std::shared_ptr<Node> parent) {
+    m_Parent = parent;
 }
 
 std::shared_ptr<Environment> Node::getEnvironment() const
@@ -94,7 +104,7 @@ float Node::getU() const
     if (m_Parent == nullptr)
     {
         // this should never happen unless you call this function on the root node
-        LOG(FATAL) << "Parent is null";
+        LFATAL << "Parent is null";
         exit(EXIT_FAILURE);
     }
     // uses the PUCT formula based on AlphaZero's paper and pseudocode

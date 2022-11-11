@@ -127,7 +127,7 @@ void writeLossToCSV(std::string filename, LossHistory& lossHistory)
         // if it is, create the directory to be sure
         std::filesystem::create_directories(dir);
     }
-    LOG(INFO) << "Saving loss history to " << filename;
+    LINFO << "Saving loss history to " << filename;
     std::ofstream file;
     file.open(filename);
     // header
