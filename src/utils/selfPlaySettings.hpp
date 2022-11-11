@@ -106,7 +106,7 @@ class SelfPlaySettings : public Settings
     void setPipelineGames(int games);
 
   private:
-    int                    m_Simulations         = 400;
+    int                    m_Simulations         = 200;
     bool                   m_UseStochasticSearch = true;
     std::vector<AgentData> m_AgentSettings       = std::vector<AgentData>();
     bool                   m_ShowMoves           = false;

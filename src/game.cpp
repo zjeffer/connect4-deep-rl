@@ -69,40 +69,36 @@ ePlayer Game::playGame()
 bool Game::playMove()
 {
     // play move and return if game is over
+    std::cout << std::endl;
 
     // get agent
     Agent* agent = m_Agents.at(static_cast<int>(m_Env->getCurrentPlayer()) - 1);
+    MCTS*  mcts  = agent->getMCTS();
 
     // TODO: get new node from old tree
     Node* currentNode = new Node(m_Env);
-    agent->getMCTS()->setRoot(currentNode);
+    mcts->setRoot(currentNode);
 
-    agent->getMCTS()->run_simulations();
+    mcts->run_simulations();
     // calculate average action-value of all actions in the root node
-    /* float value = 0.0f;
-    for (auto &node : agent->getMCTS()->getRoot()->getChildren()) {
-            float weight = (float)node->getVisits() / (float)agent->getMCTS()->getRoot()->getVisits();
-            value += node->getQ() * weight;
+    float value = 0.0f;
+    for (auto& node: mcts->getRoot()->getChildren())
+    {
+        float weight = (float)node->getVisits() / (float)mcts->getRoot()->getVisits();
+        value += node->getQ() * weight;
     }
-    LOG(INFO) << "Average action-value according to current player (" << agent->getName() << "): " << value; */
+    LOG(INFO) << "Average action-value according to current player (" << agent->getName() << "): " << value;
 
     // get best move from mcts tree
     int bestMove = -1;
-    if (m_Settings->isStochastic())
-    {
-        bestMove = agent->getMCTS()->getBestMoveStochastic();
-    }
-    else
-    {
-        bestMove = agent->getMCTS()->getBestMoveDeterministic();
-    }
+    bestMove     = m_Settings->isStochastic() ? mcts->getBestMoveStochastic() : mcts->getBestMoveDeterministic();
 
     // print moves and their q + u values
-    std::vector<std::unique_ptr<Node>> const& children  = agent->getMCTS()->getRoot()->getChildren();
+    std::vector<std::unique_ptr<Node>> const& children  = mcts->getRoot()->getChildren();
     std::vector<float>                        moveProbs = std::vector<float>(m_Env->getCols(), 0.0f);
     for (auto& child: children)
     {
-        moveProbs[child->getMove()] = (float)child->getVisits() / (float)agent->getMCTS()->getRoot()->getVisits();
+        moveProbs[child->getMove()] = (float)child->getVisits() / (float)mcts->getRoot()->getVisits();
         if (m_Settings->showMoves())
         {
             LOG(DEBUG) << "Move: " << child->getMove() << " Q: " << child->getQ() << " U: " << child->getU() << ". Visits: " << child->getVisits();
