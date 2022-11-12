@@ -76,45 +76,46 @@ $(function() {
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;../connect4/player.hpp&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;settings.hpp&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;types.hpp&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="class_self_play_settings.html">   15</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_self_play_settings.html">SelfPlaySettings</a> : <span class="keyword">public</span> <a class="code" href="class_settings.html">Settings</a></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;{</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="class_self_play_settings.html#a3ea925465ff61248705d954152a40e81">SelfPlaySettings</a>();</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="class_self_play_settings.html#a3ea925465ff61248705d954152a40e81">SelfPlaySettings</a>(std::filesystem::path <span class="keyword">const</span>&amp; settings_path);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    [[nodiscard]] <span class="keywordtype">int</span> <a class="code" href="class_self_play_settings.html#a76a70e280d4196eae2dce9dce25805b2">getSimulations</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#ab3c9ee204e0333468d4dc0260343e21b">setSimulations</a>(<span class="keywordtype">int</span> simulations);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    [[nodiscard]] <span class="keywordtype">bool</span> <a class="code" href="class_self_play_settings.html#a0ddd52f1796822e33302c7a84fbd4f63">isStochastic</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#a1ef15560ab055d35a99c28074b61d92f">setStochastic</a>(<span class="keywordtype">bool</span> stochastic);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#a7d5156df5029926eee21e7ce800cc9e8">addAgent</a>(std::string name, std::string <span class="keyword">const</span>&amp; model_path, ePlayer player);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    std::vector&lt;AgentData&gt; <span class="keyword">const</span>&amp; <a class="code" href="class_self_play_settings.html#a67cb1effd6b73f603f885f081a800d25">getAgents</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_self_play_settings.html#a767d21469cc3b39a48297dabe5e101ba">showMoves</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#a4ffba428de63c31b2d0baaeb430eaede">setShowMoves</a>(<span class="keywordtype">bool</span> show_moves);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_self_play_settings.html#ac26e9b4e8be0a02adc3529258a8fde43">saveMemory</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#a47200ec53d1a91cba92e811d838f2fb3">setSaveMemory</a>(<span class="keywordtype">bool</span> save_memory);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_self_play_settings.html#a76d3983b5dac55fc3bcf1677bc2175d3">getPipelineGames</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#ac6d75a5920863c1ed5320a731a0aed57">setPipelineGames</a>(<span class="keywordtype">int</span> games);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordtype">int</span>                    m_Simulations         = 200;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">bool</span>                   m_UseStochasticSearch = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    std::vector&lt;AgentData&gt; m_AgentSettings       = std::vector&lt;AgentData&gt;();</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordtype">bool</span>                   m_ShowMoves           = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">bool</span>                   m_SaveMemory          = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">int</span>                    m_PipelineGames       = 50;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;};</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;../common.hpp&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;../connect4/player.hpp&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;settings.hpp&quot;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;types.hpp&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="class_self_play_settings.html">   16</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_self_play_settings.html">SelfPlaySettings</a> : <span class="keyword">public</span> <a class="code" href="class_settings.html">Settings</a></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;{</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_self_play_settings.html#a3ea925465ff61248705d954152a40e81">SelfPlaySettings</a>();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="class_self_play_settings.html#a3ea925465ff61248705d954152a40e81">SelfPlaySettings</a>(std::filesystem::path <span class="keyword">const</span>&amp; settings_path);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    [[nodiscard]] <span class="keywordtype">int</span> <a class="code" href="class_self_play_settings.html#a76a70e280d4196eae2dce9dce25805b2">getSimulations</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#ab3c9ee204e0333468d4dc0260343e21b">setSimulations</a>(<span class="keywordtype">int</span> simulations);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    [[nodiscard]] <span class="keywordtype">bool</span> <a class="code" href="class_self_play_settings.html#a0ddd52f1796822e33302c7a84fbd4f63">isStochastic</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#a1ef15560ab055d35a99c28074b61d92f">setStochastic</a>(<span class="keywordtype">bool</span> stochastic);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#a7d5156df5029926eee21e7ce800cc9e8">addAgent</a>(std::string name, std::string <span class="keyword">const</span>&amp; model_path, ePlayer player);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    std::vector&lt;AgentData&gt; <span class="keyword">const</span>&amp; <a class="code" href="class_self_play_settings.html#a67cb1effd6b73f603f885f081a800d25">getAgents</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_self_play_settings.html#a767d21469cc3b39a48297dabe5e101ba">showMoves</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#a4ffba428de63c31b2d0baaeb430eaede">setShowMoves</a>(<span class="keywordtype">bool</span> show_moves);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_self_play_settings.html#ac26e9b4e8be0a02adc3529258a8fde43">saveMemory</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#a47200ec53d1a91cba92e811d838f2fb3">setSaveMemory</a>(<span class="keywordtype">bool</span> save_memory);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_self_play_settings.html#a76d3983b5dac55fc3bcf1677bc2175d3">getPipelineGames</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_self_play_settings.html#ac6d75a5920863c1ed5320a731a0aed57">setPipelineGames</a>(<span class="keywordtype">int</span> games);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordtype">int</span>                    m_Simulations         = 200;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordtype">bool</span>                   m_UseStochasticSearch = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    std::vector&lt;AgentData&gt; m_AgentSettings       = std::vector&lt;AgentData&gt;();</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">bool</span>                   m_ShowMoves           = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">bool</span>                   m_SaveMemory          = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">int</span>                    m_PipelineGames       = 50;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclass_self_play_settings_html"><div class="ttname"><a href="class_self_play_settings.html">SelfPlaySettings</a></div><div class="ttdoc">Keeps the settings for self-play.</div><div class="ttdef"><b>Definition:</b> selfPlaySettings.hpp:15</div></div>
+<div class="ttc" id="aclass_self_play_settings_html"><div class="ttname"><a href="class_self_play_settings.html">SelfPlaySettings</a></div><div class="ttdoc">Keeps the settings for self-play.</div><div class="ttdef"><b>Definition:</b> selfPlaySettings.hpp:16</div></div>
 <div class="ttc" id="aclass_self_play_settings_html_a67cb1effd6b73f603f885f081a800d25"><div class="ttname"><a href="class_self_play_settings.html#a67cb1effd6b73f603f885f081a800d25">SelfPlaySettings::getAgents</a></div><div class="ttdeci">std::vector&lt; AgentData &gt; const  &amp; getAgents() const</div><div class="ttdoc">Get the list of Agents.</div><div class="ttdef"><b>Definition:</b> selfPlaySettings.cpp:40</div></div>
 <div class="ttc" id="aclass_self_play_settings_html_a47200ec53d1a91cba92e811d838f2fb3"><div class="ttname"><a href="class_self_play_settings.html#a47200ec53d1a91cba92e811d838f2fb3">SelfPlaySettings::setSaveMemory</a></div><div class="ttdeci">void setSaveMemory(bool save_memory)</div><div class="ttdoc">Set whether to save positions to memory or not.</div><div class="ttdef"><b>Definition:</b> selfPlaySettings.cpp:60</div></div>
 <div class="ttc" id="aclass_self_play_settings_html_ac6d75a5920863c1ed5320a731a0aed57"><div class="ttname"><a href="class_self_play_settings.html#ac6d75a5920863c1ed5320a731a0aed57">SelfPlaySettings::setPipelineGames</a></div><div class="ttdeci">void setPipelineGames(int games)</div><div class="ttdoc">Set the amount of games to run every pipeline.</div><div class="ttdef"><b>Definition:</b> selfPlaySettings.cpp:70</div></div>

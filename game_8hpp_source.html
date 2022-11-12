@@ -73,51 +73,52 @@ $(function() {
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;agent.hpp&quot;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;connect4/environment.hpp&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;utils/selfPlaySettings.hpp&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;utils/types.hpp&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="class_game.html">   12</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_game.html">Game</a></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;{</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <a class="code" href="class_self_play_settings.html">SelfPlaySettings</a>*            m_Settings      = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    std::shared_ptr&lt;Environment&gt; m_Env           = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    std::string                  m_GameID        = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    std::pair&lt;int, int&gt;          m_PreviousMoves = std::make_pair&lt;int, int&gt;(-1, -1);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    std::vector&lt;std::shared_ptr&lt;Agent&gt;&gt; m_Agents = std::vector&lt;std::shared_ptr&lt;Agent&gt;&gt;();</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    std::vector&lt;MemoryElement&gt; m_Memory;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="class_game.html#a917abd266bb5dca01522776eae99afc1">Game</a>(<a class="code" href="class_self_play_settings.html">SelfPlaySettings</a>* selfPlaySettings);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="class_game.html#ae3d112ca6e0e55150d2fdbc704474530">~Game</a>();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    ePlayer <a class="code" href="class_game.html#ad390715b221a43c6bbd379c2321ad940">playGame</a>();</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_game.html#a9e1588a7c0d57b691ae746d94acd2218">playMove</a>();</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_game.html#a9e76a82ee0eedf9fe5049b61b0dcf7b3">addElementToMemory</a>(<a class="code" href="struct_memory_element.html">MemoryElement</a> element);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_game.html#af0babdab93eebafd60ed8eb196479db6">updateMemoryWithWinner</a>(ePlayer winner);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_game.html#a0b20162221bf45a11d9224ac23565587">saveMemoryToFile</a>();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    std::shared_ptr&lt;Environment&gt; <a class="code" href="class_game.html#a68597fd21df408dc4127d1bdd2193e54">getEnvironment</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;};</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;connect4/environment.hpp&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;utils/selfPlaySettings.hpp&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;utils/types.hpp&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="class_game.html">   13</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_game.html">Game</a></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <a class="code" href="class_self_play_settings.html">SelfPlaySettings</a>*            m_Settings      = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    std::shared_ptr&lt;Environment&gt; m_Env           = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    std::string                  m_GameID        = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    std::pair&lt;int, int&gt;          m_PreviousMoves = std::make_pair&lt;int, int&gt;(-1, -1);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    std::vector&lt;std::shared_ptr&lt;Agent&gt;&gt; m_Agents = std::vector&lt;std::shared_ptr&lt;Agent&gt;&gt;();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    std::vector&lt;MemoryElement&gt; m_Memory;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <a class="code" href="class_game.html#a917abd266bb5dca01522776eae99afc1">Game</a>(<a class="code" href="class_self_play_settings.html">SelfPlaySettings</a>* selfPlaySettings);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="class_game.html#ae3d112ca6e0e55150d2fdbc704474530">~Game</a>();</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    ePlayer <a class="code" href="class_game.html#ad390715b221a43c6bbd379c2321ad940">playGame</a>();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_game.html#a9e1588a7c0d57b691ae746d94acd2218">playMove</a>();</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_game.html#a9e76a82ee0eedf9fe5049b61b0dcf7b3">addElementToMemory</a>(<a class="code" href="struct_memory_element.html">MemoryElement</a> element);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_game.html#af0babdab93eebafd60ed8eb196479db6">updateMemoryWithWinner</a>(ePlayer winner);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_game.html#a0b20162221bf45a11d9224ac23565587">saveMemoryToFile</a>();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    std::shared_ptr&lt;Environment&gt; <a class="code" href="class_game.html#a68597fd21df408dc4127d1bdd2193e54">getEnvironment</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclass_self_play_settings_html"><div class="ttname"><a href="class_self_play_settings.html">SelfPlaySettings</a></div><div class="ttdoc">Keeps the settings for self-play.</div><div class="ttdef"><b>Definition:</b> selfPlaySettings.hpp:15</div></div>
-<div class="ttc" id="aclass_game_html_af0babdab93eebafd60ed8eb196479db6"><div class="ttname"><a href="class_game.html#af0babdab93eebafd60ed8eb196479db6">Game::updateMemoryWithWinner</a></div><div class="ttdeci">void updateMemoryWithWinner(ePlayer winner)</div><div class="ttdoc">For every element in memory, set the winner.</div><div class="ttdef"><b>Definition:</b> game.cpp:146</div></div>
+<div class="ttc" id="aclass_self_play_settings_html"><div class="ttname"><a href="class_self_play_settings.html">SelfPlaySettings</a></div><div class="ttdoc">Keeps the settings for self-play.</div><div class="ttdef"><b>Definition:</b> selfPlaySettings.hpp:16</div></div>
+<div class="ttc" id="aclass_game_html_af0babdab93eebafd60ed8eb196479db6"><div class="ttname"><a href="class_game.html#af0babdab93eebafd60ed8eb196479db6">Game::updateMemoryWithWinner</a></div><div class="ttdeci">void updateMemoryWithWinner(ePlayer winner)</div><div class="ttdoc">For every element in memory, set the winner.</div><div class="ttdef"><b>Definition:</b> game.cpp:145</div></div>
 <div class="ttc" id="aclass_game_html_ad390715b221a43c6bbd379c2321ad940"><div class="ttname"><a href="class_game.html#ad390715b221a43c6bbd379c2321ad940">Game::playGame</a></div><div class="ttdeci">ePlayer playGame()</div><div class="ttdoc">Plays a single game of Connect 4.</div><div class="ttdef"><b>Definition:</b> game.cpp:26</div></div>
 <div class="ttc" id="astruct_memory_element_html"><div class="ttname"><a href="struct_memory_element.html">MemoryElement</a></div><div class="ttdoc">Holds the data for one position in memory.</div><div class="ttdef"><b>Definition:</b> types.hpp:12</div></div>
 <div class="ttc" id="aclass_game_html_a9e1588a7c0d57b691ae746d94acd2218"><div class="ttname"><a href="class_game.html#a9e1588a7c0d57b691ae746d94acd2218">Game::playMove</a></div><div class="ttdeci">bool playMove()</div><div class="ttdoc">Plays a single move in the current environment.</div><div class="ttdef"><b>Definition:</b> game.cpp:62</div></div>
-<div class="ttc" id="aclass_game_html_a0b20162221bf45a11d9224ac23565587"><div class="ttname"><a href="class_game.html#a0b20162221bf45a11d9224ac23565587">Game::saveMemoryToFile</a></div><div class="ttdeci">bool saveMemoryToFile()</div><div class="ttdoc">Save the current memory to a file in the chosen memory folder.</div><div class="ttdef"><b>Definition:</b> game.cpp:155</div></div>
+<div class="ttc" id="aclass_game_html_a0b20162221bf45a11d9224ac23565587"><div class="ttname"><a href="class_game.html#a0b20162221bf45a11d9224ac23565587">Game::saveMemoryToFile</a></div><div class="ttdeci">bool saveMemoryToFile()</div><div class="ttdoc">Save the current memory to a file in the chosen memory folder.</div><div class="ttdef"><b>Definition:</b> game.cpp:154</div></div>
 <div class="ttc" id="aclass_game_html_a917abd266bb5dca01522776eae99afc1"><div class="ttname"><a href="class_game.html#a917abd266bb5dca01522776eae99afc1">Game::Game</a></div><div class="ttdeci">Game(SelfPlaySettings *selfPlaySettings)</div><div class="ttdoc">Construct a new Game based on the givenselfplay settings.</div><div class="ttdef"><b>Definition:</b> game.cpp:3</div></div>
-<div class="ttc" id="aclass_game_html_a9e76a82ee0eedf9fe5049b61b0dcf7b3"><div class="ttname"><a href="class_game.html#a9e76a82ee0eedf9fe5049b61b0dcf7b3">Game::addElementToMemory</a></div><div class="ttdeci">void addElementToMemory(MemoryElement element)</div><div class="ttdoc">Add a single element to the current memory. Does not include the winner, which needs to be added at t...</div><div class="ttdef"><b>Definition:</b> game.cpp:166</div></div>
+<div class="ttc" id="aclass_game_html_a9e76a82ee0eedf9fe5049b61b0dcf7b3"><div class="ttname"><a href="class_game.html#a9e76a82ee0eedf9fe5049b61b0dcf7b3">Game::addElementToMemory</a></div><div class="ttdeci">void addElementToMemory(MemoryElement element)</div><div class="ttdoc">Add a single element to the current memory. Does not include the winner, which needs to be added at t...</div><div class="ttdef"><b>Definition:</b> game.cpp:165</div></div>
 <div class="ttc" id="aclass_game_html_a68597fd21df408dc4127d1bdd2193e54"><div class="ttname"><a href="class_game.html#a68597fd21df408dc4127d1bdd2193e54">Game::getEnvironment</a></div><div class="ttdeci">std::shared_ptr&lt; Environment &gt; getEnvironment() const</div><div class="ttdoc">Get a pointer to the current environment.</div><div class="ttdef"><b>Definition:</b> game.cpp:21</div></div>
 <div class="ttc" id="aclass_game_html_ae3d112ca6e0e55150d2fdbc704474530"><div class="ttname"><a href="class_game.html#ae3d112ca6e0e55150d2fdbc704474530">Game::~Game</a></div><div class="ttdeci">~Game()</div><div class="ttdoc">Destroy the Game object.</div><div class="ttdef"><b>Definition:</b> game.cpp:19</div></div>
-<div class="ttc" id="aclass_game_html"><div class="ttname"><a href="class_game.html">Game</a></div><div class="ttdoc">The Game class is for creating an environment and agents to self-play games of Connect 4.</div><div class="ttdef"><b>Definition:</b> game.hpp:12</div></div>
+<div class="ttc" id="aclass_game_html"><div class="ttname"><a href="class_game.html">Game</a></div><div class="ttdoc">The Game class is for creating an environment and agents to self-play games of Connect 4.</div><div class="ttdef"><b>Definition:</b> game.hpp:13</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
