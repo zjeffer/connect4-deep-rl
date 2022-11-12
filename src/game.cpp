@@ -70,8 +70,7 @@ bool Game::playMove()
 
     if (m_PreviousMoves.first != -1 && m_PreviousMoves.second != -1)
     {
-        std::shared_ptr<Node> oldRoot = mcts->getRoot();
-        std::shared_ptr<Node> newRoot = oldRoot->getChildAfterMove(m_PreviousMoves.first);
+        std::shared_ptr<Node> newRoot = mcts->getRoot()->getChildAfterMove(m_PreviousMoves.first);
         if (newRoot == nullptr){
             LFATAL << "NewRoot after getting first child is null!";
         }

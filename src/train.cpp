@@ -1,5 +1,9 @@
 #include "train.hpp"
 
+#include <sstream>
+
+#include "utils/utils.hpp"
+
 Trainer::Trainer(TrainerSettings* settings)
 {
     m_Settings = settings;
@@ -19,7 +23,7 @@ Trainer::~Trainer()
     // std::cout << "Trainer destructor" << std::endl;
 }
 
-std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor, torch::Tensor> outputs, torch::Tensor target)
+std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor, torch::Tensor> const& outputs, torch::Tensor const& target)
 {
     torch::Tensor policy_output = std::get<0>(outputs);
     torch::Tensor value_output  = std::get<1>(outputs);
@@ -61,7 +65,8 @@ std::filesystem::path Trainer::train()
     auto data_loader    = torch::data::make_data_loader<torch::data::samplers::RandomSampler>(std::move(train_set), batch_size);
 
     // optimizer
-    torch::optim::Adam optimizer(m_NN->getNetwork()->parameters(), m_Settings->getLearningRate());
+    Network            net = m_NN->getNetwork();
+    torch::optim::Adam optimizer(net->parameters(), m_Settings->getLearningRate());
     optimizer.zero_grad();
 
     // TODO: plot loss
@@ -98,8 +103,8 @@ std::filesystem::path Trainer::train()
             exit(EXIT_FAILURE);
         }
 
-        std::tuple<torch::Tensor, torch::Tensor> outputs = m_NN->predict(input);
-        std::tuple<torch::Tensor, torch::Tensor> losses  = loss_function(outputs, target);
+        std::tuple<torch::Tensor, torch::Tensor> predictions = m_NN->predict(input);
+        std::tuple<torch::Tensor, torch::Tensor> losses      = loss_function(predictions, target);
 
         torch::Tensor policy_loss = std::get<0>(losses);
         torch::Tensor value_loss  = std::get<1>(losses);
@@ -113,8 +118,8 @@ std::filesystem::path Trainer::train()
         auto end = std::min(train_set_size, (index + 1) * batch_size);
 
         // calculate average accuracy of value output
-        int           policySize    = std::get<0>(outputs).size(1);
-        torch::Tensor value_output  = std::get<1>(outputs);
+        int           policySize    = std::get<0>(predictions).size(1);
+        torch::Tensor value_output  = std::get<1>(predictions);
         torch::Tensor value_target  = target.slice(1, policySize, policySize + 1);
         int           amountCorrect = 0;
         for (int i = 0; i < value_output.size(0); i++)
@@ -128,7 +133,7 @@ std::filesystem::path Trainer::train()
         Acc += (float)amountCorrect / (float)size;
 
         LINFO << "Epoch: " << index << ". Batch size: " << size << " => Average loss: " << Loss / end << ". Policy loss: " << policy_loss.item<float>()
-                  << ". Value loss: " << value_loss.item<float>() << ". Value accuracy: " << Acc / (index + 1);
+              << ". Value loss: " << value_loss.item<float>() << ". Value accuracy: " << Acc / (index + 1);
 
         // add loss to history
         loss_history.losses.push_back(loss.item<float>());
@@ -140,11 +145,14 @@ std::filesystem::path Trainer::train()
     }
     LINFO << "Training finished. Saving model...";
 
-    std::string timeString = utils::getTimeString();
+    std::string        timeString = utils::getTimeString();
+    std::ostringstream oss;
+    oss << "./models/model_" << timeString << "_lr" << std::to_string(m_Settings->getLearningRate()) << "_bs" << std::to_string(m_Settings->getBatchSize())
+        << ".pt";
     // save loss history to csv, to make graphs with
     utils::writeLossToCSV("losses/history_" + timeString + ".csv", loss_history);
     // save the trained model
-    std::filesystem::path trainedModelName = m_NN->saveModel("./models/model_" + timeString);
+    std::filesystem::path trainedModelName = m_NN->saveModel(oss.str());
 
     // set network back to evaluation mode
     m_NN->getNetwork()->eval();

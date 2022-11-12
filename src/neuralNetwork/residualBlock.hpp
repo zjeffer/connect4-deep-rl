@@ -1,6 +1,6 @@
 #pragma once
 
-#include <torch/torch.h>
+#include "../common.hpp"
 
 /**
  * @brief A residual block consists of multiple convolutional layers with skip connections.

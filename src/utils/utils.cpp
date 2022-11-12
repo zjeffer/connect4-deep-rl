@@ -1,5 +1,7 @@
 #include "utils.hpp"
 
+#include <Python.h>
+
 #include <cstddef>
 #include <cstdint>
 #include <filesystem>
@@ -26,12 +28,20 @@ std::string getTimeString()
 std::vector<uint8_t> boardToVector(torch::Tensor tensor)
 {
     std::vector<uint8_t> board;
+    if (tensor.size(0) == 0 || tensor.size(1) == 0)
+    {
+        LFATAL << "Tensor size is 0";
+    }
     for (int i = 0; i < tensor.size(0); i++)
     {
         for (int j = 0; j < tensor.size(1); j++)
         {
             board.push_back(tensor[i][j].item().to<uint8_t>());
         }
+    }
+    if (board.size() == 0)
+    {
+        LFATAL << "Board size is 0";
     }
     return board;
 }
@@ -49,33 +59,46 @@ torch::Tensor moveListToOutputs(std::vector<float> const& moveList, float const&
 }
 
 template<typename T>
-void writeVectorToFile(std::vector<T>& vector, std::ofstream& file)
+void writeVectorToFile(std::vector<T> const& vector, std::ofstream& file)
 {
     typename std::vector<T>::size_type size = vector.size();
-    file.write((char*)&size, sizeof(size));
-    file.write((char*)vector.data(), sizeof(T) * size);
+    file.write(reinterpret_cast<const char*>(&size), sizeof(size));
+    file.write(reinterpret_cast<const char*>(vector.data()), sizeof(T) * size);
 }
 
 template<typename T>
 void readVectorFromFile(std::vector<T>& vector, std::ifstream& file)
 {
-    typename std::vector<T>::size_type size = vector.size();
-    file.read((char*)&size, sizeof(size));
+    typename std::vector<T>::size_type size;
+    file.read(reinterpret_cast<char*>(&size), sizeof(size));
     vector.resize(size);
-    file.read((char*)vector.data(), sizeof(T) * size);
+    file.read(reinterpret_cast<char*>(vector.data()), sizeof(T) * size);
 }
 
 bool writeMemoryElementsToFile(std::vector<MemoryElement>& elements, std::filesystem::path const& filepath)
 {
     std::ofstream file(filepath, std::ios::out | std::ios::binary);
+    int           i = 0;
     if (file.is_open())
     {
-        for (MemoryElement& element: elements)
+        // LWARN << elements.size();
+        for (auto const& element: elements)
         {
+            if (element.board.empty())
+            {
+                LFATAL << "element " << i << " is empty";
+            }
+            else
+            {
+                LDEBUG << "element " << i << " is not empty";
+            }
+
             writeVectorToFile<uint8_t>(element.board, file);
             file.write((char*)&element.currentPlayer, sizeof(element.currentPlayer));
             writeVectorToFile<float>(element.moveList, file);
             file.write((char*)&element.winner, sizeof(element.winner));
+
+            i++;
         }
         file.close();
         return true;
@@ -96,6 +119,12 @@ bool readMemoryElementsFromFile(std::vector<MemoryElement>& elements, std::files
             file.read((char*)&element.currentPlayer, sizeof(element.currentPlayer));
             readVectorFromFile<float>(element.moveList, file);
             file.read((char*)&element.winner, sizeof(element.winner));
+
+            if (element.board.empty())
+            {
+                LWARN << "Element " << i << " is empty";
+                exit(1);
+            }
 
             elements.push_back(element);
             i++;
@@ -139,6 +168,12 @@ void writeLossToCSV(std::string filename, LossHistory& lossHistory)
     }
     file << "\n";
     file.close();
+}
+
+void createLossGraph(std::string filename, LossHistory& lossHistory)
+{
+    (void)filename;
+    (void)lossHistory;
 }
 
 } // namespace utils

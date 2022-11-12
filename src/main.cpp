@@ -1,8 +1,4 @@
 #include <signal.h>
-#include <torch/jit.h>
-#include <torch/nn.h>
-#include <torch/script.h>
-#include <torch/torch.h>
 
 #include <cstdlib>
 #include <exception>
@@ -60,7 +56,7 @@ class InputParser
     std::vector<std::string> tokens;
 };
 
-[[noreturn]] void printUsage(char* filename)
+[[noreturn]] void printUsage(std::string filename)
 {
     // print help and exit
     std::cout << "Usage: " << filename << " [options]" << std::endl;
@@ -262,11 +258,12 @@ int main(int argc, char* argv[])
     // test
     if (inputParser.cmdOptionExists("--test"))
     {
-        Test::testHorizontalWin();
-        Test::testVerticalWin();
-        Test::testDiagonalWin();
-        Test::testEasyPuzzle();
-        // testStochasticDistribution();
+        // Test::testHorizontalWin();
+        // Test::testVerticalWin();
+        // Test::testDiagonalWin();
+        // Test::testEasyPuzzle();
+        // Test::testStochasticDistribution();
+        Test::testReadAndWriteMemoryElement();
         exit(EXIT_SUCCESS);
     }
 

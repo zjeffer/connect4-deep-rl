@@ -1,6 +1,7 @@
 #pragma once
 
 #include "agent.hpp"
+#include "common.hpp"
 #include "connect4/environment.hpp"
 #include "utils/selfPlaySettings.hpp"
 #include "utils/types.hpp"

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <time.h>
-#include <torch/torch.h>
 
 #include <filesystem>
 #include <string>
@@ -60,5 +59,7 @@ std::string getDirectoryFromFilename(std::string filename);
  * @param lossHistory
  */
 void writeLossToCSV(std::string filename, LossHistory& lossHistory);
+
+void createLossGraph(std::string filename, LossHistory& lossHistory);
 
 } // namespace utils

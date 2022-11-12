@@ -13,7 +13,7 @@ include_directories(${OpenCV_LIBS})
 include_directories(${TORCH_INCLUDE_DIRS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
-###### g3log #########
+###### g3log ######
 set(CMAKE_PREFIX_PATH /usr/local/lib/cmake/g3log)
 find_package(g3log CONFIG REQUIRED)
 message(
@@ -23,6 +23,7 @@ message(
     libraries: ${G3LOG_LIBRARIES}"
 )
 include_directories(${G3LOG_INCLUDE_DIRS})
+
 
 
 ###### main files ######
@@ -39,6 +40,11 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
 # link libraries (torch, g3log)
 target_link_libraries(${PROJECT_NAME} ${TORCH_LIBRARIES} g3log)
+
+# python
+find_package(PythonLibs REQUIRED)
+include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${PYTHON_LIBRARIES})
 
 # fix libgomp error
 add_library(libgomp SHARED IMPORTED)

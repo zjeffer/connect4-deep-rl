@@ -18,4 +18,6 @@ void testEasyPuzzle();
 
 void testStochasticDistribution();
 
+void testReadAndWriteMemoryElement();
+
 } // namespace Test

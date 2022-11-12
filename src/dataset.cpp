@@ -40,11 +40,18 @@ bool C4Dataset::loadData(std::string folder)
             auto opts = torch::TensorOptions().dtype(torch::kUInt8);
             for (auto& element: elements)
             {
+                
                 if (element.board.size() == 0)
                 {
                     LWARN << "Empty board in " << file.path();
                     // TODO: every file contains 1 empty board?
-                    continue;
+                    LDEBUG << "board: " << element.board;
+                    LDEBUG << "currentPlayer: " << element.currentPlayer;
+                    LDEBUG << "moveList: " << element.moveList;
+                    LDEBUG << "winner: " << element.winner;
+
+                    // continue;
+                    exit(1);
                 }
                 // load the board from the int vector
                 torch::Tensor board = torch::from_blob(element.board.data(), {rows, cols}, opts);

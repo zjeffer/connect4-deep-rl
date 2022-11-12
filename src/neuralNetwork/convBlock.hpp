@@ -1,6 +1,6 @@
 #pragma once
 
-#include <torch/torch.h>
+#include "../common.hpp"
 
 /**
  * @brief A set of layers reprenting a convolutional block

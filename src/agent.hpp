@@ -2,11 +2,11 @@
 
 #include <string>
 
+#include "common.hpp"
 #include "connect4/environment.hpp"
 #include "mcts.hpp"
 #include "neuralNetwork.hpp"
 #include "tree/node.hpp"
-#include "common.hpp"
 
 /**
  * @brief An agent is used to represent a player. It holds the player's neural network.

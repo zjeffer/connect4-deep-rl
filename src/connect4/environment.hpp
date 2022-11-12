@@ -1,7 +1,5 @@
 #pragma once
 
-#include <torch/torch.h>
-
 #include "../common.hpp"
 #include "cell.hpp"
 

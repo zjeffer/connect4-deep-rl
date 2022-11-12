@@ -3,7 +3,13 @@
 NeuralNetwork::NeuralNetwork(Settings* selfPlaySettings)
 {
     m_Settings = selfPlaySettings;
-    m_Net = Network(selfPlaySettings->getInputPlanes(), selfPlaySettings->getRows(), selfPlaySettings->getCols(), selfPlaySettings->getOutputSize(), 256, 2, 1);
+    m_Net      = Network(selfPlaySettings->getInputPlanes(),
+                                      selfPlaySettings->getRows(),
+                                      selfPlaySettings->getCols(),
+                                      selfPlaySettings->getOutputSize(),
+                                      256,
+                                      2,
+                                      1);
     if (m_Settings->useCUDA())
     {
         m_Device = torch::Device(torch::kCUDA);

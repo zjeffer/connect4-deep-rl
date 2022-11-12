@@ -1,6 +1,6 @@
 #pragma once
 
-#include <torch/torch.h>
+#include "../common.hpp"
 
 /**
  * @brief The policy output architecture of the AlphaZero network

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "../common.hpp"
 #include "../connect4/player.hpp"
 #include "settings.hpp"
 #include "types.hpp"

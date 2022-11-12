@@ -1,5 +1,10 @@
 #pragma once
 
+#include <torch/jit.h>
+#include <torch/nn.h>
+#include <torch/script.h>
+#include <torch/torch.h>
+
 #include <random>
 
 #include "logger/logger.hpp"
