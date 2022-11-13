@@ -77,26 +77,25 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno"><a class="line" href="class_trainer_settings.html">    5</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_trainer_settings.html">TrainerSettings</a> : <span class="keyword">public</span> <a class="code" href="class_settings.html">Settings</a></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;{</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <a class="code" href="class_trainer_settings.html#aa89eaec0ed44a8044f7740e431ac7623">TrainerSettings</a>();</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_trainer_settings.html#a6a5be8e7a9b4ce9c8961bbbe40307057">setLearningRate</a>(<span class="keywordtype">float</span> learningRate);</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    [[nodiscard]] <span class="keywordtype">float</span> <a class="code" href="class_trainer_settings.html#a25538513312b2a142df00f763dbcbbcd">getLearningRate</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">void</span>              <a class="code" href="class_trainer_settings.html#a79700faa1d5445128d157add52031ff7">setBatchSize</a>(<span class="keywordtype">int</span> batchSize);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    [[nodiscard]] <span class="keywordtype">int</span> getBatchSize() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">float</span> m_LearningRate = 0.02f;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">int</span>   m_BatchSize    = 64;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;};</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;    <a class="code" href="class_trainer_settings.html">TrainerSettings</a>();</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keywordtype">float</span> getLearningRate() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keywordtype">void</span>  setLearningRate(<span class="keywordtype">float</span> learningRate);</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keywordtype">int</span>  getBatchSize() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keywordtype">void</span> setBatchSize(<span class="keywordtype">int</span> batchSize);</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordtype">int</span>  getEpochs() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> setEpochs(<span class="keywordtype">int</span> epochs);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">float</span> m_LearningRate = 0.02f;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keywordtype">int</span>   m_BatchSize    = 64;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="keywordtype">int</span>   m_Epochs       = 10;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclass_trainer_settings_html_aa89eaec0ed44a8044f7740e431ac7623"><div class="ttname"><a href="class_trainer_settings.html#aa89eaec0ed44a8044f7740e431ac7623">TrainerSettings::TrainerSettings</a></div><div class="ttdeci">TrainerSettings()</div><div class="ttdoc">Construct a new settings object.</div><div class="ttdef"><b>Definition:</b> trainerSettings.cpp:3</div></div>
 <div class="ttc" id="aclass_settings_html"><div class="ttname"><a href="class_settings.html">Settings</a></div><div class="ttdef"><b>Definition:</b> settings.hpp:5</div></div>
-<div class="ttc" id="aclass_trainer_settings_html_a25538513312b2a142df00f763dbcbbcd"><div class="ttname"><a href="class_trainer_settings.html#a25538513312b2a142df00f763dbcbbcd">TrainerSettings::getLearningRate</a></div><div class="ttdeci">float getLearningRate() const</div><div class="ttdoc">Get the learning rate.</div><div class="ttdef"><b>Definition:</b> trainerSettings.cpp:10</div></div>
-<div class="ttc" id="aclass_trainer_settings_html_a79700faa1d5445128d157add52031ff7"><div class="ttname"><a href="class_trainer_settings.html#a79700faa1d5445128d157add52031ff7">TrainerSettings::setBatchSize</a></div><div class="ttdeci">void setBatchSize(int batchSize)</div><div class="ttdoc">Set the trainer's batch size.</div><div class="ttdef"><b>Definition:</b> trainerSettings.cpp:15</div></div>
 <div class="ttc" id="aclass_trainer_settings_html"><div class="ttname"><a href="class_trainer_settings.html">TrainerSettings</a></div><div class="ttdef"><b>Definition:</b> trainerSettings.hpp:5</div></div>
-<div class="ttc" id="aclass_trainer_settings_html_a6a5be8e7a9b4ce9c8961bbbe40307057"><div class="ttname"><a href="class_trainer_settings.html#a6a5be8e7a9b4ce9c8961bbbe40307057">TrainerSettings::setLearningRate</a></div><div class="ttdeci">void setLearningRate(float learningRate)</div><div class="ttdoc">Set the trainer's learning rate.</div><div class="ttdef"><b>Definition:</b> trainerSettings.cpp:5</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
