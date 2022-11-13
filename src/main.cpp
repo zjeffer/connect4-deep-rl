@@ -190,7 +190,6 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
         else
         {
             LFATAL << "Model file invalid: " << modelPath;
-            exit(EXIT_FAILURE);
         }
     }
 
@@ -204,7 +203,6 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
     catch (std::invalid_argument const& e)
     {
         LFATAL << "Invalid batch size: " << e.what();
-        exit(EXIT_FAILURE);
     }
 
     try
@@ -217,7 +215,6 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
     catch (std::invalid_argument const& e)
     {
         LFATAL << "Invalid learning rate: " << e.what();
-        exit(EXIT_FAILURE);
     }
 
     try
@@ -230,7 +227,18 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
     catch (std::exception const& e)
     {
         LFATAL << "Invalid memory folder: " << e.what();
-        exit(EXIT_FAILURE);
+    }
+
+    try
+    {
+        if (inputParser->cmdOptionExists("--epochs"))
+        {
+            settings->setEpochs(std::stoi(inputParser->getCmdOption("--epochs")));
+        }
+    }
+    catch (std::exception const& e)
+    {
+        LFATAL << "Invalid amount of epochs: " << e.what();
     }
 }
 

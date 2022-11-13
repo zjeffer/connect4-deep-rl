@@ -81,16 +81,11 @@ bool writeMemoryElementsToFile(std::vector<MemoryElement>& elements, std::filesy
     int           i = 0;
     if (file.is_open())
     {
-        // LWARN << elements.size();
         for (auto const& element: elements)
         {
             if (element.board.empty())
             {
                 LFATAL << "element " << i << " is empty";
-            }
-            else
-            {
-                LDEBUG << "element " << i << " is not empty";
             }
 
             writeVectorToFile<uint8_t>(element.board, file);

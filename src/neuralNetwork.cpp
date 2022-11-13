@@ -15,6 +15,7 @@ NeuralNetwork::NeuralNetwork(Settings* selfPlaySettings)
         m_Device = torch::Device(torch::kCUDA);
     }
     loadModel(selfPlaySettings->getModelPath());
+    m_Net->eval();
     m_Net->to(m_Device);
 }
 

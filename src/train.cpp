@@ -69,10 +69,6 @@ std::filesystem::path Trainer::train()
     torch::optim::Adam optimizer(net->parameters(), m_Settings->getLearningRate());
     optimizer.zero_grad();
 
-    // TODO: plot loss
-    float Loss = 0.0f;
-    float Acc  = 0.0f;
-
     // enable training mode
     m_NN->getNetwork()->train();
     m_NN->getNetwork()->to(m_Device);
@@ -82,67 +78,76 @@ std::filesystem::path Trainer::train()
     loss_history.data_size  = train_set_size;
 
     LINFO << "Starting training with " << train_set_size << " samples. Learning rate: " << m_Settings->getLearningRate();
-    int index = 0;
-    for (auto batch: *data_loader)
+    for (int epoch = 0; epoch < m_Settings->getEpochs(); epoch++)
     {
-        if (!g_Running)
+        LINFO << "\n\nEpoch " << epoch << ": ";
+
+        // TODO: plot loss
+        float Loss = 0.0f;
+        float Acc  = 0.0f;
+
+        int index = 0;
+        for (auto batch: *data_loader)
         {
-            exit(EXIT_FAILURE);
-        }
-
-        optimizer.zero_grad();
-        int  size   = batch.data.sizes()[0];
-        auto input  = batch.data.to(m_Device);
-        auto target = batch.target.to(m_Device);
-
-        // check if policy_target contains nans
-        if (!torch::nan_to_num(target).equal(target))
-        {
-            LWARN << target;
-            LWARN << "Target contains nans";
-            exit(EXIT_FAILURE);
-        }
-
-        std::tuple<torch::Tensor, torch::Tensor> predictions = m_NN->predict(input);
-        std::tuple<torch::Tensor, torch::Tensor> losses      = loss_function(predictions, target);
-
-        torch::Tensor policy_loss = std::get<0>(losses);
-        torch::Tensor value_loss  = std::get<1>(losses);
-        torch::Tensor loss        = policy_loss + value_loss;
-
-        loss.backward();
-        optimizer.step();
-
-        // calculate average loss
-        Loss += loss.item<float>();
-        auto end = std::min(train_set_size, (index + 1) * batch_size);
-
-        // calculate average accuracy of value output
-        int           policySize    = std::get<0>(predictions).size(1);
-        torch::Tensor value_output  = std::get<1>(predictions);
-        torch::Tensor value_target  = target.slice(1, policySize, policySize + 1);
-        int           amountCorrect = 0;
-        for (int i = 0; i < value_output.size(0); i++)
-        {
-            if (std::abs(value_output[i].item<float>() - value_target[i].item<float>()) < 0.5)
+            if (!g_Running)
             {
-                amountCorrect++;
+                exit(EXIT_FAILURE);
             }
+
+            optimizer.zero_grad();
+            int  size   = batch.data.sizes()[0];
+            auto input  = batch.data.to(m_Device);
+            auto target = batch.target.to(m_Device);
+
+            // check if policy_target contains nans
+            if (!torch::nan_to_num(target).equal(target))
+            {
+                LWARN << target;
+                LFATAL << "Target contains nans";
+            }
+
+            std::tuple<torch::Tensor, torch::Tensor> predictions = m_NN->predict(input);
+            std::tuple<torch::Tensor, torch::Tensor> losses      = loss_function(predictions, target);
+
+            torch::Tensor policy_loss = std::get<0>(losses);
+            torch::Tensor value_loss  = std::get<1>(losses);
+            torch::Tensor loss        = policy_loss + value_loss;
+
+            loss.backward();
+            optimizer.step();
+
+            // calculate average loss
+            Loss += loss.item<float>();
+            auto end = std::min(train_set_size, (index + 1) * batch_size);
+
+            // calculate average accuracy of value output
+            int           policySize    = std::get<0>(predictions).size(1);
+            torch::Tensor value_output  = std::get<1>(predictions);
+            torch::Tensor value_target  = target.slice(1, policySize, policySize + 1);
+            int           amountCorrect = 0;
+            for (int i = 0; i < value_output.size(0); i++)
+            {
+                if (std::abs(value_output[i].item<float>() - value_target[i].item<float>()) < 0.5)
+                {
+                    amountCorrect++;
+                }
+            }
+            // calculate average accuracy
+            Acc += (float)amountCorrect / (float)size;
+
+            LINFO << "Epoch: " << epoch << ": Batch index: " << index << " => Average loss: " << Loss / end << ". Policy loss: " << policy_loss.item<float>()
+                  << ". Value loss: " << value_loss.item<float>() << ". Value accuracy: " << Acc / (index + 1);
+
+            // add loss to history
+            loss_history.losses.push_back(loss.item<float>());
+            loss_history.policies.push_back(policy_loss.item<float>());
+            loss_history.values.push_back(value_loss.item<float>());
+            loss_history.historySize++;
+
+            index++;
         }
-        // calculate average accuracy
-        Acc += (float)amountCorrect / (float)size;
-
-        LINFO << "Epoch: " << index << ". Batch size: " << size << " => Average loss: " << Loss / end << ". Policy loss: " << policy_loss.item<float>()
-              << ". Value loss: " << value_loss.item<float>() << ". Value accuracy: " << Acc / (index + 1);
-
-        // add loss to history
-        loss_history.losses.push_back(loss.item<float>());
-        loss_history.policies.push_back(policy_loss.item<float>());
-        loss_history.values.push_back(value_loss.item<float>());
-        loss_history.historySize++;
-
-        index++;
     }
+
     LINFO << "Training finished. Saving model...";
 
     std::string        timeString = utils::getTimeString();

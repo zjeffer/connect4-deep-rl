@@ -5,35 +5,19 @@
 class TrainerSettings : public Settings
 {
   public:
-    /**
-     * @brief Construct a new settings object
-     *
-     */
     TrainerSettings();
 
-    /**
-     * @brief Set the trainer's learning rate
-     *
-     * @param learningRate
-     */
-    void setLearningRate(float learningRate);
+    float getLearningRate() const;
+    void  setLearningRate(float learningRate);
 
-    /**
-     * @brief Get the learning rate
-     *
-     * @return float
-     */
-    [[nodiscard]] float getLearningRate() const;
+    int  getBatchSize() const;
+    void setBatchSize(int batchSize);
 
-    /**
-     * @brief Set the trainer's batch size
-     *
-     * @param batchSize
-     */
-    void              setBatchSize(int batchSize);
-    [[nodiscard]] int getBatchSize() const;
+    int  getEpochs() const;
+    void setEpochs(int epochs);
 
   private:
     float m_LearningRate = 0.02f;
     int   m_BatchSize    = 64;
+    int   m_Epochs       = 10;
 };
