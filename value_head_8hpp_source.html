@@ -91,24 +91,30 @@ $(function() {
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        int64_t size = input.size(0);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keyword">auto</span> value = convValue(input);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        value      = value.view({size, -1});</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        value      = linearValue1(value);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">// conv, batch norm, relu</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">auto</span> value = convValue(input);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        value      = batchNormValue(value);</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        value      = torch::relu(value);</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        value = linearValue2(value);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        value = torch::tanh(value);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordflow">return</span> value;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    torch::nn::Conv2d      convValue      = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    torch::nn::BatchNorm2d batchNormValue = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    torch::nn::Linear      linearValue1   = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    torch::nn::Linear      linearValue2   = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;};</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;TORCH_MODULE(ValueHead);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">// flatten, linear, relu</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        value = value.view({size, -1});</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        value = linearValue1(value);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        value = torch::relu(value);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="comment">// linear, tanh activation</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        value = linearValue2(value);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        value = torch::tanh(value);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keywordflow">return</span> value;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    torch::nn::Conv2d      convValue      = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    torch::nn::BatchNorm2d batchNormValue = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    torch::nn::Linear      linearValue1   = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    torch::nn::Linear      linearValue2   = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;};</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;TORCH_MODULE(ValueHead);</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="astruct_value_head_impl_html_a28bf97cfefcfcad973deeeac2f9ce41b"><div class="ttname"><a href="struct_value_head_impl.html#a28bf97cfefcfcad973deeeac2f9ce41b">ValueHeadImpl::forward</a></div><div class="ttdeci">torch::Tensor forward(torch::Tensor const &amp;input)</div><div class="ttdoc">Method to make a forward pass through the neural network.</div><div class="ttdef"><b>Definition:</b> valueHead.hpp:37</div></div>
 <div class="ttc" id="astruct_value_head_impl_html"><div class="ttname"><a href="struct_value_head_impl.html">ValueHeadImpl</a></div><div class="ttdoc">The value output architecture of the AlphaZero network.</div><div class="ttdef"><b>Definition:</b> valueHead.hpp:9</div></div>

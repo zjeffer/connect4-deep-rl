@@ -99,7 +99,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a901e884630e15100bc905f11f8313ee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a vector of child nodes for this <a class="el" href="class_node.html" title="A Node represents a position in the MCTS tree.">Node</a>. These represent the resulting positions of all possible moves from the current position.  <a href="class_node.html#a901e884630e15100bc905f11f8313ee7">More...</a><br /></td></tr>
 <tr class="separator:a901e884630e15100bc905f11f8313ee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fd0f237eaf3a0e3fff5bd73cc762d9d"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_node.html#a8fd0f237eaf3a0e3fff5bd73cc762d9d">getChildAfterMove</a> (int move)</td></tr>
-<tr class="memdesc:a8fd0f237eaf3a0e3fff5bd73cc762d9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the child that made the given move.  <a href="class_node.html#a8fd0f237eaf3a0e3fff5bd73cc762d9d">More...</a><br /></td></tr>
+<tr class="memdesc:a8fd0f237eaf3a0e3fff5bd73cc762d9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the child that resulted after making the given move from the current node.  <a href="class_node.html#a8fd0f237eaf3a0e3fff5bd73cc762d9d">More...</a><br /></td></tr>
 <tr class="separator:a8fd0f237eaf3a0e3fff5bd73cc762d9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36ab59d094fe2dd2b2d8087c7fe3c955"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_node.html#a36ab59d094fe2dd2b2d8087c7fe3c955">addChild</a> (std::shared_ptr&lt; <a class="el" href="class_node.html">Node</a> &gt; child)</td></tr>
 <tr class="memdesc:a36ab59d094fe2dd2b2d8087c7fe3c955"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a new child to this <a class="el" href="class_node.html" title="A Node represents a position in the MCTS tree.">Node</a>. Moves unique_ptr's ownership.  <a href="class_node.html#a36ab59d094fe2dd2b2d8087c7fe3c955">More...</a><br /></td></tr>
@@ -303,7 +303,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get the child that made the given move. </p>
+<p>Get the child that resulted after making the given move from the current node. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">move</td><td>the move which resulted in the child </td></tr>
