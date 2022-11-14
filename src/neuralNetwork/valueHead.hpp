@@ -38,11 +38,17 @@ struct ValueHeadImpl : public torch::nn::Module
     {
         int64_t size = input.size(0);
 
+        // conv, batch norm, relu
         auto value = convValue(input);
-        value      = value.view({size, -1});
-        value      = linearValue1(value);
+        value      = batchNormValue(value);
         value      = torch::relu(value);
 
+        // flatten, linear, relu
+        value = value.view({size, -1});
+        value = linearValue1(value);
+        value = torch::relu(value);
+
+        // linear, tanh activation
         value = linearValue2(value);
         value = torch::tanh(value);
 

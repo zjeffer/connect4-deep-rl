@@ -59,7 +59,8 @@ class Node
     std::vector<std::shared_ptr<Node>> const& getChildren() const;
 
     /**
-     * @brief Get the child that made the given move
+     * @brief Get the child that resulted after making 
+     * the given move from the current node
      *
      * @param move: the move which resulted in the child
      * @return std::shared_ptr<Node> const&: the child

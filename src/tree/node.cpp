@@ -55,7 +55,8 @@ std::shared_ptr<Node> Node::getParent() const
     return m_Parent;
 }
 
-void Node::setParent(std::shared_ptr<Node> parent) {
+void Node::setParent(std::shared_ptr<Node> parent)
+{
     m_Parent = parent;
 }
 
@@ -96,20 +97,18 @@ void Node::setPrior(float prior)
 
 float Node::getQ() const
 {
-    return m_Value / (float)(m_Visits + 1e-6);
+    return m_Value / ((float)m_Visits + 1e-3);
 }
 
 float Node::getU() const
 {
     if (m_Parent == nullptr)
     {
-        // this should never happen unless you call this function on the root node
-        LFATAL << "Parent is null";
-        exit(EXIT_FAILURE);
+        LFATAL << "Parent is null. This shouldn't happen unless you call this function on the root node.";
     }
     // uses the PUCT formula based on AlphaZero's paper and pseudocode
     float exp_rate = log((m_Parent->getVisits() + 19652.0f + 1.0f) / 19652.0f) + 1.25f;
-    exp_rate *= sqrt(m_Parent->getVisits() + 1.0f) / (m_Visits + 1.0f);
+    exp_rate *= sqrt((float)m_Parent->getVisits()) / ((float)m_Visits + 1.0f);
     return exp_rate * this->m_Prior;
 }
 

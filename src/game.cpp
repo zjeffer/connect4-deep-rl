@@ -78,7 +78,7 @@ bool Game::playMove()
         if (newRoot == nullptr){
             LFATAL << "NewRoot after getting second child is null!";
         }
-        mcts->setRoot(newRoot);
+        mcts->setRoot(std::move(newRoot));
     }
     else
     {

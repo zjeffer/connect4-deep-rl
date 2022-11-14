@@ -62,8 +62,8 @@ template<typename T>
 void writeVectorToFile(std::vector<T> const& vector, std::ofstream& file)
 {
     typename std::vector<T>::size_type size = vector.size();
-    file.write(reinterpret_cast<const char*>(&size), sizeof(size));
-    file.write(reinterpret_cast<const char*>(vector.data()), sizeof(T) * size);
+    file.write(reinterpret_cast<char const*>(&size), sizeof(size));
+    file.write(reinterpret_cast<char const*>(vector.data()), sizeof(T) * size);
 }
 
 template<typename T>
@@ -167,8 +167,41 @@ void writeLossToCSV(std::string filename, LossHistory& lossHistory)
 
 void createLossGraph(std::string filename, LossHistory& lossHistory)
 {
+    // TODO
     (void)filename;
     (void)lossHistory;
+}
+
+std::vector<float> sampleFromGamma(int size)
+{
+    std::vector<float> samples = std::vector<float>(size, 0.0f);
+    float              sum     = 0.0f;
+    for (int i = 0; i < size; i++)
+    {
+        samples[i] = g_GammaDist(g_Generator);
+        sum += samples[i];
+    }
+    for (int i = 0; i < size; i++)
+    {
+        samples[i] /= sum;
+    }
+    return samples;
+}
+
+std::vector<float> calculateDirichletNoise(torch::Tensor const& root_priors)
+{
+    std::vector<float> dirichletNoiseVector;
+
+    // get the noise
+    std::vector<float> noise = sampleFromGamma(root_priors.size(0));
+
+    float frac = 0.25;
+    for (int i = 0; i < (int)noise.size(); i++)
+    {
+        dirichletNoiseVector.emplace_back(root_priors[i].item<float>() * (1 - frac) + noise[i] * frac);
+    }
+
+    return dirichletNoiseVector;
 }
 
 } // namespace utils

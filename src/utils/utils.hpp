@@ -6,6 +6,7 @@
 #include <string>
 
 #include "../common.hpp"
+#include "../tree/node.hpp"
 #include "types.hpp"
 
 namespace utils
@@ -61,5 +62,9 @@ std::string getDirectoryFromFilename(std::string filename);
 void writeLossToCSV(std::string filename, LossHistory& lossHistory);
 
 void createLossGraph(std::string filename, LossHistory& lossHistory);
+
+std::vector<float> sampleFromGamma(int size);
+
+std::vector<float> calculateDirichletNoise(torch::Tensor const & root_priors);
 
 } // namespace utils

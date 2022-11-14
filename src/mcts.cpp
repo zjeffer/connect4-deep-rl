@@ -28,6 +28,7 @@ std::shared_ptr<Node> const& MCTS::getRoot() const
 void MCTS::setRoot(std::shared_ptr<Node> root)
 {
     m_Root = root;
+    m_Root->setParent(nullptr);
 }
 
 void MCTS::run_simulations()
@@ -59,7 +60,7 @@ std::shared_ptr<Node> MCTS::select(std::shared_ptr<Node> root)
     while (current->getChildren().size() > 0)
     {
         std::shared_ptr<Node> best_child = std::shared_ptr<Node>(nullptr);
-        float                 best_score = -1;
+        float                 best_score = -2;
         for (auto& child: current->getChildren())
         {
             float score = child->getQ() + child->getU();
@@ -72,7 +73,6 @@ std::shared_ptr<Node> MCTS::select(std::shared_ptr<Node> root)
         if (best_child == nullptr)
         {
             LFATAL << "Error: best child is null";
-            exit(EXIT_FAILURE);
         }
         current = best_child;
     }
@@ -92,10 +92,23 @@ float MCTS::expand(std::shared_ptr<Node> node)
     // value output (= step 3: evaluation)
     float value = output.second.item<float>();
 
+    if (node->getParent() == nullptr)
+    {
+        // root node, add dirichlet noise to policy
+        auto  noise = utils::calculateDirichletNoise(policy);
+        float frac  = 0.25;
+        for (int i = 0; i < policy.size(0); i++)
+        {
+            // LWARN << policy[i].item<float>() << "--" << noise[i] << " ==> " << policy[i].item<float>() * (1 - frac) + noise[i] * frac;
+            policy[i] = policy[i] * (1 - frac) + noise[i] * frac;
+        }
+    }
+
     std::vector<int> valid_moves = env->getValidMoves();
     if (valid_moves.size() == 0)
     {
-        return env->getWinner() == ePlayer::NONE ? 0 : 1;
+        float win =  env->getWinner() == ePlayer::NONE ? 0 : 1;
+        return win;
     }
 
     if (env->getWinner() != ePlayer::NONE)

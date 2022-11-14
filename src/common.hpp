@@ -19,5 +19,5 @@ inline std::shared_ptr<Logger> g_Logger;
 inline std::uniform_int_distribution<int> g_UniformIntDist;
 // the random engine for all random generation
 inline std::default_random_engine g_Generator;
-// gamma distribution to add dirichlet noise (TODO: implement)
-inline std::gamma_distribution<double> g_GammaDist(0.3, 1.0);
+// gamma distribution to add dirichlet noise
+inline std::gamma_distribution<double> g_GammaDist(0.5, 1.0);
