@@ -99,7 +99,6 @@ float MCTS::expand(std::shared_ptr<Node> node)
         float frac  = 0.25;
         for (int i = 0; i < policy.size(0); i++)
         {
-            // LWARN << policy[i].item<float>() << "--" << noise[i] << " ==> " << policy[i].item<float>() * (1 - frac) + noise[i] * frac;
             policy[i] = policy[i] * (1 - frac) + noise[i] * frac;
         }
     }
@@ -107,8 +106,7 @@ float MCTS::expand(std::shared_ptr<Node> node)
     std::vector<int> valid_moves = env->getValidMoves();
     if (valid_moves.size() == 0)
     {
-        float win =  env->getWinner() == ePlayer::NONE ? 0 : 1;
-        return win;
+        return env->getWinner() == ePlayer::NONE ? 0 : 1;
     }
 
     if (env->getWinner() != ePlayer::NONE)

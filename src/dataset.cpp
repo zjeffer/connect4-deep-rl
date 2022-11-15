@@ -40,24 +40,21 @@ bool C4Dataset::loadData(std::string folder)
             auto opts = torch::TensorOptions().dtype(torch::kUInt8);
             for (auto& element: elements)
             {
-                
                 if (element.board.size() == 0)
                 {
                     LWARN << "Empty board in " << file.path();
-                    // TODO: every file contains 1 empty board?
                     LDEBUG << "board: " << element.board;
                     LDEBUG << "currentPlayer: " << element.currentPlayer;
                     LDEBUG << "moveList: " << element.moveList;
                     LDEBUG << "winner: " << element.winner;
-
-                    // continue;
                     exit(1);
                 }
                 // load the board from the int vector
                 torch::Tensor board = torch::from_blob(element.board.data(), {rows, cols}, opts);
 
                 // convert the board to an input for the neural network
-                torch::Tensor input = NeuralNetwork::boardToInput(board, element.currentPlayer, inputPlanes).squeeze();
+                ePlayer player = element.currentPlayer == 1 ? ePlayer::YELLOW : element.currentPlayer == 2 ? ePlayer::RED : ePlayer::NONE;
+                torch::Tensor input  = NeuralNetwork::boardToInput(board, player, inputPlanes).squeeze();
                 // convert the list of all moves and the final winner to an output for the neural network
                 torch::Tensor output = utils::moveListToOutputs(element.moveList, element.winner);
 

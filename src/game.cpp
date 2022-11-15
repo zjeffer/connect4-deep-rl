@@ -1,5 +1,7 @@
 #include "game.hpp"
 
+#include "connect4/player.hpp"
+
 Game::Game(SelfPlaySettings* selfPlaySettings)
   : m_Settings(selfPlaySettings)
   , m_Env(std::make_shared<Environment>(m_Settings->getRows(), m_Settings->getCols()))
@@ -65,17 +67,20 @@ bool Game::playMove()
     std::cout << std::endl;
 
     // get agent
-    std::shared_ptr<Agent> agent = m_Agents.at(static_cast<int>(m_Env->getCurrentPlayer()) - 1);
+    int currentAgent = m_Env->getCurrentPlayer() == ePlayer::YELLOW ? 0 : m_Env->getCurrentPlayer() == ePlayer::RED ? 1 : -1;
+    std::shared_ptr<Agent> agent = m_Agents.at(currentAgent);
     MCTS*                  mcts  = agent->getMCTS();
 
     if (m_PreviousMoves.first != -1 && m_PreviousMoves.second != -1)
     {
         std::shared_ptr<Node> newRoot = mcts->getRoot()->getChildAfterMove(m_PreviousMoves.first);
-        if (newRoot == nullptr){
+        if (newRoot == nullptr)
+        {
             LFATAL << "NewRoot after getting first child is null!";
         }
         newRoot = newRoot->getChildAfterMove(m_PreviousMoves.second);
-        if (newRoot == nullptr){
+        if (newRoot == nullptr)
+        {
             LFATAL << "NewRoot after getting second child is null!";
         }
         mcts->setRoot(std::move(newRoot));
@@ -137,7 +142,6 @@ bool Game::playMove()
 
     m_PreviousMoves.first  = m_PreviousMoves.second;
     m_PreviousMoves.second = bestMove;
-    LDEBUG << "Previous moves: " << m_PreviousMoves.first << ", " << m_PreviousMoves.second;
 
     return !m_Env->hasValidMoves() || m_Env->currentPlayerHasConnected4();
 }
@@ -147,7 +151,7 @@ void Game::updateMemoryWithWinner(ePlayer winner)
     // update memory with winner
     for (MemoryElement& element: m_Memory)
     {
-        element.winner = static_cast<uint8_t>(winner);
+        element.winner = (winner == ePlayer::YELLOW) ? 1 : (winner == ePlayer::RED) ? -1 : 0;
     }
 }
 

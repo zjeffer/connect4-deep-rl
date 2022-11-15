@@ -297,16 +297,16 @@ void Environment::print()
         {
             for (int j = 0; j < m_Cols; j++)
             {
-                int value = m_Board[i][j].item<int>();
-                if (value == 0)
+                int player = m_Board[i][j].item<int>();
+                if (player == 0)
                 {
                     ss << ".";
                 }
-                else if (value == static_cast<int>(ePlayer::RED))
+                else if (player == static_cast<int>(ePlayer::RED))
                 {
                     ss << "R";
                 }
-                else if (value == static_cast<int>(ePlayer::YELLOW))
+                else if (player == static_cast<int>(ePlayer::YELLOW))
                 {
                     ss << "Y";
                 }
@@ -314,8 +314,8 @@ void Environment::print()
                 {
                     throw std::runtime_error(
                       "Error: Environment::print(): "
-                      "value is not 0, 1 or 2, but: " +
-                      std::to_string(value));
+                      "player is not 0, 1 or 2, but: " +
+                      std::to_string(player));
                 }
                 ss << " ";
             }

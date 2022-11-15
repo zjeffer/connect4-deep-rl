@@ -29,7 +29,7 @@ Network NeuralNetwork::getNetwork() const
     return m_Net;
 }
 
-torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, int player, int inputPlanes)
+torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, ePlayer player, int inputPlanes)
 {
     // Create input tensor
     int           rows  = board.size(0);
@@ -39,7 +39,7 @@ torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, int player, int i
     // 2 planes for pieces, 1 plane for player
     // input[0] is the plane with yellow pieces
     // input[1] is the plane with red pieces
-    // input[2] is the plane filled with 1 if the player is yellow, 0 otherwise
+    // input[2] is the plane filled with 1 if the player is yellow, 2 if red
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
@@ -54,14 +54,20 @@ torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, int player, int i
             }
         }
     }
-    input[2] = torch::full({rows, cols}, player);
+    if (player == ePlayer::YELLOW){
+        input[2] = torch::full({rows, cols}, 1);
+    } else if (player == ePlayer::RED){
+        input[2] = torch::full({rows, cols}, 2);
+    } else{
+        LFATAL << "Player is not yellow or red!";
+    }
 
     return input.unsqueeze(0);
 }
 
 torch::Tensor NeuralNetwork::boardToInput(std::shared_ptr<Environment> const& env)
 {
-    return NeuralNetwork::boardToInput(env->getBoard().detach().clone(), static_cast<int>(env->getCurrentPlayer()), m_Settings->getInputPlanes()).to(m_Device);
+    return NeuralNetwork::boardToInput(env->getBoard().detach().clone(), env->getCurrentPlayer(), m_Settings->getInputPlanes()).to(m_Device);
 }
 
 std::pair<torch::Tensor, torch::Tensor> NeuralNetwork::predict(torch::Tensor& input)

@@ -29,7 +29,7 @@ class NeuralNetwork
      * @param inputPlanes
      * @return torch::Tensor
      */
-    static torch::Tensor boardToInput(torch::Tensor board, int player, int inputPlanes);
+    static torch::Tensor boardToInput(torch::Tensor board, ePlayer player, int inputPlanes);
 
     /**
      * @brief Convert the given environment's board to an input state.

@@ -24,7 +24,7 @@ struct MemoryElement
     std::vector<uint8_t> board;
     uint8_t              currentPlayer;
     std::vector<float>   moveList;
-    uint8_t              winner;
+    int8_t               winner;
 };
 
 /**
@@ -64,7 +64,7 @@ struct SelfPlayTally
 {
     ~SelfPlayTally() {}
 
-    int draws  = 0;
-    int red    = 0;
-    int yellow = 0;
+    uint32_t draws  = 0;
+    uint32_t red    = 0;
+    uint32_t yellow = 0;
 };

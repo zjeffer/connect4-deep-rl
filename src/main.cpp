@@ -266,11 +266,11 @@ int main(int argc, char* argv[])
     // test
     if (inputParser.cmdOptionExists("--test"))
     {
-        // Test::testHorizontalWin();
-        // Test::testVerticalWin();
-        // Test::testDiagonalWin();
-        // Test::testEasyPuzzle();
-        // Test::testStochasticDistribution();
+        Test::testHorizontalWin();
+        Test::testVerticalWin();
+        Test::testDiagonalWin();
+        Test::testEasyPuzzle();
+        Test::testStochasticDistribution();
         Test::testReadAndWriteMemoryElement();
         exit(EXIT_SUCCESS);
     }
