@@ -92,7 +92,7 @@ $(function() {
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    std::vector&lt;uint8_t&gt; board;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    uint8_t              currentPlayer;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    std::vector&lt;float&gt;   moveList;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    uint8_t              winner;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    int8_t               winner;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;};</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="struct_agent_data.html">   34</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_agent_data.html">AgentData</a></div>
@@ -120,9 +120,9 @@ $(function() {
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;{</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    ~<a class="code" href="struct_self_play_tally.html">SelfPlayTally</a>() {}</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">int</span> draws  = 0;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">int</span> red    = 0;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">int</span> yellow = 0;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    uint32_t draws  = 0;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    uint32_t red    = 0;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    uint32_t yellow = 0;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="astruct_memory_element_html"><div class="ttname"><a href="struct_memory_element.html">MemoryElement</a></div><div class="ttdoc">Holds the data for one position in memory.</div><div class="ttdef"><b>Definition:</b> types.hpp:12</div></div>
