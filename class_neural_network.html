@@ -78,9 +78,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a34d16fb480e37a216be2f1de0d614d71"><td class="memItemLeft" align="right" valign="top"><a id="a34d16fb480e37a216be2f1de0d614d71"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>NeuralNetwork</b> (<a class="el" href="class_settings.html">Settings</a> *selfPlaySettings)</td></tr>
-<tr class="separator:a34d16fb480e37a216be2f1de0d614d71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7c3645cd739e3a387ac2360d99e749f"><td class="memItemLeft" align="right" valign="top"><a id="ac7c3645cd739e3a387ac2360d99e749f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>NeuralNetwork</b> (std::shared_ptr&lt; <a class="el" href="class_settings.html">Settings</a> &gt; selfPlaySettings)</td></tr>
+<tr class="separator:ac7c3645cd739e3a387ac2360d99e749f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a021b6323cfc357894fb964e253a5bda9"><td class="memItemLeft" align="right" valign="top">torch::Tensor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neural_network.html#a021b6323cfc357894fb964e253a5bda9">boardToInput</a> (std::shared_ptr&lt; <a class="el" href="class_environment.html">Environment</a> &gt; const &amp;env)</td></tr>
 <tr class="memdesc:a021b6323cfc357894fb964e253a5bda9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the given environment's board to an input state.  <a href="class_neural_network.html#a021b6323cfc357894fb964e253a5bda9">More...</a><br /></td></tr>
 <tr class="separator:a021b6323cfc357894fb964e253a5bda9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -99,9 +99,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ae7b82cbc55bc9dece890c15041097019"><td class="memItemLeft" align="right" valign="top">static torch::Tensor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neural_network.html#ae7b82cbc55bc9dece890c15041097019">boardToInput</a> (torch::Tensor board, ePlayer player, int inputPlanes)</td></tr>
-<tr class="memdesc:ae7b82cbc55bc9dece890c15041097019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the given board to the network's input state.  <a href="class_neural_network.html#ae7b82cbc55bc9dece890c15041097019">More...</a><br /></td></tr>
-<tr class="separator:ae7b82cbc55bc9dece890c15041097019"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02788b5a7dcf45a92d0f10e0a91a3932"><td class="memItemLeft" align="right" valign="top">static torch::Tensor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_neural_network.html#a02788b5a7dcf45a92d0f10e0a91a3932">boardToInput</a> (torch::Tensor const &amp;board, ePlayer player, int inputPlanes)</td></tr>
+<tr class="memdesc:a02788b5a7dcf45a92d0f10e0a91a3932"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert the given board to the network's input state.  <a href="class_neural_network.html#a02788b5a7dcf45a92d0f10e0a91a3932">More...</a><br /></td></tr>
+<tr class="separator:a02788b5a7dcf45a92d0f10e0a91a3932"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="class_neural_network.html" title="The NeuralNetwork class holds the torch Network to run inference with. It also features some methods ...">NeuralNetwork</a> class holds the torch Network to run inference with. It also features some methods to load &amp; save the model, and convert a board to an input state for use with the network. </p>
@@ -133,8 +133,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ae7b82cbc55bc9dece890c15041097019"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7b82cbc55bc9dece890c15041097019">&#9670;&nbsp;</a></span>boardToInput() <span class="overload">[2/2]</span></h2>
+<a id="a02788b5a7dcf45a92d0f10e0a91a3932"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02788b5a7dcf45a92d0f10e0a91a3932">&#9670;&nbsp;</a></span>boardToInput() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -145,7 +145,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">torch::Tensor NeuralNetwork::boardToInput </td>
           <td>(</td>
-          <td class="paramtype">torch::Tensor&#160;</td>
+          <td class="paramtype">torch::Tensor const &amp;&#160;</td>
           <td class="paramname"><em>board</em>, </td>
         </tr>
         <tr>

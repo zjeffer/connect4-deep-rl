@@ -114,12 +114,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a716ef3f971c6cabd13d9d4b9230f7bc2"><td class="memItemLeft" align="right" valign="top">ePlayer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment.html#a716ef3f971c6cabd13d9d4b9230f7bc2">getPlayerAtPiece</a> (int row, int column) const</td></tr>
 <tr class="memdesc:a716ef3f971c6cabd13d9d4b9230f7bc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the player of a specific cell.  <a href="class_environment.html#a716ef3f971c6cabd13d9d4b9230f7bc2">More...</a><br /></td></tr>
 <tr class="separator:a716ef3f971c6cabd13d9d4b9230f7bc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a770659e3aa2688d64788ac04fd0bab9b"><td class="memItemLeft" align="right" valign="top">torch::Tensor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment.html#a770659e3aa2688d64788ac04fd0bab9b">getBoard</a> ()</td></tr>
-<tr class="memdesc:a770659e3aa2688d64788ac04fd0bab9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the board.  <a href="class_environment.html#a770659e3aa2688d64788ac04fd0bab9b">More...</a><br /></td></tr>
-<tr class="separator:a770659e3aa2688d64788ac04fd0bab9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa8a257912773ef88a6e0ae86a5d7bef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment.html#aaa8a257912773ef88a6e0ae86a5d7bef">setBoard</a> (torch::Tensor board)</td></tr>
-<tr class="memdesc:aaa8a257912773ef88a6e0ae86a5d7bef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the board.  <a href="class_environment.html#aaa8a257912773ef88a6e0ae86a5d7bef">More...</a><br /></td></tr>
-<tr class="separator:aaa8a257912773ef88a6e0ae86a5d7bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada7a1cfb1763f7c43e9abc32c5507a84"><td class="memItemLeft" align="right" valign="top">torch::Tensor &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment.html#ada7a1cfb1763f7c43e9abc32c5507a84">getBoard</a> ()</td></tr>
+<tr class="memdesc:ada7a1cfb1763f7c43e9abc32c5507a84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the board.  <a href="class_environment.html#ada7a1cfb1763f7c43e9abc32c5507a84">More...</a><br /></td></tr>
+<tr class="separator:ada7a1cfb1763f7c43e9abc32c5507a84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0b89394ffef7fdca902ee229f1f2e0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment.html#ab0b89394ffef7fdca902ee229f1f2e0f">setBoard</a> (const torch::Tensor &amp;board)</td></tr>
+<tr class="memdesc:ab0b89394ffef7fdca902ee229f1f2e0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the board.  <a href="class_environment.html#ab0b89394ffef7fdca902ee229f1f2e0f">More...</a><br /></td></tr>
+<tr class="separator:ab0b89394ffef7fdca902ee229f1f2e0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb77f69abbe3eefc3ea7ba27ce30f5fc"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment.html#adb77f69abbe3eefc3ea7ba27ce30f5fc">getValidMoves</a> ()</td></tr>
 <tr class="memdesc:adb77f69abbe3eefc3ea7ba27ce30f5fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the vector of possible moves in the current position.  <a href="class_environment.html#adb77f69abbe3eefc3ea7ba27ce30f5fc">More...</a><br /></td></tr>
 <tr class="separator:adb77f69abbe3eefc3ea7ba27ce30f5fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -280,14 +280,14 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a770659e3aa2688d64788ac04fd0bab9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a770659e3aa2688d64788ac04fd0bab9b">&#9670;&nbsp;</a></span>getBoard()</h2>
+<a id="ada7a1cfb1763f7c43e9abc32c5507a84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada7a1cfb1763f7c43e9abc32c5507a84">&#9670;&nbsp;</a></span>getBoard()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">torch::Tensor Environment::getBoard </td>
+          <td class="memname">torch::Tensor &amp; Environment::getBoard </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -586,8 +586,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aaa8a257912773ef88a6e0ae86a5d7bef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa8a257912773ef88a6e0ae86a5d7bef">&#9670;&nbsp;</a></span>setBoard()</h2>
+<a id="ab0b89394ffef7fdca902ee229f1f2e0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0b89394ffef7fdca902ee229f1f2e0f">&#9670;&nbsp;</a></span>setBoard()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -595,7 +595,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void Environment::setBoard </td>
           <td>(</td>
-          <td class="paramtype">torch::Tensor&#160;</td>
+          <td class="paramtype">const torch::Tensor &amp;&#160;</td>
           <td class="paramname"><em>board</em></td><td>)</td>
           <td></td>
         </tr>

@@ -83,23 +83,22 @@ $(function() {
 <div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="class_trainer.html">   15</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_trainer.html">Trainer</a></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;{</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_trainer.html#aca26ae1a2050868beb86d9a905c09b6d">Trainer</a>(<a class="code" href="class_trainer_settings.html">TrainerSettings</a>* settings);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_trainer.html#ade9b0981e45a90903927dd8cc4ab3c94">Trainer</a>(std::shared_ptr&lt;TrainerSettings&gt; settings);</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="class_trainer.html#aa3d993d1eb090f4111e12a710fe9d3f6">~Trainer</a>();</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    std::filesystem::path <a class="code" href="class_trainer.html#a4e80af362519928e62a2220d5e906200">train</a>();</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    std::shared_ptr&lt;NeuralNetwork&gt; m_NN;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="class_trainer_settings.html">TrainerSettings</a>*               m_Settings;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    torch::Device                  m_Device = torch::Device(torch::kCPU);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    std::shared_ptr&lt;NeuralNetwork&gt;   m_NN;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    std::shared_ptr&lt;TrainerSettings&gt; m_Settings;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    torch::Device                    m_Device = torch::Device(torch::kCPU);</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;};</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclass_trainer_html"><div class="ttname"><a href="class_trainer.html">Trainer</a></div><div class="ttdoc">The Trainer serves as a way to train the network based on given settings.</div><div class="ttdef"><b>Definition:</b> train.hpp:15</div></div>
-<div class="ttc" id="aclass_trainer_html_a4e80af362519928e62a2220d5e906200"><div class="ttname"><a href="class_trainer.html#a4e80af362519928e62a2220d5e906200">Trainer::train</a></div><div class="ttdeci">std::filesystem::path train()</div><div class="ttdoc">Train the model.</div><div class="ttdef"><b>Definition:</b> train.cpp:56</div></div>
-<div class="ttc" id="aclass_trainer_html_aca26ae1a2050868beb86d9a905c09b6d"><div class="ttname"><a href="class_trainer.html#aca26ae1a2050868beb86d9a905c09b6d">Trainer::Trainer</a></div><div class="ttdeci">Trainer(TrainerSettings *settings)</div><div class="ttdoc">Construct a new Trainer.</div><div class="ttdef"><b>Definition:</b> train.cpp:7</div></div>
-<div class="ttc" id="aclass_trainer_html_aa3d993d1eb090f4111e12a710fe9d3f6"><div class="ttname"><a href="class_trainer.html#aa3d993d1eb090f4111e12a710fe9d3f6">Trainer::~Trainer</a></div><div class="ttdeci">~Trainer()</div><div class="ttdoc">Destroy the Trainer object.</div><div class="ttdef"><b>Definition:</b> train.cpp:21</div></div>
-<div class="ttc" id="aclass_trainer_settings_html"><div class="ttname"><a href="class_trainer_settings.html">TrainerSettings</a></div><div class="ttdef"><b>Definition:</b> trainerSettings.hpp:5</div></div>
+<div class="ttc" id="aclass_trainer_html_a4e80af362519928e62a2220d5e906200"><div class="ttname"><a href="class_trainer.html#a4e80af362519928e62a2220d5e906200">Trainer::train</a></div><div class="ttdeci">std::filesystem::path train()</div><div class="ttdoc">Train the model.</div><div class="ttdef"><b>Definition:</b> train.cpp:55</div></div>
+<div class="ttc" id="aclass_trainer_html_ade9b0981e45a90903927dd8cc4ab3c94"><div class="ttname"><a href="class_trainer.html#ade9b0981e45a90903927dd8cc4ab3c94">Trainer::Trainer</a></div><div class="ttdeci">Trainer(std::shared_ptr&lt; TrainerSettings &gt; settings)</div><div class="ttdoc">Construct a new Trainer.</div><div class="ttdef"><b>Definition:</b> train.cpp:7</div></div>
+<div class="ttc" id="aclass_trainer_html_aa3d993d1eb090f4111e12a710fe9d3f6"><div class="ttname"><a href="class_trainer.html#aa3d993d1eb090f4111e12a710fe9d3f6">Trainer::~Trainer</a></div><div class="ttdeci">~Trainer()</div><div class="ttdoc">Destroy the Trainer object.</div><div class="ttdef"><b>Definition:</b> train.cpp:20</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

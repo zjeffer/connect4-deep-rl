@@ -4,6 +4,6 @@ var searchData=
   ['tqdm_99',['tqdm',['../classtqdm.html',1,'']]],
   ['tqdm_2eh_100',['tqdm.h',['../tqdm_8h.html',1,'']]],
   ['train_101',['train',['../class_trainer.html#a4e80af362519928e62a2220d5e906200',1,'Trainer']]],
-  ['trainer_102',['Trainer',['../class_trainer.html',1,'Trainer'],['../class_trainer.html#aca26ae1a2050868beb86d9a905c09b6d',1,'Trainer::Trainer()']]],
+  ['trainer_102',['Trainer',['../class_trainer.html',1,'Trainer'],['../class_trainer.html#ade9b0981e45a90903927dd8cc4ab3c94',1,'Trainer::Trainer()']]],
   ['trainersettings_103',['TrainerSettings',['../class_trainer_settings.html',1,'']]]
 ];
