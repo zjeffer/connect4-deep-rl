@@ -64,7 +64,7 @@ void MCTS::addDirichletNoise(Node * root)
         float frac = 0.25;
         for (int i = 0; i < policy.size(0); i++)
         {
-            policy[i] = policy[i] * (1 - frac) + noise[i] * frac;
+            root->setPrior((policy[i] * (1 - frac) + noise[i] * frac).item<float>());
         }
     }
     else
