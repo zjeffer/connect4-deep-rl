@@ -1,8 +1,6 @@
 #include "node.hpp"
 
-#include <memory>
-
-Node::Node(std::shared_ptr<Node> parent, std::shared_ptr<Environment> env, int move, float prior)
+Node::Node(Node * parent, std::shared_ptr<Environment> env, int move, float prior)
   : m_Parent(parent)
   , m_Environment(env)
   , m_Move(move)
@@ -18,44 +16,50 @@ Node::Node(std::shared_ptr<Environment> env)
 
 Node::~Node() {}
 
-Node::Node(Node const & node)
-{
-    m_Parent      = node.m_Parent;
-    m_Environment = node.m_Environment;
-    m_Move        = node.m_Move;
-    m_Prior       = node.m_Prior;
-    m_Value       = node.m_Value;
-    m_Visits      = node.m_Visits;
-}
-
-std::vector<std::shared_ptr<Node>> const & Node::getChildren() const
+std::vector<std::unique_ptr<Node>> const & Node::getChildren() const
 {
     return m_Children;
 }
 
-std::shared_ptr<Node> Node::getChildAfterMove(int move)
+Node * Node::getChildAfterMove(int move)
 {
     for (auto const & node: m_Children)
     {
         if (node->getMove() == move)
         {
-            return node;
+            return node.get();
         }
     }
-    return std::shared_ptr<Node>(nullptr);
+    return nullptr;
 }
 
-void Node::addChild(std::shared_ptr<Node> child)
+void Node::addChild(std::unique_ptr<Node> child)
 {
     m_Children.emplace_back(std::move(child));
 }
 
-std::shared_ptr<Node> const & Node::getParent() const
+Node* Node::removeChild(std::unique_ptr<Node> const & child)
+{
+    Node * releasedChild = nullptr;
+    auto   found         = std::find_if(m_Children.begin(), m_Children.end(), [&](std::unique_ptr<Node> const & node) { return node == child; });
+    if (found != m_Children.end())
+    {
+        releasedChild = (*found).release();
+        m_Children.erase(found);
+    }
+    else
+    {
+        throw std::runtime_error("Could not remove child: child not in list of children");
+    }
+    return releasedChild;
+}
+
+Node * Node::getParent() const
 {
     return m_Parent;
 }
 
-void Node::setParent(std::shared_ptr<Node> parent)
+void Node::setParent(Node * parent)
 {
     m_Parent = parent;
 }

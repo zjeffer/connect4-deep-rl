@@ -1,15 +1,15 @@
 #include "mcts.hpp"
 
-MCTS::MCTS(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::shared_ptr<Node> root, std::shared_ptr<NeuralNetwork> const & nn)
+MCTS::MCTS(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::unique_ptr<Node> root, std::shared_ptr<NeuralNetwork> const & nn)
   : m_Settings(selfPlaySettings)
   , m_NN(nn)
 {
 
     if (root == nullptr)
     {
-        root = std::make_shared<Node>(std::make_shared<Environment>(selfPlaySettings->getRows(), selfPlaySettings->getCols()));
+        root = std::make_unique<Node>(std::make_shared<Environment>(selfPlaySettings->getRows(), selfPlaySettings->getCols()));
     }
-    setRoot(root);
+    setRoot(std::move(root));
 
     // uses torch::kCPU if useCUDA is false
     if (m_Settings->useCUDA())
@@ -20,20 +20,64 @@ MCTS::MCTS(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::shared_ptr<N
 
 MCTS::~MCTS() {}
 
-std::shared_ptr<Node> const & MCTS::getRoot() const
+std::unique_ptr<Node> const & MCTS::getRoot() const
 {
     return m_Root;
 }
 
-void MCTS::setRoot(std::shared_ptr<Node> const & root)
+void MCTS::setRoot(Node * newRoot)
 {
-    m_Root = root;
-    m_Root->setParent(std::shared_ptr<Node>(nullptr));
+    // release the child from previousNode where child == newroot
+    Node * previousNode = newRoot->getParent();
+    for (auto const & child: previousNode->getChildren())
+    {
+        if (child.get() == newRoot)
+        {
+            newRoot = previousNode->removeChild(child);
+            break;
+        }
+    }
+
+    // now we can reset the current root, deleting all unnecessary children
+    m_Root.reset();
+
+    // now set the new root
+    m_Root = std::unique_ptr<Node>(newRoot);
+    m_Root->setParent(nullptr);
+}
+
+void MCTS::setRoot(std::unique_ptr<Node> newRoot)
+{
+    m_Root = std::move(newRoot);
+    m_Root->setParent(nullptr);
+}
+
+void MCTS::addDirichletNoise(Node * root)
+{
+    if (root->getParent() == nullptr)
+    {
+        auto input  = m_NN->boardToInput(root->getEnvironment());
+        auto output = m_NN->predict(input);
+        auto policy = output.first.view({7});
+        // root node, add dirichlet noise to policy
+        auto noise = utils::calculateDirichletNoise(policy);
+        float frac = 0.25;
+        for (int i = 0; i < policy.size(0); i++)
+        {
+            policy[i] = policy[i] * (1 - frac) + noise[i] * frac;
+        }
+    }
+    else
+    {
+        LFATAL << "Root has parent, this shouldn't be the case when adding dirichlet noise";
+    }
 }
 
 void MCTS::run_simulations()
 {
-    std::shared_ptr<Node> root = getRoot();
+    Node* root = getRoot().get();
+
+    addDirichletNoise(root);
 
     int sims = m_Settings->getSimulations();
     LINFO << "Running " << sims << " simulations...\n";
@@ -42,7 +86,7 @@ void MCTS::run_simulations()
     {
         bar.progress(i, sims);
         // step 1: selection
-        std::shared_ptr<Node> selected = select(root);
+        Node * selected = select(root);
         // step 2 and 3: expansion and evaluation
         float result = expand(selected);
         // step 4: backpropagation
@@ -52,21 +96,21 @@ void MCTS::run_simulations()
     std::cout << std::endl;
 }
 
-std::shared_ptr<Node> MCTS::select(std::shared_ptr<Node> const & root)
+Node * MCTS::select(Node* root)
 {
     // keep selecting nodes using the Q+U formula
     // until we reach a node not yet expanded
-    std::shared_ptr<Node> current = root;
+    Node * current = root;
     while (current->getChildren().size() > 0)
     {
-        std::shared_ptr<Node> best_child = std::shared_ptr<Node>(nullptr);
-        float                 best_score = -2;
+        Node * best_child = nullptr;
+        float  best_score = -2;
         for (auto & child: current->getChildren())
         {
             float score = child->getQ() + child->getU();
             if (score > best_score)
             {
-                best_child = child;
+                best_child = child.get();
                 best_score = score;
             }
         }
@@ -79,10 +123,10 @@ std::shared_ptr<Node> MCTS::select(std::shared_ptr<Node> const & root)
     return current;
 }
 
-float MCTS::expand(std::shared_ptr<Node> & node)
+float MCTS::expand(Node * node)
 {
     // expand the node by adding a child for each possible move
-    std::shared_ptr<Environment> env = node->getEnvironment();
+    std::shared_ptr<Environment> const & env = node->getEnvironment();
 
     torch::Tensor                           input  = m_NN->boardToInput(env);
     std::pair<torch::Tensor, torch::Tensor> output = m_NN->predict(input);
@@ -91,18 +135,6 @@ float MCTS::expand(std::shared_ptr<Node> & node)
     torch::Tensor policy = output.first.view({7});
     // value output (= step 3: evaluation)
     float value = output.second.item<float>();
-
-    if (!node->getParent())
-    {
-        // root node, add dirichlet noise to policy
-        auto noise = utils::calculateDirichletNoise(policy);
-        LWARN << noise;
-        float frac = 0.25;
-        for (int i = 0; i < policy.size(0); i++)
-        {
-            policy[i] = policy[i] * (1 - frac) + noise[i] * frac;
-        }
-    }
 
     std::vector<int> valid_moves = env->getValidMoves();
     if (valid_moves.size() == 0)
@@ -122,17 +154,17 @@ float MCTS::expand(std::shared_ptr<Node> & node)
         std::shared_ptr<Environment> new_env = std::make_shared<Environment>(env);
         new_env->makeMove(move);
 
-        node->addChild(std::make_shared<Node>(node, std::move(new_env), move, policy[move].item<float>()));
+        node->addChild(std::make_unique<Node>(node, std::move(new_env), move, policy[move].item<float>()));
     }
 
     return value;
 }
 
-void MCTS::backpropagate(std::shared_ptr<Node> leaf, float result)
+void MCTS::backpropagate(Node * leaf, float result)
 {
     ePlayer player = leaf->getEnvironment()->getCurrentPlayer();
     // backpropagate the result to the root
-    std::shared_ptr<Node> current = leaf;
+    Node * current = leaf;
     while (current != nullptr)
     {
         current->incrementVisit();
@@ -155,7 +187,7 @@ int MCTS::getBestMoveDeterministic() const
     // get move where visits is highest
     float                                      max_visits = 0;
     int                                        max_index  = 0;
-    std::vector<std::shared_ptr<Node>> const & moves      = m_Root->getChildren();
+    std::vector<std::unique_ptr<Node>> const & moves      = m_Root->getChildren();
     for (int i = 0; i < (int)moves.size(); i++)
     {
         if (moves[i]->getVisits() > max_visits)
@@ -169,7 +201,7 @@ int MCTS::getBestMoveDeterministic() const
 
 int MCTS::getBestMoveStochastic() const
 {
-    std::vector<std::shared_ptr<Node>> const & children = m_Root->getChildren();
+    std::vector<std::unique_ptr<Node>> const & children = m_Root->getChildren();
     std::vector<int>                           moves;
     for (auto const & node: children)
     {
@@ -181,7 +213,7 @@ int MCTS::getBestMoveStochastic() const
     return children.at(index)->getMove();
 }
 
-int MCTS::getTreeDepth(std::shared_ptr<Node> const & root)
+int MCTS::getTreeDepth(std::unique_ptr<Node> const & root)
 {
     // recursive function of getting height of the tree
     if (root->getChildren().empty())

@@ -21,7 +21,7 @@ class MCTS
      * @param root: the Node where the tree starts from
      * @param nn: the neural network to use in the expand() method
      */
-    MCTS(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::shared_ptr<Node> root, std::shared_ptr<NeuralNetwork> const& nn);
+    MCTS(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::unique_ptr<Node> root, std::shared_ptr<NeuralNetwork> const & nn);
     ~MCTS();
 
     /**
@@ -37,7 +37,7 @@ class MCTS
      * @param root: the root node of the tree, where the selection will start.
      * @return Node*: the leaf node that has not yet been expanded
      */
-    std::shared_ptr<Node> select(std::shared_ptr<Node> & root);
+    Node * select(Node* root);
 
     /**
      * @brief The 2nd and 3rd steps of the MCTS algorithm: Expand the given leaf node
@@ -46,7 +46,7 @@ class MCTS
      * @param leaf: the leaf node found by the select() method
      * @return float: the value of the leaf node (from the NN)
      */
-    float expand(std::shared_ptr<Node> & node);
+    float expand(Node * node);
 
     /**
      * @brief The 4th and final step of the MCTS algorithm: Backpropagate the value
@@ -55,20 +55,23 @@ class MCTS
      * @param leaf: the bottom node to start from
      * @param result: the value to backpropagate
      */
-    void backpropagate(std::shared_ptr<Node> leaf, float result);
+    void backpropagate(Node * leaf, float result);
 
     /**
      * @brief Get the root node of the tree
      *
      * @return Node*
      */
-    std::shared_ptr<Node> const & getRoot() const;
+    std::unique_ptr<Node> const & getRoot() const;
     /**
      * @brief Set a new root Node
      *
      * @param root
      */
-    void setRoot(std::shared_ptr<Node> const & root);
+    void setRoot(Node * root);
+    void setRoot(std::unique_ptr<Node> root);
+
+    void addDirichletNoise(Node* root);
 
     /**
      * @brief After running simulations, get the root's best child node (deterministically).
@@ -90,12 +93,11 @@ class MCTS
      * @param root: the node to start counting from.
      * @return int: the depth of the tree from the given node to the end
      */
-    static int getTreeDepth(const std::shared_ptr<Node> & root);
+    static int getTreeDepth(std::unique_ptr<Node> const & root);
 
   private:
-    std::shared_ptr<SelfPlaySettings> m_Settings     = nullptr;
-    std::shared_ptr<Node>             m_Root         = nullptr;
-    std::shared_ptr<Node>             m_PreviousRoot = nullptr;
-    std::shared_ptr<NeuralNetwork>    m_NN           = nullptr;
-    torch::Device                     m_Device       = torch::kCPU;
+    std::shared_ptr<SelfPlaySettings> m_Settings = nullptr;
+    std::unique_ptr<Node>             m_Root     = nullptr;
+    std::shared_ptr<NeuralNetwork>    m_NN       = nullptr;
+    torch::Device                     m_Device   = torch::kCPU;
 };

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <optional>
+
 #include "../connect4/environment.hpp"
 
 /**
@@ -17,19 +20,16 @@ class Node
      * @param move: The action the previous Node made to get here
      * @param prior: The probability of the action
      */
-    Node(std::shared_ptr<Node> parent, std::shared_ptr<Environment> env, int move, float prior);
+    Node(Node * parent, std::shared_ptr<Environment> env, int move, float prior);
     /**
      * @brief Construct a new root node: no parent/move/prior.
      *
      * @param env: The environment
      */
     Node(std::shared_ptr<Environment> env);
-    /**
-     * @brief Copy constructor to copy a Node
-     *
-     * @param node: The node to copy
-     */
-    Node(Node const & node);
+
+    Node(Node const &);
+    Node & operator=(Node const &);
 
     /**
      * @brief Destroy the Node object
@@ -42,13 +42,14 @@ class Node
      *
      * @return Node*
      */
-    std::shared_ptr<Node> const & getParent() const;
+    Node * getParent() const;
+
     /**
      * @brief Change the Node's parent parent
      *
      * @param parent
      */
-    void setParent(std::shared_ptr<Node> parent);
+    void setParent(Node * parent);
 
     /**
      * @brief Get a vector of child nodes for this Node.
@@ -56,7 +57,7 @@ class Node
      *
      * @return const std::vector<std::unique_ptr<Node>>&
      */
-    std::vector<std::shared_ptr<Node>> const & getChildren() const;
+    std::vector<std::unique_ptr<Node>> const & getChildren() const;
 
     /**
      * @brief Get the child that resulted after making
@@ -65,14 +66,16 @@ class Node
      * @param move: the move which resulted in the child
      * @return std::shared_ptr<Node> const&: the child
      */
-    std::shared_ptr<Node> getChildAfterMove(int move);
+    Node * getChildAfterMove(int move);
 
     /**
      * @brief Add a new child to this Node. Moves unique_ptr's ownership.
      *
      * @param child
      */
-    void addChild(std::shared_ptr<Node> child);
+    void addChild(std::unique_ptr<Node> child);
+
+    Node* removeChild(std::unique_ptr<Node> const & child);
 
     /**
      * @brief Get this Node's environment.
@@ -141,8 +144,8 @@ class Node
     int getMove();
 
   private:
-    std::shared_ptr<Node>              m_Parent      = nullptr;
-    std::vector<std::shared_ptr<Node>> m_Children    = {};
+    Node *                             m_Parent      = nullptr;
+    std::vector<std::unique_ptr<Node>> m_Children    = {};
     std::shared_ptr<Environment>       m_Environment = nullptr;
     int                                m_Move        = -1;
     float                              m_Prior       = 0.0f;

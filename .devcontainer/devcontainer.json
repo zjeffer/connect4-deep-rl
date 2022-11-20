@@ -12,7 +12,8 @@
 		"GitHub.copilot",
 		"GitHub.vscode-pull-request-github",
 		"ms-vscode.cmake-tools",
-		"ms-vscode.cpptools-extension-pack"
+		"ms-vscode.cpptools-extension-pack",
+		"tdennis4496.cmantic"
 	],
 
 	"runArgs": [

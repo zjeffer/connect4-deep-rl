@@ -73,7 +73,7 @@ bool Game::playMove()
 
     if (m_PreviousMoves.first != -1 && m_PreviousMoves.second != -1)
     {
-        std::shared_ptr<Node> newRoot = mcts->getRoot()->getChildAfterMove(m_PreviousMoves.first);
+        Node * newRoot = mcts->getRoot()->getChildAfterMove(m_PreviousMoves.first);
         if (newRoot == nullptr)
         {
             LFATAL << "NewRoot after getting first child is null!";
@@ -83,16 +83,16 @@ bool Game::playMove()
         {
             LFATAL << "NewRoot after getting second child is null!";
         }
-        mcts->setRoot(std::move(newRoot));
+        mcts->setRoot(newRoot);
     }
     else
     {
-        mcts->setRoot(std::make_shared<Node>(m_Env));
+        mcts->setRoot(std::make_unique<Node>(m_Env));
     }
 
     mcts->run_simulations();
 
-    std::shared_ptr<Node> currentRoot = mcts->getRoot();
+    std::unique_ptr<Node> const & currentRoot = mcts->getRoot();
     // calculate average action-value of all actions in the root node
     float value = 0.0f;
     for (auto & node: currentRoot->getChildren())
