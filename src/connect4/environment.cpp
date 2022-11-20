@@ -9,8 +9,8 @@ Environment::Environment(int rows, int cols)
 
 Environment::Environment(torch::Tensor board, ePlayer currentPlayer)
   : m_Board(board.detach().clone())
-  , m_Rows(board.size(0))
-  , m_Cols(board.size(1))
+  , m_Rows(m_Board.size(0))
+  , m_Cols(m_Board.size(1))
   , m_CurrentPlayer(currentPlayer)
 {
 }
@@ -145,12 +145,12 @@ ePlayer Environment::getPlayerAtPiece(int row, int column) const
     return static_cast<ePlayer>(m_Board[row][column].item<int>());
 }
 
-torch::Tensor Environment::getBoard()
+torch::Tensor & Environment::getBoard()
 {
     return m_Board;
 }
 
-void Environment::setBoard(torch::Tensor board)
+void Environment::setBoard(const torch::Tensor & board)
 {
     m_Board = board.detach().clone();
     // set player according to amount of pieces

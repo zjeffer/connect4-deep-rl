@@ -22,7 +22,7 @@ class Agent
      * @param model_path: Path to the neural network
      * @param selfPlaySettings: other settings for selfplay
      */
-    Agent(std::string name, std::string model_path, SelfPlaySettings* selfPlaySettings);
+    Agent(std::string name, std::string model_path, std::shared_ptr<SelfPlaySettings> selfPlaySettings);
 
     /**
      * @brief Construct a new Agent with an already created neural network.
@@ -31,7 +31,7 @@ class Agent
      * @param nn A shared pointer to an alread loaded neural network.
      * @param selfPlaySettings: other settings for selfplay
      */
-    Agent(std::string name, std::shared_ptr<NeuralNetwork> nn, SelfPlaySettings* selfPlaySettings);
+    Agent(std::string name, std::shared_ptr<NeuralNetwork> nn, std::shared_ptr<SelfPlaySettings> selfPlaySettings);
 
     /**
      * @brief Destroy the Agent object
@@ -44,7 +44,7 @@ class Agent
      *
      * @return MCTS*
      */
-    [[nodiscard]] MCTS* getMCTS() const;
+    [[nodiscard]] std::shared_ptr<MCTS> getMCTS() const;
 
     /**
      * @brief Get the Agent's name
@@ -62,5 +62,5 @@ class Agent
   private:
     std::string                    m_Name;
     std::shared_ptr<NeuralNetwork> m_NN;
-    MCTS*                          m_MCTS;
+    std::shared_ptr<MCTS>          m_MCTS;
 };

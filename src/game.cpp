@@ -2,13 +2,13 @@
 
 #include "connect4/player.hpp"
 
-Game::Game(SelfPlaySettings* selfPlaySettings)
+Game::Game(std::shared_ptr<SelfPlaySettings> selfPlaySettings)
   : m_Settings(selfPlaySettings)
   , m_Env(std::make_shared<Environment>(m_Settings->getRows(), m_Settings->getCols()))
 {
 
     std::shared_ptr<NeuralNetwork> nn = std::make_shared<NeuralNetwork>(m_Settings);
-    for (auto& agentData: m_Settings->getAgents())
+    for (auto & agentData: m_Settings->getAgents())
     {
         m_Agents.push_back(std::make_shared<Agent>(agentData.name, nn, m_Settings));
     }
@@ -67,9 +67,9 @@ bool Game::playMove()
     std::cout << std::endl;
 
     // get agent
-    int currentAgent = m_Env->getCurrentPlayer() == ePlayer::YELLOW ? 0 : m_Env->getCurrentPlayer() == ePlayer::RED ? 1 : -1;
-    std::shared_ptr<Agent> agent = m_Agents.at(currentAgent);
-    MCTS*                  mcts  = agent->getMCTS();
+    int                    currentAgent = m_Env->getCurrentPlayer() == ePlayer::YELLOW ? 0 : m_Env->getCurrentPlayer() == ePlayer::RED ? 1 : -1;
+    std::shared_ptr<Agent> agent        = m_Agents.at(currentAgent);
+    std::shared_ptr<MCTS>  mcts         = agent->getMCTS();
 
     if (m_PreviousMoves.first != -1 && m_PreviousMoves.second != -1)
     {
@@ -95,7 +95,7 @@ bool Game::playMove()
     std::shared_ptr<Node> currentRoot = mcts->getRoot();
     // calculate average action-value of all actions in the root node
     float value = 0.0f;
-    for (auto& node: currentRoot->getChildren())
+    for (auto & node: currentRoot->getChildren())
     {
         float weight = (float)node->getVisits() / (float)currentRoot->getVisits();
         value += node->getQ() * weight;
@@ -107,7 +107,7 @@ bool Game::playMove()
 
     // print moves and their q + u values
     std::vector<float> moveProbs = std::vector<float>(m_Env->getCols(), 0.0f);
-    for (auto& child: currentRoot->getChildren())
+    for (auto & child: currentRoot->getChildren())
     {
         moveProbs[child->getMove()] = (float)child->getVisits() / (float)currentRoot->getVisits();
         if (m_Settings->showMoves())
@@ -149,7 +149,7 @@ bool Game::playMove()
 void Game::updateMemoryWithWinner(ePlayer winner)
 {
     // update memory with winner
-    for (MemoryElement& element: m_Memory)
+    for (MemoryElement & element: m_Memory)
     {
         element.winner = (winner == ePlayer::YELLOW) ? 1 : (winner == ePlayer::RED) ? -1 : 0;
     }

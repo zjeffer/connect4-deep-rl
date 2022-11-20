@@ -56,7 +56,7 @@ class InputParser
     std::vector<std::string> tokens;
 };
 
-[[noreturn]] void printUsage(std::string filename)
+[[noreturn]] void printUsage(std::string const& filename)
 {
     // print help and exit
     std::cout << "Usage: " << filename << " [options]" << std::endl;
@@ -75,12 +75,12 @@ class InputParser
     exit(EXIT_SUCCESS);
 }
 
-void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings* settings)
+void parseSelfPlayOptions(InputParser const& inputParser, std::shared_ptr<SelfPlaySettings> settings)
 {
     // set AI model
-    if (inputParser->cmdOptionExists("--model"))
+    if (inputParser.cmdOptionExists("--model"))
     {
-        settings->setModelPath(inputParser->getCmdOption("--model"));
+        settings->setModelPath(inputParser.getCmdOption("--model"));
     }
 
     // create/load model
@@ -99,11 +99,11 @@ void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings* settings)
     settings->addAgent("Red", modelPath, ePlayer::RED);
 
     // set #simulations per move
-    if (inputParser->cmdOptionExists("--sims"))
+    if (inputParser.cmdOptionExists("--sims"))
     {
         try
         {
-            int sims = std::stoi(inputParser->getCmdOption("--sims"));
+            int sims = std::stoi(inputParser.getCmdOption("--sims"));
             settings->setSimulations(sims);
             if (sims < 1)
             {
@@ -123,9 +123,9 @@ void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings* settings)
     settings->setMemoryFolder("memory");
     try
     {
-        if (inputParser->cmdOptionExists("--memory-folder"))
+        if (inputParser.cmdOptionExists("--memory-folder"))
         {
-            settings->setMemoryFolder(inputParser->getCmdOption("--memory-folder"));
+            settings->setMemoryFolder(inputParser.getCmdOption("--memory-folder"));
         }
     }
     catch (std::exception const& e)
@@ -135,9 +135,9 @@ void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings* settings)
     }
 
     // set amount of pipeline games
-    if (inputParser->cmdOptionExists("--pipeline"))
+    if (inputParser.cmdOptionExists("--pipeline"))
     {
-        std::string games = inputParser->getCmdOption("--pipeline");
+        std::string games = inputParser.getCmdOption("--pipeline");
         if (games.length() > 0 && !games.starts_with(("-")))
         {
             try
@@ -153,36 +153,36 @@ void parseSelfPlayOptions(InputParser* inputParser, SelfPlaySettings* settings)
     }
 }
 
-void runGame(SelfPlaySettings* settings, SelfPlayTally* tally)
+void runGame(std::shared_ptr<SelfPlaySettings> settings, SelfPlayTally& tally)
 {
     Game    game   = Game(settings);
     ePlayer winner = game.playGame();
     if (winner == ePlayer::NONE)
     {
-        tally->draws++;
+        tally.draws++;
     }
     else if (winner == ePlayer::YELLOW)
     {
-        tally->yellow++;
+        tally.yellow++;
     }
     else if (winner == ePlayer::RED)
     {
-        tally->red++;
+        tally.red++;
     }
     LINFO << "Winner: " << static_cast<int>(winner) << "\n";
     LINFO << "========= Tally:";
-    LINFO << "===== Yellow: " << tally->yellow;
-    LINFO << "===== Red: " << tally->red;
-    LINFO << "===== Draws: " << tally->draws;
+    LINFO << "===== Yellow: " << tally.yellow;
+    LINFO << "===== Red: " << tally.red;
+    LINFO << "===== Draws: " << tally.draws;
     LINFO << "===============  \n";
     LINFO << "\n\n\n";
 }
 
-void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
+void parseTrainingOptions(InputParser const& inputParser, std::shared_ptr<TrainerSettings> settings)
 {
-    if (inputParser->cmdOptionExists("--model"))
+    if (inputParser.cmdOptionExists("--model"))
     {
-        std::string modelPath = inputParser->getCmdOption("--model");
+        std::string modelPath = inputParser.getCmdOption("--model");
         if (std::filesystem::is_regular_file(modelPath) && modelPath.ends_with(".pt"))
         {
             settings->setModelPath(modelPath);
@@ -195,9 +195,9 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
 
     try
     {
-        if (inputParser->cmdOptionExists("--bs"))
+        if (inputParser.cmdOptionExists("--bs"))
         {
-            settings->setBatchSize(std::stoi(inputParser->getCmdOption("--bs")));
+            settings->setBatchSize(std::stoi(inputParser.getCmdOption("--bs")));
         }
     }
     catch (std::invalid_argument const& e)
@@ -207,9 +207,9 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
 
     try
     {
-        if (inputParser->cmdOptionExists("--lr"))
+        if (inputParser.cmdOptionExists("--lr"))
         {
-            settings->setLearningRate(std::stod(inputParser->getCmdOption("--lr")));
+            settings->setLearningRate(std::stod(inputParser.getCmdOption("--lr")));
         }
     }
     catch (std::invalid_argument const& e)
@@ -219,9 +219,9 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
 
     try
     {
-        if (inputParser->cmdOptionExists("--memory-folder"))
+        if (inputParser.cmdOptionExists("--memory-folder"))
         {
-            settings->setMemoryFolder(inputParser->getCmdOption("--memory-folder"));
+            settings->setMemoryFolder(inputParser.getCmdOption("--memory-folder"));
         }
     }
     catch (std::exception const& e)
@@ -231,9 +231,9 @@ void parseTrainingOptions(InputParser* inputParser, TrainerSettings* settings)
 
     try
     {
-        if (inputParser->cmdOptionExists("--epochs"))
+        if (inputParser.cmdOptionExists("--epochs"))
         {
-            settings->setEpochs(std::stoi(inputParser->getCmdOption("--epochs")));
+            settings->setEpochs(std::stoi(inputParser.getCmdOption("--epochs")));
         }
     }
     catch (std::exception const& e)
@@ -279,44 +279,43 @@ int main(int argc, char* argv[])
     if (inputParser.cmdOptionExists("--train"))
     {
         // parse settings
-        TrainerSettings trainerSettings = TrainerSettings();
-        parseTrainingOptions(&inputParser, &trainerSettings);
+        std::shared_ptr<TrainerSettings> trainerSettings = std::make_shared<TrainerSettings>();
+        parseTrainingOptions(inputParser, trainerSettings);
         // create trainer and train
-        Trainer trainer = Trainer(&trainerSettings);
+        Trainer trainer = Trainer(trainerSettings);
         trainer.train();
         return 0;
     }
     else
     { // selfplay
-        SelfPlaySettings selfPlaySettings = SelfPlaySettings();
-        parseSelfPlayOptions(&inputParser, &selfPlaySettings);
+        std::shared_ptr<SelfPlaySettings> selfPlaySettings = std::make_shared<SelfPlaySettings>();
+        parseSelfPlayOptions(inputParser, selfPlaySettings);
+        SelfPlayTally tally;
 
         if (inputParser.cmdOptionExists("--pipeline"))
         {
             // run full pipeline with selfplay & training
-
-            LINFO << "Running full pipeline with " << selfPlaySettings.getPipelineGames() << " games...";
-            TrainerSettings trainerSettings = TrainerSettings();
-            parseTrainingOptions(&inputParser, &trainerSettings);
+            LINFO << "Running full pipeline with " << selfPlaySettings->getPipelineGames() << " games...";
+            std::shared_ptr<TrainerSettings> trainerSettings = std::make_shared<TrainerSettings>();
+            parseTrainingOptions(inputParser, trainerSettings);
 
             while (g_Running)
             {
                 LINFO << "Running selfplay...";
-                SelfPlayTally tally = SelfPlayTally();
-                for (int gameCount = 1; gameCount <= selfPlaySettings.getPipelineGames(); gameCount++)
+                for (int gameCount = 1; gameCount <= selfPlaySettings->getPipelineGames(); gameCount++)
                 {
                     LINFO << "\n\n\tStarting game " << gameCount << "...\n";
-                    runGame(&selfPlaySettings, &tally);
+                    runGame(selfPlaySettings, tally);
                 }
+
                 LINFO << "Training new model...";
                 // train with these games
-
-                Trainer               trainer          = Trainer(&trainerSettings);
+                Trainer               trainer          = Trainer(trainerSettings);
                 std::filesystem::path trainedModelName = trainer.train();
 
                 // move memory to old/ folder
                 LINFO << "Moving old games...";
-                std::filesystem::path memoryFolder = selfPlaySettings.getMemoryFolder();
+                std::filesystem::path memoryFolder = selfPlaySettings->getMemoryFolder();
                 std::filesystem::path oldFolder    = std::filesystem::path(memoryFolder).append("old");
                 assert(memoryFolder.string() != oldFolder.string());
                 if (!std::filesystem::exists(oldFolder))
@@ -339,7 +338,7 @@ int main(int argc, char* argv[])
 
                 // move old model to old/ folder
                 LINFO << "Moving old model...";
-                std::filesystem::path modelPath = std::filesystem::path(selfPlaySettings.getModelPath());
+                std::filesystem::path modelPath = std::filesystem::path(selfPlaySettings->getModelPath());
                 if (modelPath.string().starts_with("./"))
                 {
                     modelPath = modelPath.string().substr(2);
@@ -354,8 +353,8 @@ int main(int argc, char* argv[])
                 std::filesystem::rename(modelPath, oldModelPath);
 
                 LINFO << "Setting new model path to " << trainedModelName;
-                trainerSettings.setModelPath(trainedModelName);
-                selfPlaySettings.setModelPath(trainedModelName);
+                trainerSettings->setModelPath(trainedModelName);
+                selfPlaySettings->setModelPath(trainedModelName);
                 // save new model
                 LINFO << "Saving new model...";
             }
@@ -363,10 +362,9 @@ int main(int argc, char* argv[])
         else
         {
             // run games infinitely
-            SelfPlayTally tally;
             while (g_Running)
             {
-                runGame(&selfPlaySettings, &tally);
+                runGame(selfPlaySettings, tally);
             }
         }
     }

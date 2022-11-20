@@ -48,6 +48,6 @@ class C4Dataset : public torch::data::datasets::Dataset<C4Dataset>
     torch::optional<size_t> size() const override;
 
   private:
-    std::vector<Data> m_Data;
-    TrainerSettings*  m_Settings;
+    std::vector<Data>                m_Data;
+    TrainerSettings* m_Settings;
 };

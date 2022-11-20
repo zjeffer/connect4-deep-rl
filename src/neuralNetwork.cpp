@@ -1,15 +1,9 @@
 #include "neuralNetwork.hpp"
 
-NeuralNetwork::NeuralNetwork(Settings* selfPlaySettings)
+NeuralNetwork::NeuralNetwork(std::shared_ptr<Settings> selfPlaySettings)
+  : m_Settings(selfPlaySettings)
+  , m_Net(Network(m_Settings->getInputPlanes(), m_Settings->getRows(), m_Settings->getCols(), m_Settings->getOutputSize(), 256, 2, 1))
 {
-    m_Settings = selfPlaySettings;
-    m_Net      = Network(selfPlaySettings->getInputPlanes(),
-                                      selfPlaySettings->getRows(),
-                                      selfPlaySettings->getCols(),
-                                      selfPlaySettings->getOutputSize(),
-                                      256,
-                                      2,
-                                      1);
     if (m_Settings->useCUDA())
     {
         m_Device = torch::Device(torch::kCUDA);
@@ -29,7 +23,7 @@ Network NeuralNetwork::getNetwork() const
     return m_Net;
 }
 
-torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, ePlayer player, int inputPlanes)
+torch::Tensor NeuralNetwork::boardToInput(torch::Tensor const & board, ePlayer player, int inputPlanes)
 {
     // Create input tensor
     int           rows  = board.size(0);
@@ -54,23 +48,28 @@ torch::Tensor NeuralNetwork::boardToInput(torch::Tensor board, ePlayer player, i
             }
         }
     }
-    if (player == ePlayer::YELLOW){
+    if (player == ePlayer::YELLOW)
+    {
         input[2] = torch::full({rows, cols}, 1);
-    } else if (player == ePlayer::RED){
+    }
+    else if (player == ePlayer::RED)
+    {
         input[2] = torch::full({rows, cols}, 2);
-    } else{
+    }
+    else
+    {
         LFATAL << "Player is not yellow or red!";
     }
 
     return input.unsqueeze(0);
 }
 
-torch::Tensor NeuralNetwork::boardToInput(std::shared_ptr<Environment> const& env)
+torch::Tensor NeuralNetwork::boardToInput(std::shared_ptr<Environment> const & env)
 {
-    return NeuralNetwork::boardToInput(env->getBoard().detach().clone(), env->getCurrentPlayer(), m_Settings->getInputPlanes()).to(m_Device);
+    return NeuralNetwork::boardToInput(env->getBoard(), env->getCurrentPlayer(), m_Settings->getInputPlanes()).to(m_Device);
 }
 
-std::pair<torch::Tensor, torch::Tensor> NeuralNetwork::predict(torch::Tensor& input)
+std::pair<torch::Tensor, torch::Tensor> NeuralNetwork::predict(torch::Tensor & input)
 {
     return m_Net->forward(input);
 }
@@ -83,7 +82,7 @@ bool NeuralNetwork::loadModel(std::string path)
         LINFO << "Loading model from: " << path;
         torch::load(this->m_Net, path);
     }
-    catch (std::exception const& e)
+    catch (std::exception const & e)
     {
         LWARN << "Error loading model: " << e.what();
         return false;
@@ -112,7 +111,7 @@ std::filesystem::path NeuralNetwork::saveModel(std::filesystem::path path)
         torch::save(this->m_Net, path);
         LINFO << "Saved model to: " << path;
     }
-    catch (std::exception const& e)
+    catch (std::exception const & e)
     {
         LWARN << "Error saving model: " << e.what();
         exit(EXIT_FAILURE);

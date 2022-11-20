@@ -5,8 +5,8 @@
 #include <ATen/ops/tensor.h>
 
 C4Dataset::C4Dataset(TrainerSettings* settings)
+  : m_Settings(settings)
 {
-    m_Settings = settings;
     // load data from the memory folder
     if (!loadData(m_Settings->getMemoryFolder()))
     {
@@ -53,7 +53,7 @@ bool C4Dataset::loadData(std::string folder)
                 torch::Tensor board = torch::from_blob(element.board.data(), {rows, cols}, opts);
 
                 // convert the board to an input for the neural network
-                ePlayer player = element.currentPlayer == 1 ? ePlayer::YELLOW : element.currentPlayer == 2 ? ePlayer::RED : ePlayer::NONE;
+                ePlayer       player = element.currentPlayer == 1 ? ePlayer::YELLOW : element.currentPlayer == 2 ? ePlayer::RED : ePlayer::NONE;
                 torch::Tensor input  = NeuralNetwork::boardToInput(board, player, inputPlanes).squeeze();
                 // convert the list of all moves and the final winner to an output for the neural network
                 torch::Tensor output = utils::moveListToOutputs(element.moveList, element.winner);

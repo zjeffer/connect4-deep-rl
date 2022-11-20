@@ -29,7 +29,7 @@ class Node
      *
      * @param node: The node to copy
      */
-    Node(Node const& node);
+    Node(Node const & node);
 
     /**
      * @brief Destroy the Node object
@@ -42,7 +42,7 @@ class Node
      *
      * @return Node*
      */
-    std::shared_ptr<Node> getParent() const;
+    std::shared_ptr<Node> const & getParent() const;
     /**
      * @brief Change the Node's parent parent
      *
@@ -56,10 +56,10 @@ class Node
      *
      * @return const std::vector<std::unique_ptr<Node>>&
      */
-    std::vector<std::shared_ptr<Node>> const& getChildren() const;
+    std::vector<std::shared_ptr<Node>> const & getChildren() const;
 
     /**
-     * @brief Get the child that resulted after making 
+     * @brief Get the child that resulted after making
      * the given move from the current node
      *
      * @param move: the move which resulted in the child
@@ -79,7 +79,7 @@ class Node
      *
      * @return std::shared_ptr<Environment>
      */
-    std::shared_ptr<Environment> getEnvironment() const;
+    std::shared_ptr<Environment> const & getEnvironment() const;
 
     /**
      * @brief Increment the visit count for this Node.

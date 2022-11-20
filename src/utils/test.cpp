@@ -78,7 +78,7 @@ void testDiagonalWin()
 
 void testEasyPuzzle()
 {
-    SelfPlaySettings* settings = new SelfPlaySettings();
+    std::shared_ptr<SelfPlaySettings> settings = std::make_shared<SelfPlaySettings>();
     settings->addAgent("Yellow", "models/model.pt", ePlayer::YELLOW);
     settings->addAgent("Red", "models/model.pt", ePlayer::RED);
 
@@ -90,7 +90,12 @@ void testEasyPuzzle()
 
     // for debugging purposes: try pre-configured board
     std::vector<uint8_t> data = {
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, //
+      0, 0, 0, 0, 0, 0, 0, //
+      0, 0, 0, 0, 0, 0, 0, //
+      0, 0, 0, 0, 0, 0, 0, //
+      0, 2, 2, 2, 0, 0, 0, //
+      0, 1, 1, 1, 0, 0, 0  //
     };
     auto          options = torch::TensorOptions().dtype(torch::kInt8);
     torch::Tensor board   = torch::from_blob(data.data(), {settings->getRows(), settings->getCols()}, options);

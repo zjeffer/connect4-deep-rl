@@ -20,7 +20,7 @@ class Trainer
      *
      * @param settings
      */
-    Trainer(TrainerSettings* settings);
+    Trainer(std::shared_ptr<TrainerSettings> settings);
 
     /**
      * @brief Destroy the Trainer object
@@ -36,7 +36,7 @@ class Trainer
     std::filesystem::path train();
 
   private:
-    std::shared_ptr<NeuralNetwork> m_NN;
-    TrainerSettings*               m_Settings;
-    torch::Device                  m_Device = torch::Device(torch::kCPU);
+    std::shared_ptr<NeuralNetwork>   m_NN;
+    std::shared_ptr<TrainerSettings> m_Settings;
+    torch::Device                    m_Device = torch::Device(torch::kCPU);
 };

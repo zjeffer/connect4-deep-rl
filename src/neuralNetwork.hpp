@@ -18,7 +18,7 @@
 class NeuralNetwork
 {
   public:
-    NeuralNetwork(Settings* selfPlaySettings);
+    NeuralNetwork(std::shared_ptr<Settings> selfPlaySettings);
     ~NeuralNetwork();
 
     /**
@@ -29,7 +29,7 @@ class NeuralNetwork
      * @param inputPlanes
      * @return torch::Tensor
      */
-    static torch::Tensor boardToInput(torch::Tensor board, ePlayer player, int inputPlanes);
+    static torch::Tensor boardToInput(torch::Tensor const & board, ePlayer player, int inputPlanes);
 
     /**
      * @brief Convert the given environment's board to an input state.
@@ -37,7 +37,7 @@ class NeuralNetwork
      * @param env
      * @return torch::Tensor
      */
-    torch::Tensor boardToInput(std::shared_ptr<Environment> const& env);
+    torch::Tensor boardToInput(std::shared_ptr<Environment> const & env);
 
     /**
      * @brief Run inference on the network
@@ -45,7 +45,7 @@ class NeuralNetwork
      * @param input: the input to give the network
      * @return std::pair<torch::Tensor, torch::Tensor>: two outputs: policy & value output
      */
-    std::pair<torch::Tensor, torch::Tensor> predict(torch::Tensor& input);
+    std::pair<torch::Tensor, torch::Tensor> predict(torch::Tensor & input);
 
     /**
      * @brief Load the weights into the network.
@@ -71,7 +71,7 @@ class NeuralNetwork
     Network getNetwork() const;
 
   private:
-    torch::Device m_Device   = torch::Device(torch::kCPU);
-    Network       m_Net      = nullptr;
-    Settings*     m_Settings = nullptr;
+    torch::Device             m_Device   = torch::Device(torch::kCPU);
+    std::shared_ptr<Settings> m_Settings = nullptr;
+    Network                   m_Net      = nullptr;
 };

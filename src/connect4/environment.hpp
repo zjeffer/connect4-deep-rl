@@ -115,14 +115,14 @@ class Environment
      *
      * @return torch::Tensor
      */
-    [[nodiscard]] torch::Tensor getBoard();
+    [[nodiscard]] torch::Tensor & getBoard();
 
     /**
      * @brief Set the board
      *
      * @param board
      */
-    void setBoard(torch::Tensor board);
+    void setBoard(const torch::Tensor & board);
 
     /**
      * @brief Get the vector of possible moves in the current position.

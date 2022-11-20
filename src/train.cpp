@@ -4,10 +4,9 @@
 
 #include "utils/utils.hpp"
 
-Trainer::Trainer(TrainerSettings* settings)
+Trainer::Trainer(std::shared_ptr<TrainerSettings> settings)
+  : m_Settings(settings)
 {
-    m_Settings = settings;
-
     // if useCUDA is false, it will use the CPU instead.
     if (m_Settings->useCUDA())
     {
@@ -23,7 +22,7 @@ Trainer::~Trainer()
     // std::cout << "Trainer destructor" << std::endl;
 }
 
-std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor, torch::Tensor> const& outputs, torch::Tensor const& target)
+std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor, torch::Tensor> const & outputs, torch::Tensor const & target)
 {
     torch::Tensor policy_output = std::get<0>(outputs);
     torch::Tensor value_output  = std::get<1>(outputs);
@@ -56,7 +55,7 @@ std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor,
 std::filesystem::path Trainer::train()
 {
     // load data
-    C4Dataset dataset    = C4Dataset(m_Settings);
+    C4Dataset dataset    = C4Dataset(m_Settings.get());
     int       batch_size = m_Settings->getBatchSize();
 
     // create data loader

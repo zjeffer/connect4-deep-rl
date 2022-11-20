@@ -13,10 +13,10 @@
 class Game
 {
   private:
-    SelfPlaySettings*            m_Settings      = nullptr;
-    std::shared_ptr<Environment> m_Env           = nullptr;
-    std::string                  m_GameID        = "";
-    std::pair<int, int>          m_PreviousMoves = std::make_pair<int, int>(-1, -1);
+    std::shared_ptr<SelfPlaySettings> m_Settings      = nullptr;
+    std::shared_ptr<Environment>      m_Env           = nullptr;
+    std::string                       m_GameID        = "";
+    std::pair<int, int>               m_PreviousMoves = std::make_pair<int, int>(-1, -1);
 
     std::vector<std::shared_ptr<Agent>> m_Agents = std::vector<std::shared_ptr<Agent>>();
 
@@ -28,7 +28,7 @@ class Game
      *
      * @param selfPlaySettings
      */
-    Game(SelfPlaySettings* selfPlaySettings);
+    Game(std::shared_ptr<SelfPlaySettings> selfPlaySettings);
 
     /**
      * @brief Destroy the Game object
