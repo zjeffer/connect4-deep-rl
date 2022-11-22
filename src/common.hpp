@@ -20,4 +20,5 @@ inline std::uniform_int_distribution<int> g_UniformIntDist;
 // the random engine for all random generation
 inline std::default_random_engine g_Generator;
 // gamma distribution to add dirichlet noise
-inline std::gamma_distribution<double> g_GammaDist(0.5, 1.0);
+inline std::gamma_distribution<double> g_GammaDist(1.5, 1.0);
+inline float cpuct = 4.0f;

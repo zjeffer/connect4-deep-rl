@@ -112,8 +112,8 @@ float Node::getU() const
     }
     // uses the PUCT formula based on AlphaZero's paper and pseudocode
     float exp_rate = log((m_Parent->getVisits() + 19652.0f + 1.0f) / 19652.0f) + 1.25f;
-    exp_rate *= sqrt((float)m_Parent->getVisits()) / ((float)m_Visits + 1.0f);
-    return exp_rate * this->m_Prior;
+    exp_rate *= sqrt((float)m_Parent->getVisits()) / ((float)m_Visits + 1e-3);
+    return cpuct * exp_rate * this->m_Prior;
 }
 
 int Node::getMove()

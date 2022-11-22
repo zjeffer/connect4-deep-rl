@@ -11,7 +11,6 @@ C4Dataset::C4Dataset(TrainerSettings* settings)
     if (!loadData(m_Settings->getMemoryFolder()))
     {
         LFATAL << "Failed to load data from " << m_Settings->getMemoryFolder();
-        exit(EXIT_FAILURE);
     }
 }
 
@@ -29,12 +28,10 @@ bool C4Dataset::loadData(std::string folder)
             if (!utils::readMemoryElementsFromFile(elements, file.path()))
             {
                 LFATAL << "Failed to read memory elements from " << file.path();
-                exit(EXIT_FAILURE);
             }
             if (elements.size() == 0)
             {
                 LFATAL << "No memory elements in " << file.path();
-                exit(EXIT_FAILURE);
             }
             // convert MemoryElements to Data
             auto opts = torch::TensorOptions().dtype(torch::kUInt8);

@@ -61,10 +61,14 @@ void MCTS::addDirichletNoise(Node * root)
         auto policy = output.first.view({7});
         // root node, add dirichlet noise to policy
         auto noise = utils::calculateDirichletNoise(policy);
-        float frac = 0.25;
+        float frac = 0.40;
         for (int i = 0; i < policy.size(0); i++)
         {
+            std::stringstream ss;
+            ss << "Prior " << i << ": " << policy[i].item<float>();
             root->setPrior((policy[i] * (1 - frac) + noise[i] * frac).item<float>());
+            ss << "\t => \t" << root->getPrior();
+            LDEBUG << ss.str();
         }
     }
     else
@@ -77,6 +81,7 @@ void MCTS::run_simulations()
 {
     Node* root = getRoot().get();
 
+    // TODO: only add this in selfplay
     addDirichletNoise(root);
 
     int sims = m_Settings->getSimulations();

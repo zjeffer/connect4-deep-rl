@@ -54,7 +54,6 @@ ePlayer Game::playGame()
         if (!saveMemoryToFile())
         {
             LFATAL << "Could not save memory to file";
-            exit(EXIT_FAILURE);
         }
     }
 
@@ -130,7 +129,6 @@ bool Game::playMove()
         if ((int)element.board.size() != m_Env->getRows() * m_Env->getCols())
         {
             LFATAL << "Memory element has no board";
-            exit(EXIT_FAILURE);
         }
     }
 
@@ -143,7 +141,9 @@ bool Game::playMove()
     m_PreviousMoves.first  = m_PreviousMoves.second;
     m_PreviousMoves.second = bestMove;
 
+    std::cout << "\n==============================================\n" << std::endl;
     return !m_Env->hasValidMoves() || m_Env->currentPlayerHasConnected4();
+
 }
 
 void Game::updateMemoryWithWinner(ePlayer winner)

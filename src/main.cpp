@@ -131,7 +131,6 @@ void parseSelfPlayOptions(InputParser const& inputParser, std::shared_ptr<SelfPl
     catch (std::exception const& e)
     {
         LFATAL << "Invalid memory folder: " << e.what();
-        exit(EXIT_FAILURE);
     }
 
     // set amount of pipeline games

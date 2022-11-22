@@ -35,7 +35,6 @@ void Environment::newEnvironment(int rows, int cols)
     {
         LFATAL << "Invalid width and/or height. Must both be greater or "
                       "equal to 4.";
-        exit(EXIT_FAILURE);
     }
     m_Board         = torch::zeros({rows, cols});
     m_Rows          = rows;
@@ -79,14 +78,12 @@ void Environment::makeMove(int column)
         // out of bounds
         LWARN << m_Board;
         LFATAL << "Out of bounds: " << e.what();
-        exit(EXIT_FAILURE);
     }
 
     // fill cell with currentPlayer's piece
     if (m_Board[row][column].item<int>() != 0)
     {
         LFATAL << "Error: cell is already filled";
-        exit(EXIT_FAILURE);
     }
     m_Board[row][column] = static_cast<int>(m_CurrentPlayer);
     m_BoardHistory.push_back(Cell{row, column, m_CurrentPlayer});
@@ -289,7 +286,6 @@ ePlayer Environment::getWinner() const
 void Environment::print()
 {
     std::stringstream ss;
-    ss << "Current player: " << static_cast<int>(m_CurrentPlayer);
     ss << "\nBoard: \n";
     try
     {
@@ -325,8 +321,8 @@ void Environment::print()
     catch (std::runtime_error& e)
     {
         LFATAL << "Error in Environment::print(): " << e.what();
-        exit(EXIT_FAILURE);
     }
+    ss << "Current player: " << static_cast<int>(m_CurrentPlayer);
     LINFO << ss.str();
 }
 

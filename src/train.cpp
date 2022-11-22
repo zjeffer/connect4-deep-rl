@@ -39,7 +39,6 @@ std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor,
     {
         LWARN << policy_output;
         LFATAL << "Policy output contains nans";
-        exit(EXIT_FAILURE);
     }
 
     policy_output = policy_output.view({size, policySize});

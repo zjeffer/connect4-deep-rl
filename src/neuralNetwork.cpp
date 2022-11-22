@@ -113,8 +113,7 @@ std::filesystem::path NeuralNetwork::saveModel(std::filesystem::path path)
     }
     catch (std::exception const & e)
     {
-        LWARN << "Error saving model: " << e.what();
-        exit(EXIT_FAILURE);
+        LFATAL << "Error saving model: " << e.what();
     }
     return path;
 }
