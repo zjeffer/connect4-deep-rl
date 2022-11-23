@@ -20,4 +20,6 @@ void testStochasticDistribution();
 
 void testReadAndWriteMemoryElement();
 
+void runTests();
+
 } // namespace Test

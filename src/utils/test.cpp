@@ -185,4 +185,13 @@ void testReadAndWriteMemoryElement()
     std::cout << "Test complete" << std::endl;
 }
 
+void runTests() {
+	Test::testHorizontalWin();
+    Test::testVerticalWin();
+    Test::testDiagonalWin();
+    Test::testEasyPuzzle();
+    Test::testStochasticDistribution();
+    Test::testReadAndWriteMemoryElement();
+}
+
 } // namespace Test

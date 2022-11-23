@@ -10,6 +10,7 @@
 #include "common.hpp"
 #include "game.hpp"
 #include "train.hpp"
+#include "utils/inputParser.hpp"
 #include "utils/selfPlaySettings.hpp"
 #include "utils/test.hpp"
 #include "utils/trainerSettings.hpp"
@@ -21,42 +22,7 @@ void signal_handling(int signal)
     g_Running = false;
 }
 
-// argument parsing (https://stackoverflow.com/a/868894/10180569)
-class InputParser
-{
-  public:
-    InputParser(int& argc, char** argv)
-    {
-        for (int i = 1; i < argc; ++i)
-        {
-            this->tokens.push_back(std::string(argv[i]));
-        }
-    }
-
-    /// @author iain
-    std::string const& getCmdOption(std::string const& option) const
-    {
-        std::vector<std::string>::const_iterator itr;
-        itr = std::find(this->tokens.begin(), this->tokens.end(), option);
-        if (itr != this->tokens.end() && ++itr != this->tokens.end())
-        {
-            return *itr;
-        }
-        static const std::string empty_string("");
-        return empty_string;
-    }
-
-    /// @author iain
-    bool cmdOptionExists(std::string const& option) const
-    {
-        return std::find(this->tokens.begin(), this->tokens.end(), option) != this->tokens.end();
-    }
-
-  private:
-    std::vector<std::string> tokens;
-};
-
-[[noreturn]] void printUsage(std::string const& filename)
+[[noreturn]] void printUsage(std::string const & filename)
 {
     // print help and exit
     std::cout << "Usage: " << filename << " [options]" << std::endl;
@@ -75,7 +41,7 @@ class InputParser
     exit(EXIT_SUCCESS);
 }
 
-void parseSelfPlayOptions(InputParser const& inputParser, std::shared_ptr<SelfPlaySettings> settings)
+void parseSelfPlayOptions(InputParser const & inputParser, std::shared_ptr<SelfPlaySettings> settings)
 {
     // set AI model
     if (inputParser.cmdOptionExists("--model"))
@@ -112,7 +78,7 @@ void parseSelfPlayOptions(InputParser const& inputParser, std::shared_ptr<SelfPl
                   "to 1");
             }
         }
-        catch (std::invalid_argument& e)
+        catch (std::invalid_argument & e)
         {
             std::cerr << "Invalid argument for --sims: " << e.what() << std::endl;
             exit(EXIT_FAILURE);
@@ -128,7 +94,7 @@ void parseSelfPlayOptions(InputParser const& inputParser, std::shared_ptr<SelfPl
             settings->setMemoryFolder(inputParser.getCmdOption("--memory-folder"));
         }
     }
-    catch (std::exception const& e)
+    catch (std::exception const & e)
     {
         LFATAL << "Invalid memory folder: " << e.what();
     }
@@ -144,7 +110,7 @@ void parseSelfPlayOptions(InputParser const& inputParser, std::shared_ptr<SelfPl
                 settings->setPipelineGames(std::stoi(games));
                 LINFO << "Pipeline: " << settings->getPipelineGames() << " games.";
             }
-            catch (std::invalid_argument const& e)
+            catch (std::invalid_argument const & e)
             {
                 LWARN << "Invalid amount of games: " << e.what();
             }
@@ -152,7 +118,71 @@ void parseSelfPlayOptions(InputParser const& inputParser, std::shared_ptr<SelfPl
     }
 }
 
-void runGame(std::shared_ptr<SelfPlaySettings> settings, SelfPlayTally& tally)
+void parseTrainingOptions(InputParser const & inputParser, std::shared_ptr<TrainerSettings> settings)
+{
+    if (inputParser.cmdOptionExists("--model"))
+    {
+        std::string modelPath = inputParser.getCmdOption("--model");
+        if (std::filesystem::is_regular_file(modelPath) && modelPath.ends_with(".pt"))
+        {
+            settings->setModelPath(modelPath);
+        }
+        else
+        {
+            LFATAL << "Model file invalid: " << modelPath;
+        }
+    }
+
+    try
+    {
+        if (inputParser.cmdOptionExists("--bs"))
+        {
+            settings->setBatchSize(std::stoi(inputParser.getCmdOption("--bs")));
+        }
+    }
+    catch (std::invalid_argument const & e)
+    {
+        LFATAL << "Invalid batch size: " << e.what();
+    }
+
+    try
+    {
+        if (inputParser.cmdOptionExists("--lr"))
+        {
+            settings->setLearningRate(std::stod(inputParser.getCmdOption("--lr")));
+        }
+    }
+    catch (std::invalid_argument const & e)
+    {
+        LFATAL << "Invalid learning rate: " << e.what();
+    }
+
+    try
+    {
+        if (inputParser.cmdOptionExists("--memory-folder"))
+        {
+            settings->setMemoryFolder(inputParser.getCmdOption("--memory-folder"));
+        }
+    }
+    catch (std::exception const & e)
+    {
+        LFATAL << "Invalid memory folder: " << e.what();
+    }
+
+    try
+    {
+        if (inputParser.cmdOptionExists("--epochs"))
+        {
+            settings->setEpochs(std::stoi(inputParser.getCmdOption("--epochs")));
+        }
+    }
+    catch (std::exception const & e)
+    {
+        LFATAL << "Invalid amount of epochs: " << e.what();
+    }
+}
+
+void runGame(std::shared_ptr<SelfPlaySettings> settings, SelfPlayTally & tally)
 {
     Game    game   = Game(settings);
     ePlayer winner = game.playGame();
@@ -177,71 +207,67 @@ void runGame(std::shared_ptr<SelfPlaySettings> settings, SelfPlayTally& tally)
     LINFO << "\n\n\n";
 }
 
-void parseTrainingOptions(InputParser const& inputParser, std::shared_ptr<TrainerSettings> settings)
+void runPipeline(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::shared_ptr<TrainerSettings> trainerSettings, SelfPlayTally & tally)
 {
-    if (inputParser.cmdOptionExists("--model"))
+    LINFO << "Running selfplay...";
+    for (int gameCount = 1; gameCount <= selfPlaySettings->getPipelineGames(); gameCount++)
     {
-        std::string modelPath = inputParser.getCmdOption("--model");
-        if (std::filesystem::is_regular_file(modelPath) && modelPath.ends_with(".pt"))
+        LINFO << "\n\n\tStarting game " << gameCount << "...\n";
+        runGame(selfPlaySettings, tally);
+    }
+
+    LINFO << "Training new model...";
+    // train with these games
+    Trainer               trainer          = Trainer(trainerSettings);
+    std::filesystem::path trainedModelName = trainer.train();
+
+    // move memory to old/ folder
+    LINFO << "Moving old games...";
+    std::filesystem::path memoryFolder = selfPlaySettings->getMemoryFolder();
+    std::filesystem::path oldFolder    = std::filesystem::path(memoryFolder).append("old");
+    assert(memoryFolder.string() != oldFolder.string());
+    if (!std::filesystem::exists(oldFolder))
+    {
+        std::filesystem::create_directory(oldFolder);
+    }
+    for (auto & p: std::filesystem::directory_iterator(memoryFolder))
+    {
+        if (p.path().extension() == ".bin")
         {
-            settings->setModelPath(modelPath);
-        }
-        else
-        {
-            LFATAL << "Model file invalid: " << modelPath;
+            // move to old folder
+            std::filesystem::path newPath = oldFolder / p.path().filename().string();
+            std::filesystem::rename(p.path(), newPath);
         }
     }
 
-    try
-    {
-        if (inputParser.cmdOptionExists("--bs"))
-        {
-            settings->setBatchSize(std::stoi(inputParser.getCmdOption("--bs")));
-        }
-    }
-    catch (std::invalid_argument const& e)
-    {
-        LFATAL << "Invalid batch size: " << e.what();
-    }
+    // TODO: evaluate with older model
+    // LINFO << "Evaluating against old model...";
+    // TODO: keep model with best performance
 
-    try
+    // move old model to old/ folder
+    LINFO << "Moving old model...";
+    std::filesystem::path modelPath = std::filesystem::path(selfPlaySettings->getModelPath());
+    if (modelPath.string().starts_with("./"))
     {
-        if (inputParser.cmdOptionExists("--lr"))
-        {
-            settings->setLearningRate(std::stod(inputParser.getCmdOption("--lr")));
-        }
+        modelPath = modelPath.string().substr(2);
     }
-    catch (std::invalid_argument const& e)
+    std::filesystem::path modelFolder  = modelPath.parent_path();
+    std::filesystem::path oldModelPath = std::filesystem::path(modelFolder).append("old").append(modelPath.filename().string());
+    if (!std::filesystem::exists(oldModelPath.parent_path()))
     {
-        LFATAL << "Invalid learning rate: " << e.what();
+        std::filesystem::create_directory(oldModelPath.parent_path());
     }
+    LINFO << "Moving " << modelPath << " to " << oldModelPath;
+    std::filesystem::rename(modelPath, oldModelPath);
 
-    try
-    {
-        if (inputParser.cmdOptionExists("--memory-folder"))
-        {
-            settings->setMemoryFolder(inputParser.getCmdOption("--memory-folder"));
-        }
-    }
-    catch (std::exception const& e)
-    {
-        LFATAL << "Invalid memory folder: " << e.what();
-    }
-
-    try
-    {
-        if (inputParser.cmdOptionExists("--epochs"))
-        {
-            settings->setEpochs(std::stoi(inputParser.getCmdOption("--epochs")));
-        }
-    }
-    catch (std::exception const& e)
-    {
-        LFATAL << "Invalid amount of epochs: " << e.what();
-    }
+    LINFO << "Setting new model path to " << trainedModelName;
+    trainerSettings->setModelPath(trainedModelName);
+    selfPlaySettings->setModelPath(trainedModelName);
+    // save new model
+    LINFO << "Saving new model...";
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char * argv[])
 {
     // signal handling
     signal(SIGINT, signal_handling);
@@ -265,12 +291,7 @@ int main(int argc, char* argv[])
     // test
     if (inputParser.cmdOptionExists("--test"))
     {
-        Test::testHorizontalWin();
-        Test::testVerticalWin();
-        Test::testDiagonalWin();
-        Test::testEasyPuzzle();
-        Test::testStochasticDistribution();
-        Test::testReadAndWriteMemoryElement();
+        Test::runTests();
         exit(EXIT_SUCCESS);
     }
 
@@ -286,7 +307,8 @@ int main(int argc, char* argv[])
         return 0;
     }
     else
-    { // selfplay
+    {
+        // selfplay
         std::shared_ptr<SelfPlaySettings> selfPlaySettings = std::make_shared<SelfPlaySettings>();
         parseSelfPlayOptions(inputParser, selfPlaySettings);
         SelfPlayTally tally;
@@ -300,62 +322,7 @@ int main(int argc, char* argv[])
 
             while (g_Running)
             {
-                LINFO << "Running selfplay...";
-                for (int gameCount = 1; gameCount <= selfPlaySettings->getPipelineGames(); gameCount++)
-                {
-                    LINFO << "\n\n\tStarting game " << gameCount << "...\n";
-                    runGame(selfPlaySettings, tally);
-                }
-
-                LINFO << "Training new model...";
-                // train with these games
-                Trainer               trainer          = Trainer(trainerSettings);
-                std::filesystem::path trainedModelName = trainer.train();
-
-                // move memory to old/ folder
-                LINFO << "Moving old games...";
-                std::filesystem::path memoryFolder = selfPlaySettings->getMemoryFolder();
-                std::filesystem::path oldFolder    = std::filesystem::path(memoryFolder).append("old");
-                assert(memoryFolder.string() != oldFolder.string());
-                if (!std::filesystem::exists(oldFolder))
-                {
-                    std::filesystem::create_directory(oldFolder);
-                }
-                for (auto& p: std::filesystem::directory_iterator(memoryFolder))
-                {
-                    if (p.path().extension() == ".bin")
-                    {
-                        // move to old folder
-                        std::filesystem::path newPath = oldFolder / p.path().filename().string();
-                        std::filesystem::rename(p.path(), newPath);
-                    }
-                }
-
-                // TODO: evaluate with older model
-                // LINFO << "Evaluating against old model...";
-                // TODO: keep model with best performance
-
-                // move old model to old/ folder
-                LINFO << "Moving old model...";
-                std::filesystem::path modelPath = std::filesystem::path(selfPlaySettings->getModelPath());
-                if (modelPath.string().starts_with("./"))
-                {
-                    modelPath = modelPath.string().substr(2);
-                }
-                std::filesystem::path modelFolder  = modelPath.parent_path();
-                std::filesystem::path oldModelPath = std::filesystem::path(modelFolder).append("old").append(modelPath.filename().string());
-                if (!std::filesystem::exists(oldModelPath.parent_path()))
-                {
-                    std::filesystem::create_directory(oldModelPath.parent_path());
-                }
-                LINFO << "Moving " << modelPath << " to " << oldModelPath;
-                std::filesystem::rename(modelPath, oldModelPath);
-
-                LINFO << "Setting new model path to " << trainedModelName;
-                trainerSettings->setModelPath(trainedModelName);
-                selfPlaySettings->setModelPath(trainedModelName);
-                // save new model
-                LINFO << "Saving new model...";
+                runPipeline(selfPlaySettings, trainerSettings, tally);
             }
         }
         else
