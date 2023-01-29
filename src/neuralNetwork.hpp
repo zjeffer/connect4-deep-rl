@@ -6,7 +6,7 @@
 #include "common.hpp"
 #include "connect4/environment.hpp"
 #include "neuralNetwork/network.hpp"
-#include "utils/selfPlaySettings.hpp"
+#include "utils/settings.hpp"
 #include "utils/utils.hpp"
 
 /**
@@ -18,7 +18,7 @@
 class NeuralNetwork
 {
   public:
-    NeuralNetwork(std::shared_ptr<Settings> selfPlaySettings);
+    NeuralNetwork(std::shared_ptr<Settings> settings);
     ~NeuralNetwork();
 
     /**
@@ -53,7 +53,7 @@ class NeuralNetwork
      * @param modelPath: path to the saved weights
      * @return true if successful
      */
-    bool loadModel(std::string modelPath);
+    bool loadModel(std::filesystem::path path);
 
     /**
      * @brief Save the model's weights to a file
@@ -68,7 +68,7 @@ class NeuralNetwork
      *
      * @return Network
      */
-    Network getNetwork() const;
+    Network getNetwork();
 
   private:
     torch::Device             m_Device   = torch::Device(torch::kCPU);

@@ -14,9 +14,9 @@ namespace utils
 
 std::string getTimeString()
 {
-    time_t     rawtime;
-    struct tm* timeinfo;
-    char       buffer[80];
+    time_t      rawtime;
+    struct tm * timeinfo;
+    char        buffer[80];
 
     time(&rawtime);
     timeinfo = localtime(&rawtime);
@@ -46,7 +46,7 @@ std::vector<uint8_t> boardToVector(torch::Tensor tensor)
     return board;
 }
 
-torch::Tensor moveListToOutputs(std::vector<float> const& moveList, float const& value)
+torch::Tensor moveListToOutputs(std::vector<float> const & moveList, float const & value)
 {
     // concat all move probabilities into one tensor, and add the value to the end
     torch::Tensor outputs = torch::zeros({(int)moveList.size() + 1});
@@ -59,29 +59,51 @@ torch::Tensor moveListToOutputs(std::vector<float> const& moveList, float const&
 }
 
 template<typename T>
-void writeVectorToFile(std::vector<T> const& vector, std::ofstream& file)
+void writeVectorToFile(std::vector<T> const & vector, std::ofstream & file)
 {
-    typename std::vector<T>::size_type size = vector.size();
-    file.write(reinterpret_cast<char const*>(&size), sizeof(size));
-    file.write(reinterpret_cast<char const*>(vector.data()), sizeof(T) * size);
+    try
+    {
+        typename std::vector<T>::size_type size = vector.size();
+        if (size < 0 || size > 1000000)
+        {
+            throw std::runtime_error("Writing vector to file: size is unrealistic: ");
+        }
+        file.write(reinterpret_cast<char const *>(&size), sizeof(size));
+        file.write(reinterpret_cast<char const *>(vector.data()), sizeof(T) * size);
+    }
+    catch (std::exception & e)
+    {
+        LFATAL << "Exception while writing vector to file: " << e.what();
+    }
 }
 
 template<typename T>
-void readVectorFromFile(std::vector<T>& vector, std::ifstream& file)
+void readVectorFromFile(std::vector<T> & vector, std::ifstream & file)
 {
-    typename std::vector<T>::size_type size;
-    file.read(reinterpret_cast<char*>(&size), sizeof(size));
-    vector.resize(size);
-    file.read(reinterpret_cast<char*>(vector.data()), sizeof(T) * size);
+    try
+    {
+        typename std::vector<T>::size_type size;
+        file.read(reinterpret_cast<char *>(&size), sizeof(size));
+        if (size <= 0 || size > 1000000)
+        {
+            throw std::runtime_error("Reading vector from file: size is unrealistic: ");
+        }
+        vector.resize(size);
+        file.read(reinterpret_cast<char *>(vector.data()), sizeof(T) * size);
+    }
+    catch (std::exception & e)
+    {
+        LFATAL << "Exception while reading vector from file: " << e.what();
+    }
 }
 
-bool writeMemoryElementsToFile(std::vector<MemoryElement>& elements, std::filesystem::path const& filepath)
+bool writeMemoryElementsToFile(std::vector<MemoryElement> const & elements, std::filesystem::path const & filepath)
 {
     std::ofstream file(filepath, std::ios::out | std::ios::binary);
     int           i = 0;
     if (file.is_open())
     {
-        for (auto const& element: elements)
+        for (auto const & element: elements)
         {
             if (element.board.empty())
             {
@@ -89,9 +111,9 @@ bool writeMemoryElementsToFile(std::vector<MemoryElement>& elements, std::filesy
             }
 
             writeVectorToFile<uint8_t>(element.board, file);
-            file.write((char*)&element.currentPlayer, sizeof(element.currentPlayer));
+            file.write((char *)&element.currentPlayer, sizeof(element.currentPlayer));
             writeVectorToFile<float>(element.moveList, file);
-            file.write((char*)&element.winner, sizeof(element.winner));
+            file.write((char *)&element.winner, sizeof(element.winner));
 
             i++;
         }
@@ -101,32 +123,29 @@ bool writeMemoryElementsToFile(std::vector<MemoryElement>& elements, std::filesy
     return false;
 }
 
-bool readMemoryElementsFromFile(std::vector<MemoryElement>& elements, std::filesystem::path const& filepath)
+std::vector<MemoryElement> readMemoryElementsFromFile(std::filesystem::path const & filepath)
 {
-    std::ifstream file(filepath, std::ios::in | std::ios::binary);
-    int           i = 0;
+    std::vector<MemoryElement> elements{};
+    std::ifstream              file(filepath, std::ios::in | std::ios::binary);
     if (file.is_open())
     {
         while (!file.eof())
         {
             MemoryElement element;
             readVectorFromFile<uint8_t>(element.board, file);
-            file.read((char*)&element.currentPlayer, sizeof(element.currentPlayer));
+            file.read((char *)&element.currentPlayer, sizeof(element.currentPlayer));
             readVectorFromFile<float>(element.moveList, file);
-            file.read((char*)&element.winner, sizeof(element.winner));
-
-            if (element.board.empty())
-            {
-                LWARN << "Element " << i << " is empty";
-                exit(1);
-            }
+            file.read((char *)&element.winner, sizeof(element.winner));
 
             elements.push_back(element);
-            i++;
+
+            if (file.peek() == EOF)
+                break;
         }
-        return true;
+        return elements;
     }
-    return false;
+    LFATAL << "Could not open file " << filepath;
+    return {};
 }
 
 std::string getDirectoryFromFilename(std::string filename)
@@ -138,7 +157,7 @@ std::string getDirectoryFromFilename(std::string filename)
     return filename.substr(0, filename.find_last_of("/"));
 }
 
-void writeLossToCSV(std::string filename, LossHistory& lossHistory)
+void writeLossToCSV(std::string filename, LossHistory & lossHistory)
 {
     if (!filename.ends_with((".csv")))
     {
@@ -165,7 +184,7 @@ void writeLossToCSV(std::string filename, LossHistory& lossHistory)
     file.close();
 }
 
-void createLossGraph(std::string filename, LossHistory& lossHistory)
+void createLossGraph(std::string filename, LossHistory & lossHistory)
 {
     // TODO
     (void)filename;
@@ -188,7 +207,7 @@ std::vector<float> sampleFromGamma(int size)
     return samples;
 }
 
-std::vector<float> calculateDirichletNoise(torch::Tensor const& root_priors)
+std::vector<float> calculateDirichletNoise(torch::Tensor const & root_priors)
 {
     std::vector<float> dirichletNoiseVector;
 

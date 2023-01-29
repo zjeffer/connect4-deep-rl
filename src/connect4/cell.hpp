@@ -30,21 +30,21 @@ class Cell
      *
      * @return const int&
      */
-    [[nodiscard]] int const& getRow() const;
+    int const& getRow() const;
 
     /**
      * @brief Get the cell's column
      *
      * @return const int&
      */
-    [[nodiscard]] int const& getCol() const;
+    int const& getCol() const;
 
     /**
      * @brief Get the Player
      *
      * @return ePlayer
      */
-    [[nodiscard]] ePlayer getPlayer() const;
+    ePlayer getPlayer() const;
 
     /**
      * @brief Set the Player

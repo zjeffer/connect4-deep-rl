@@ -4,7 +4,6 @@
 
 #include "common.hpp"
 #include "neuralNetwork.hpp"
-#include "utils/trainerSettings.hpp"
 #include "utils/types.hpp"
 
 // represent one sample of data
@@ -22,7 +21,7 @@ class C4Dataset : public torch::data::datasets::Dataset<C4Dataset>
      *
      * @param settings
      */
-    explicit C4Dataset(TrainerSettings* settings);
+    explicit C4Dataset(Settings* settings);
 
     /**
      * @brief Load data into the dataset from a given folder
@@ -30,7 +29,7 @@ class C4Dataset : public torch::data::datasets::Dataset<C4Dataset>
      * @param folder: the folder where the .bin files are located
      * @return true on success
      */
-    bool loadData(std::string folder);
+    bool loadData(std::filesystem::path folder);
 
     /**
      * @brief Override the torch getter to get a single data sample
@@ -49,5 +48,5 @@ class C4Dataset : public torch::data::datasets::Dataset<C4Dataset>
 
   private:
     std::vector<Data>                m_Data;
-    TrainerSettings* m_Settings;
+    Settings* m_Settings;
 };

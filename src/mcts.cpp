@@ -1,13 +1,13 @@
 #include "mcts.hpp"
 
-MCTS::MCTS(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::unique_ptr<Node> root, std::shared_ptr<NeuralNetwork> const & nn)
-  : m_Settings(selfPlaySettings)
+MCTS::MCTS(std::shared_ptr<Settings> settings, std::unique_ptr<Node> root, std::shared_ptr<NeuralNetwork> const & nn)
+  : m_Settings(settings)
   , m_NN(nn)
 {
 
     if (root == nullptr)
     {
-        root = std::make_unique<Node>(std::make_shared<Environment>(selfPlaySettings->getRows(), selfPlaySettings->getCols()));
+        root = std::make_unique<Node>(std::make_shared<Environment>(m_Settings->getRows(), m_Settings->getCols()));
     }
     setRoot(std::move(root));
 
@@ -18,7 +18,9 @@ MCTS::MCTS(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::unique_ptr<N
     }
 }
 
-MCTS::~MCTS() {}
+MCTS::~MCTS() {
+    LDEBUG << "Destroying MCTS";
+}
 
 std::unique_ptr<Node> const & MCTS::getRoot() const
 {
@@ -77,19 +79,18 @@ void MCTS::addDirichletNoise(Node * root)
     }
 }
 
-void MCTS::run_simulations()
+void MCTS::run_simulations(int simulations)
 {
     Node* root = getRoot().get();
 
     // TODO: only add this in selfplay
     addDirichletNoise(root);
 
-    int sims = m_Settings->getSimulations();
-    LINFO << "Running " << sims << " simulations...\n";
+    LINFO << "Running " << simulations << " simulations...\n";
     tqdm bar;
-    for (int i = 0; i < sims && g_Running; i++)
+    for (int i = 0; i < simulations && g_Running; i++)
     {
-        bar.progress(i, sims);
+        bar.progress(i, simulations);
         // step 1: selection
         Node * selected = select(root);
         // step 2 and 3: expansion and evaluation

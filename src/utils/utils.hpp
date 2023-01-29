@@ -42,8 +42,8 @@ void writeVectorToFile(std::vector<T>& vector, std::ofstream& file);
 template<typename T>
 void readVectorFromFile(std::vector<T>& vector, std::ifstream& file);
 
-bool writeMemoryElementsToFile(std::vector<MemoryElement>& elements, std::filesystem::path const& filepath);
-bool readMemoryElementsFromFile(std::vector<MemoryElement>& elements, std::filesystem::path const& filepath);
+bool writeMemoryElementsToFile(std::vector<MemoryElement> const & elements, std::filesystem::path const & filepath);
+std::vector<MemoryElement> readMemoryElementsFromFile(std::filesystem::path const & filepath);
 
 /**
  * @brief Extract the directory from the given filename

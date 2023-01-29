@@ -2,7 +2,7 @@
 
 #include "dataset.hpp"
 #include "neuralNetwork.hpp"
-#include "utils/trainerSettings.hpp"
+#include "utils/settings.hpp"
 
 using DataLoader =
   torch::data::StatelessDataLoader<torch::data::datasets::MapDataset<C4Dataset, torch::data::transforms::Stack<torch::data::Example<at::Tensor, at::Tensor>>>,
@@ -20,7 +20,7 @@ class Trainer
      *
      * @param settings
      */
-    Trainer(std::shared_ptr<TrainerSettings> settings);
+    Trainer(std::shared_ptr<Settings> settings);
 
     /**
      * @brief Destroy the Trainer object
@@ -36,7 +36,7 @@ class Trainer
     std::filesystem::path train();
 
   private:
-    std::shared_ptr<NeuralNetwork>   m_NN;
-    std::shared_ptr<TrainerSettings> m_Settings;
-    torch::Device                    m_Device = torch::Device(torch::kCPU);
+    std::shared_ptr<Settings>      m_Settings;
+    std::unique_ptr<NeuralNetwork> m_NN;
+    torch::Device                  m_Device = torch::Device(torch::kCPU);
 };

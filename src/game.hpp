@@ -3,7 +3,7 @@
 #include "agent.hpp"
 #include "common.hpp"
 #include "connect4/environment.hpp"
-#include "utils/selfPlaySettings.hpp"
+#include "utils/settings.hpp"
 #include "utils/types.hpp"
 
 /**
@@ -13,7 +13,7 @@
 class Game
 {
   private:
-    std::shared_ptr<SelfPlaySettings> m_Settings      = nullptr;
+    std::shared_ptr<Settings> m_Settings      = nullptr;
     std::shared_ptr<Environment>      m_Env           = nullptr;
     std::string                       m_GameID        = "";
     std::pair<int, int>               m_PreviousMoves = std::make_pair<int, int>(-1, -1);
@@ -24,11 +24,12 @@ class Game
 
   public:
     /**
-     * @brief Construct a new Game based on the givenselfplay settings
-     *
-     * @param selfPlaySettings
+     * @brief Construct a new game with a given pair of agents
+     * 
+     * @param settings 
+     * @param agents the two agents who should play against each other
      */
-    Game(std::shared_ptr<SelfPlaySettings> selfPlaySettings);
+    Game(std::shared_ptr<Settings> settings, std::pair<std::shared_ptr<Agent>, std::shared_ptr<Agent>> const & agents);
 
     /**
      * @brief Destroy the Game object
@@ -78,4 +79,5 @@ class Game
      * @return std::shared_ptr<Environment>
      */
     std::shared_ptr<Environment> getEnvironment() const;
+
 };

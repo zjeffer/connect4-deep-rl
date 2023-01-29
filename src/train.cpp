@@ -4,7 +4,7 @@
 
 #include "utils/utils.hpp"
 
-Trainer::Trainer(std::shared_ptr<TrainerSettings> settings)
+Trainer::Trainer(std::shared_ptr<Settings> settings)
   : m_Settings(settings)
 {
     // if useCUDA is false, it will use the CPU instead.
@@ -14,12 +14,12 @@ Trainer::Trainer(std::shared_ptr<TrainerSettings> settings)
     }
 
     // load the neural network based on the given settings
-    m_NN = std::make_shared<NeuralNetwork>(m_Settings);
+    m_NN = std::make_unique<NeuralNetwork>(m_Settings);
 }
 
 Trainer::~Trainer()
 {
-    // std::cout << "Trainer destructor" << std::endl;
+    LDEBUG << "Trainer destructor" << std::endl;
 }
 
 std::tuple<torch::Tensor, torch::Tensor> loss_function(std::tuple<torch::Tensor, torch::Tensor> const & outputs, torch::Tensor const & target)

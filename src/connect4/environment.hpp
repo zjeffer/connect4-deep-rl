@@ -49,7 +49,7 @@ class Environment
      *
      * @return ePlayer
      */
-    [[nodiscard]] ePlayer getCurrentPlayer() const;
+    ePlayer getCurrentPlayer() const;
 
     /**
      * @brief Set the current player
@@ -85,21 +85,21 @@ class Environment
      * @param column: the column to put the piece in
      * @return bool
      */
-    [[nodiscard]] bool isValidMove(int column) const;
+    bool isValidMove(int column) const;
 
     /**
      * @brief Get the amount of rows
      *
      * @return int
      */
-    [[nodiscard]] int getRows() const;
+    int getRows() const;
 
     /**
      * @brief Get the amount of columns
      *
      * @return int
      */
-    [[nodiscard]] int getCols() const;
+    int getCols() const;
 
     /**
      * @brief Get the player of a specific cell
@@ -108,7 +108,7 @@ class Environment
      * @param column: the cell's column
      * @return ePlayer
      */
-    [[nodiscard]] ePlayer getPlayerAtPiece(int row, int column) const;
+    ePlayer getPlayerAtPiece(int row, int column) const;
 
     /**
      * @brief Get the board
@@ -137,21 +137,21 @@ class Environment
      *
      * @return true if the player won.
      */
-    [[nodiscard]] bool currentPlayerHasConnected4() const;
+    bool currentPlayerHasConnected4() const;
 
     /**
      * @brief Return true if there are columns that are not full.
      *
      * @return bool
      */
-    [[nodiscard]] bool hasValidMoves() const;
+    bool hasValidMoves() const;
 
     /**
      * @brief If there is a winner, return it.
      *
      * @return ePlayer: returns ePlayer::None if no winner
      */
-    [[nodiscard]] ePlayer getWinner() const;
+    ePlayer getWinner() const;
 
     /**
      * @brief Print the current board

@@ -78,15 +78,16 @@ void testDiagonalWin()
 
 void testEasyPuzzle()
 {
-    std::shared_ptr<SelfPlaySettings> settings = std::make_shared<SelfPlaySettings>();
-    settings->addAgent("Yellow", "models/model.pt", ePlayer::YELLOW);
-    settings->addAgent("Red", "models/model.pt", ePlayer::RED);
+    std::shared_ptr<Settings> settings = std::make_shared<Settings>();
+    std::shared_ptr<NeuralNetwork> nn = std::make_shared<NeuralNetwork>(settings);
+    std::shared_ptr<Agent> yellow = std::make_shared<Agent>("yellow", nn, settings);
+    std::shared_ptr<Agent> red = std::make_shared<Agent>("red", nn, settings);
 
     settings->setSimulations(1000);
     settings->setStochastic(false);
     settings->setShowMoves(true);
     settings->setSaveMemory(false);
-    Game game = Game(settings);
+    Game game = Game(settings, std::pair(yellow, red));
 
     // for debugging purposes: try pre-configured board
     std::vector<uint8_t> data = {
@@ -166,10 +167,9 @@ void testReadAndWriteMemoryElement()
     element2.winner        = static_cast<uint8_t>(ePlayer::YELLOW);
 
     std::vector<MemoryElement> elements = {element, element2};
-    utils::writeMemoryElementsToFile(elements, "test/test.bin");
+    utils::writeMemoryElementsToFile(elements, std::filesystem::path("test/test.bin"));
 
-    std::vector<MemoryElement> readElements;
-    utils::readMemoryElementsFromFile(readElements, "test/test.bin");
+    std::vector<MemoryElement> readElements = utils::readMemoryElementsFromFile(std::filesystem::path("test/test.bin"));
 
     int i = 0;
     std::cout << std::endl;

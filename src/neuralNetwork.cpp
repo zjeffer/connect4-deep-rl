@@ -1,24 +1,24 @@
 #include "neuralNetwork.hpp"
 
-NeuralNetwork::NeuralNetwork(std::shared_ptr<Settings> selfPlaySettings)
-  : m_Settings(selfPlaySettings)
+NeuralNetwork::NeuralNetwork(std::shared_ptr<Settings> settings)
+  : m_Settings(settings)
   , m_Net(Network(m_Settings->getInputPlanes(), m_Settings->getRows(), m_Settings->getCols(), m_Settings->getOutputSize(), 256, 2, 1))
 {
     if (m_Settings->useCUDA())
     {
         m_Device = torch::Device(torch::kCUDA);
     }
-    loadModel(selfPlaySettings->getModelPath());
+    loadModel(settings->getModelPath());
     m_Net->eval();
     m_Net->to(m_Device);
 }
 
 NeuralNetwork::~NeuralNetwork()
 {
-    // std::cout << "NeuralNetwork destructor" << std::endl;
+    LDEBUG << "Destroying NeuralNetwork";
 }
 
-Network NeuralNetwork::getNetwork() const
+Network NeuralNetwork::getNetwork()
 {
     return m_Net;
 }
@@ -74,10 +74,15 @@ std::pair<torch::Tensor, torch::Tensor> NeuralNetwork::predict(torch::Tensor & i
     return m_Net->forward(input);
 }
 
-bool NeuralNetwork::loadModel(std::string path)
+bool NeuralNetwork::loadModel(std::filesystem::path path)
 {
     try
     {
+        if (!std::filesystem::exists(path)){
+            LWARN << "Model not found, creating a new one with the given name";
+            std::filesystem::create_directories(std::filesystem::path(path).parent_path());
+            torch::save(this->m_Net, path);
+        }
         // load model from path
         LINFO << "Loading model from: " << path;
         torch::load(this->m_Net, path);

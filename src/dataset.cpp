@@ -4,7 +4,7 @@
 #include "utils/utils.hpp"
 #include <ATen/ops/tensor.h>
 
-C4Dataset::C4Dataset(TrainerSettings* settings)
+C4Dataset::C4Dataset(Settings * settings)
   : m_Settings(settings)
 {
     // load data from the memory folder
@@ -14,52 +14,57 @@ C4Dataset::C4Dataset(TrainerSettings* settings)
     }
 }
 
-bool C4Dataset::loadData(std::string folder)
+bool C4Dataset::loadData(std::filesystem::path folder)
 {
     int rows        = m_Settings->getRows();
     int cols        = m_Settings->getCols();
     int inputPlanes = m_Settings->getInputPlanes();
     // read data from the given folder into the m_Data vector
-    for (auto& file: std::filesystem::directory_iterator(folder))
+    // try
+    // {
+    for (auto const & file: std::filesystem::directory_iterator(folder))
     {
-        if (file.path().extension() == ".bin")
+        if (file.path().extension() != ".bin")
+            continue;
+
+        LDEBUG << "Loading file " << file.path();
+        std::vector<MemoryElement> elements = utils::readMemoryElementsFromFile(file.path());
+        if (elements.size() == 0)
         {
-            std::vector<MemoryElement> elements;
-            if (!utils::readMemoryElementsFromFile(elements, file.path()))
+            LFATAL << "No memory elements in " << file.path();
+        }
+        // convert MemoryElements to Data
+        auto opts = torch::TensorOptions().dtype(torch::kUInt8);
+        for (auto & element: elements)
+        {
+            if (element.board.size() == 0)
             {
-                LFATAL << "Failed to read memory elements from " << file.path();
+                LWARN << "Empty board in " << file.path();
+                LDEBUG << "board: " << element.board;
+                LDEBUG << "currentPlayer: " << element.currentPlayer;
+                LDEBUG << "moveList: " << element.moveList;
+                LDEBUG << "winner: " << element.winner;
+                exit(1);
             }
-            if (elements.size() == 0)
-            {
-                LFATAL << "No memory elements in " << file.path();
-            }
-            // convert MemoryElements to Data
-            auto opts = torch::TensorOptions().dtype(torch::kUInt8);
-            for (auto& element: elements)
-            {
-                if (element.board.size() == 0)
-                {
-                    LWARN << "Empty board in " << file.path();
-                    LDEBUG << "board: " << element.board;
-                    LDEBUG << "currentPlayer: " << element.currentPlayer;
-                    LDEBUG << "moveList: " << element.moveList;
-                    LDEBUG << "winner: " << element.winner;
-                    exit(1);
-                }
-                // load the board from the int vector
-                torch::Tensor board = torch::from_blob(element.board.data(), {rows, cols}, opts);
+            // load the board from the int vector
+            torch::Tensor board = torch::from_blob(element.board.data(), {rows, cols}, opts);
 
-                // convert the board to an input for the neural network
-                ePlayer       player = element.currentPlayer == 1 ? ePlayer::YELLOW : element.currentPlayer == 2 ? ePlayer::RED : ePlayer::NONE;
-                torch::Tensor input  = NeuralNetwork::boardToInput(board, player, inputPlanes).squeeze();
-                // convert the list of all moves and the final winner to an output for the neural network
-                torch::Tensor output = utils::moveListToOutputs(element.moveList, element.winner);
+            // convert the board to an input for the neural network
+            ePlayer       player = element.currentPlayer == 1 ? ePlayer::YELLOW : element.currentPlayer == 2 ? ePlayer::RED : ePlayer::NONE;
+            torch::Tensor input  = NeuralNetwork::boardToInput(board, player, inputPlanes).squeeze();
+            // convert the list of all moves and the final winner to an output for the neural network
+            torch::Tensor output = utils::moveListToOutputs(element.moveList, element.winner);
 
-                // add the input & output to the dataset
-                m_Data.push_back(std::make_pair(input, output));
-            }
+            // add the input & output to the dataset
+            m_Data.push_back(std::make_pair(input, output));
         }
     }
+    // }
+    // catch (std::exception & e)
+    // {
+    //     LWARN << "Failed to load data from " << folder << ": " << e.what();
+    //     return false;
+    // }
     return true;
 }
 

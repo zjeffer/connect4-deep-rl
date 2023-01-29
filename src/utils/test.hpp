@@ -3,7 +3,7 @@
 #include "../common.hpp"
 #include "../connect4/environment.hpp"
 #include "../game.hpp"
-#include "selfPlaySettings.hpp"
+#include "settings.hpp"
 
 namespace Test
 {

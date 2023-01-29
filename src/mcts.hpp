@@ -3,7 +3,7 @@
 #include "common.hpp"
 #include "neuralNetwork.hpp"
 #include "tree/node.hpp"
-#include "utils/selfPlaySettings.hpp"
+#include "utils/settings.hpp"
 #include "utils/tqdm.h"
 
 /**
@@ -17,18 +17,18 @@ class MCTS
     /**
      * @brief Construct a new MCTS tree
      *
-     * @param selfPlaySettings
+     * @param settings
      * @param root: the Node where the tree starts from
      * @param nn: the neural network to use in the expand() method
      */
-    MCTS(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::unique_ptr<Node> root, std::shared_ptr<NeuralNetwork> const & nn);
+    MCTS(std::shared_ptr<Settings> settings, std::unique_ptr<Node> root, std::shared_ptr<NeuralNetwork> const & nn);
     ~MCTS();
 
     /**
      * @brief Continuously run the 4 steps of the MCTS algorithm.
-     * The amount of simulations is taken from the given selfPlaySettings
+     * The amount of simulations is taken from the given settings
      */
-    void run_simulations();
+    void run_simulations(int simulations);
 
     /**
      * @brief The first step of the MCTS algorithm: keep selecting actions until a
@@ -96,7 +96,7 @@ class MCTS
     static int getTreeDepth(std::unique_ptr<Node> const & root);
 
   private:
-    std::shared_ptr<SelfPlaySettings> m_Settings = nullptr;
+    std::shared_ptr<Settings> m_Settings = nullptr;
     std::unique_ptr<Node>             m_Root     = nullptr;
     std::shared_ptr<NeuralNetwork>    m_NN       = nullptr;
     torch::Device                     m_Device   = torch::kCPU;

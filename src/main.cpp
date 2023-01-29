@@ -11,9 +11,8 @@
 #include "game.hpp"
 #include "train.hpp"
 #include "utils/inputParser.hpp"
-#include "utils/selfPlaySettings.hpp"
+#include "utils/settings.hpp"
 #include "utils/test.hpp"
-#include "utils/trainerSettings.hpp"
 #include "utils/types.hpp"
 
 void signal_handling(int signal)
@@ -41,28 +40,17 @@ void signal_handling(int signal)
     exit(EXIT_SUCCESS);
 }
 
-void parseSelfPlayOptions(InputParser const & inputParser, std::shared_ptr<SelfPlaySettings> settings)
+void parseOptions(InputParser const & inputParser, std::shared_ptr<Settings> settings)
 {
     // set AI model
     if (inputParser.cmdOptionExists("--model"))
     {
-        settings->setModelPath(inputParser.getCmdOption("--model"));
-    }
-
-    // create/load model
-    std::string modelPath = settings->getModelPath();
-    if (!std::filesystem::exists(modelPath))
-    {
-        NeuralNetwork nn = NeuralNetwork(settings);
-        nn.saveModel(modelPath);
+        std::string modelPath = inputParser.getCmdOption("--model");
+        settings->setModelPath(modelPath);
     }
 
     // FOR DEBUGGING PURPOSES: show Q+U+visits for every possible action
     settings->setShowMoves(true);
-
-    // add agents
-    settings->addAgent("Yellow", modelPath, ePlayer::YELLOW);
-    settings->addAgent("Red", modelPath, ePlayer::RED);
 
     // set #simulations per move
     if (inputParser.cmdOptionExists("--sims"))
@@ -86,7 +74,6 @@ void parseSelfPlayOptions(InputParser const & inputParser, std::shared_ptr<SelfP
     }
 
     // set memory folder
-    settings->setMemoryFolder("memory");
     try
     {
         if (inputParser.cmdOptionExists("--memory-folder"))
@@ -116,22 +103,6 @@ void parseSelfPlayOptions(InputParser const & inputParser, std::shared_ptr<SelfP
             }
         }
     }
-}
-
-void parseTrainingOptions(InputParser const & inputParser, std::shared_ptr<TrainerSettings> settings)
-{
-    if (inputParser.cmdOptionExists("--model"))
-    {
-        std::string modelPath = inputParser.getCmdOption("--model");
-        if (std::filesystem::is_regular_file(modelPath) && modelPath.ends_with(".pt"))
-        {
-            settings->setModelPath(modelPath);
-        }
-        else
-        {
-            LFATAL << "Model file invalid: " << modelPath;
-        }
-    }
 
     try
     {
@@ -159,18 +130,6 @@ void parseTrainingOptions(InputParser const & inputParser, std::shared_ptr<Train
 
     try
     {
-        if (inputParser.cmdOptionExists("--memory-folder"))
-        {
-            settings->setMemoryFolder(inputParser.getCmdOption("--memory-folder"));
-        }
-    }
-    catch (std::exception const & e)
-    {
-        LFATAL << "Invalid memory folder: " << e.what();
-    }
-
-    try
-    {
         if (inputParser.cmdOptionExists("--epochs"))
         {
             settings->setEpochs(std::stoi(inputParser.getCmdOption("--epochs")));
@@ -182,9 +141,76 @@ void parseTrainingOptions(InputParser const & inputParser, std::shared_ptr<Train
     }
 }
 
-void runGame(std::shared_ptr<SelfPlaySettings> settings, SelfPlayTally & tally)
+/**
+ @brief Return true if newer model is better
+ */
+bool evaluateModel(std::filesystem::path oldModel, std::filesystem::path newModel)
 {
-    Game    game   = Game(settings);
+    int score                  = 0;
+    int amountOfGamesPerPlayer = 10;
+
+    std::shared_ptr<Settings> oldModelSettings = std::make_shared<Settings>();
+    oldModelSettings->setSaveMemory(false);
+    oldModelSettings->setSimulations(400);
+    oldModelSettings->setStochastic(false);
+
+    std::shared_ptr<Settings> newModelSettings = std::make_shared<Settings>();
+    newModelSettings->setSaveMemory(false);
+    newModelSettings->setSimulations(400);
+    newModelSettings->setStochastic(false);
+
+    // oldmodel starts as yellow, newmodel as red
+    std::pair<std::shared_ptr<Agent>, std::shared_ptr<Agent>> agents;
+
+    std::shared_ptr<Agent> oldAgent = std::make_shared<Agent>("OldAgent", oldModel, oldModelSettings);
+    std::shared_ptr<Agent> newAgent = std::make_shared<Agent>("NewAgent", newModel, newModelSettings);
+    agents.first                    = oldAgent;
+    agents.second                   = newAgent;
+
+    assert(agents.first->getName() == "OldAgent");
+    assert(agents.second->getName() == "NewAgent");
+    LINFO << "Evaluating " << oldModel << "as yellow vs " << newModel << " as red";
+    for (int i = 0; i < amountOfGamesPerPlayer; i++)
+    {
+        Game    match  = Game(oldModelSettings, agents);
+        ePlayer result = match.playGame();
+        if (result == ePlayer::YELLOW)
+        {
+            // oldmodel wins
+            score--;
+        }
+        else if (result == ePlayer::RED)
+        {
+            score++;
+        }
+    }
+
+    LINFO << "Evaluating " << newModel << "as yellow vs " << oldModel << " as red";
+    // swap agents, now oldmodel starts as red, newmodel as yellow
+    std::swap(agents.first, agents.second);
+    assert(agents.first->getName() == "NewAgent");
+    assert(agents.second->getName() == "OldAgent");
+    for (int i = 0; i < amountOfGamesPerPlayer; i++)
+    {
+        Game    match  = Game(oldModelSettings, agents);
+        ePlayer result = match.playGame();
+        if (result == ePlayer::YELLOW)
+        {
+            // newmodel wins
+            score++;
+        }
+        else if (result == ePlayer::RED)
+        {
+            score--;
+        }
+    }
+
+    return score > 0;
+}
+
+void runGame(std::shared_ptr<Settings> settings, std::shared_ptr<Agent> yellow, std::shared_ptr<Agent> red, SelfPlayTally & tally)
+{
+    Game    game   = Game(settings, std::pair(yellow, red));
     ePlayer winner = game.playGame();
     if (winner == ePlayer::NONE)
     {
@@ -207,64 +233,69 @@ void runGame(std::shared_ptr<SelfPlaySettings> settings, SelfPlayTally & tally)
     LINFO << "\n\n\n";
 }
 
-void runPipeline(std::shared_ptr<SelfPlaySettings> selfPlaySettings, std::shared_ptr<TrainerSettings> trainerSettings, SelfPlayTally & tally)
+void runPipeline(std::shared_ptr<Settings> settings, std::shared_ptr<Agent> yellow, std::shared_ptr<Agent> red, SelfPlayTally & tally)
 {
     LINFO << "Running selfplay...";
-    for (int gameCount = 1; gameCount <= selfPlaySettings->getPipelineGames(); gameCount++)
+    for (int gameCount = 1; gameCount <= settings->getPipelineGames(); gameCount++)
     {
         LINFO << "\n\n\tStarting game " << gameCount << "...\n";
-        runGame(selfPlaySettings, tally);
+        runGame(settings, yellow, red, tally);
     }
 
-    LINFO << "Training new model...";
     // train with these games
-    Trainer               trainer          = Trainer(trainerSettings);
+    LINFO << "Creating trainer...";
+    Trainer trainer = Trainer(settings);
+    LINFO << "Training new model...";
     std::filesystem::path trainedModelName = trainer.train();
 
     // move memory to old/ folder
     LINFO << "Moving old games...";
-    std::filesystem::path memoryFolder = selfPlaySettings->getMemoryFolder();
-    std::filesystem::path oldFolder    = std::filesystem::path(memoryFolder).append("old");
-    assert(memoryFolder.string() != oldFolder.string());
-    if (!std::filesystem::exists(oldFolder))
+    std::filesystem::path memoryFolder    = settings->getMemoryFolder();
+    std::filesystem::path oldMemoryFolder = memoryFolder / "old";
+    if (!std::filesystem::exists(oldMemoryFolder))
     {
-        std::filesystem::create_directory(oldFolder);
+        std::filesystem::create_directories(oldMemoryFolder);
     }
+    // move every memory file to old/ folder
     for (auto & p: std::filesystem::directory_iterator(memoryFolder))
     {
         if (p.path().extension() == ".bin")
         {
             // move to old folder
-            std::filesystem::path newPath = oldFolder / p.path().filename().string();
+            std::filesystem::path newPath = oldMemoryFolder / p.path().filename().string();
             std::filesystem::rename(p.path(), newPath);
         }
     }
 
-    // TODO: evaluate with older model
-    // LINFO << "Evaluating against old model...";
-    // TODO: keep model with best performance
-
-    // move old model to old/ folder
-    LINFO << "Moving old model...";
-    std::filesystem::path modelPath = std::filesystem::path(selfPlaySettings->getModelPath());
-    if (modelPath.string().starts_with("./"))
+    LINFO << "Evaluating against old model...";
+    if (evaluateModel(settings->getModelPath(), trainedModelName))
     {
-        modelPath = modelPath.string().substr(2);
-    }
-    std::filesystem::path modelFolder  = modelPath.parent_path();
-    std::filesystem::path oldModelPath = std::filesystem::path(modelFolder).append("old").append(modelPath.filename().string());
-    if (!std::filesystem::exists(oldModelPath.parent_path()))
-    {
-        std::filesystem::create_directory(oldModelPath.parent_path());
-    }
-    LINFO << "Moving " << modelPath << " to " << oldModelPath;
-    std::filesystem::rename(modelPath, oldModelPath);
+        // new model is better: keep new model
+        LINFO << "New model '" << trainedModelName << "' is better!";
 
-    LINFO << "Setting new model path to " << trainedModelName;
-    trainerSettings->setModelPath(trainedModelName);
-    selfPlaySettings->setModelPath(trainedModelName);
-    // save new model
-    LINFO << "Saving new model...";
+        // move old model to old/ folder
+        LDEBUG << "Moving old model...";
+        std::filesystem::path modelPath    = settings->getModelPath();
+        std::filesystem::path modelFolder  = modelPath.parent_path();
+        std::filesystem::path oldModelPath = modelFolder / "old" / modelPath.filename();
+
+        // create the old/ folder if it doesn't exist yet
+        if (!std::filesystem::exists(oldModelPath.parent_path()))
+        {
+            std::filesystem::create_directories(oldModelPath.parent_path());
+        }
+        LDEBUG << "Moving " << modelPath << " to " << oldModelPath;
+        std::filesystem::rename(modelPath, oldModelPath);
+
+        LINFO << "Setting new model to " << trainedModelName;
+        settings->setModelPath(trainedModelName);
+    }
+    else
+    {
+        LINFO << "New model is worse, reusing old model";
+        // new model is worse, remove new model
+        std::filesystem::remove(trainedModelName);
+    }
 }
 
 int main(int argc, char * argv[])
@@ -292,37 +323,36 @@ int main(int argc, char * argv[])
     if (inputParser.cmdOptionExists("--test"))
     {
         Test::runTests();
-        exit(EXIT_SUCCESS);
+        return 0;
     }
+
+    std::shared_ptr<Settings> settings = std::make_shared<Settings>();
+    parseOptions(inputParser, settings);
 
     // TODO: load all settings from a json file or something
     if (inputParser.cmdOptionExists("--train"))
     {
         // parse settings
-        std::shared_ptr<TrainerSettings> trainerSettings = std::make_shared<TrainerSettings>();
-        parseTrainingOptions(inputParser, trainerSettings);
         // create trainer and train
-        Trainer trainer = Trainer(trainerSettings);
+        Trainer trainer = Trainer(settings);
         trainer.train();
         return 0;
     }
     else
     {
         // selfplay
-        std::shared_ptr<SelfPlaySettings> selfPlaySettings = std::make_shared<SelfPlaySettings>();
-        parseSelfPlayOptions(inputParser, selfPlaySettings);
-        SelfPlayTally tally;
+        SelfPlayTally                  tally;
+        std::shared_ptr<NeuralNetwork> model   = std::make_shared<NeuralNetwork>(settings);
+        std::shared_ptr<Agent>         player1 = std::make_shared<Agent>("yellow", model, settings);
+        std::shared_ptr<Agent>         player2 = std::make_shared<Agent>("red", model, settings);
 
         if (inputParser.cmdOptionExists("--pipeline"))
         {
             // run full pipeline with selfplay & training
-            LINFO << "Running full pipeline with " << selfPlaySettings->getPipelineGames() << " games...";
-            std::shared_ptr<TrainerSettings> trainerSettings = std::make_shared<TrainerSettings>();
-            parseTrainingOptions(inputParser, trainerSettings);
-
+            LINFO << "Running full pipeline with " << settings->getPipelineGames() << " games...";
             while (g_Running)
             {
-                runPipeline(selfPlaySettings, trainerSettings, tally);
+                runPipeline(settings, player1, player2, tally);
             }
         }
         else
@@ -330,7 +360,7 @@ int main(int argc, char * argv[])
             // run games infinitely
             while (g_Running)
             {
-                runGame(selfPlaySettings, tally);
+                runGame(settings, player1, player2, tally);
             }
         }
     }

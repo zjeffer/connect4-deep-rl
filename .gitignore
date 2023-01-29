@@ -5,3 +5,4 @@ models/**/*.pt
 memory/**/*.bin
 losses/
 test/
+pipeline/

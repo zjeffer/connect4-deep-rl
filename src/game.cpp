@@ -2,16 +2,12 @@
 
 #include "connect4/player.hpp"
 
-Game::Game(std::shared_ptr<SelfPlaySettings> selfPlaySettings)
-  : m_Settings(selfPlaySettings)
-  , m_Env(std::make_shared<Environment>(m_Settings->getRows(), m_Settings->getCols()))
+Game::Game(std::shared_ptr<Settings> settings, std::pair<std::shared_ptr<Agent>, std::shared_ptr<Agent>> const & agents) 
+    : m_Settings(settings)
+    , m_Env(std::make_shared<Environment>(m_Settings->getRows(), m_Settings->getCols()))
 {
-
-    std::shared_ptr<NeuralNetwork> nn = std::make_shared<NeuralNetwork>(m_Settings);
-    for (auto & agentData: m_Settings->getAgents())
-    {
-        m_Agents.push_back(std::make_shared<Agent>(agentData.name, nn, m_Settings));
-    }
+    m_Agents.emplace_back(agents.first);
+    m_Agents.emplace_back(agents.second);
 
     // create a random id
     std::string current_date = std::to_string(std::time(nullptr));
@@ -89,7 +85,7 @@ bool Game::playMove()
         mcts->setRoot(std::make_unique<Node>(m_Env));
     }
 
-    mcts->run_simulations();
+    mcts->run_simulations(m_Settings->getSimulations());
 
     std::unique_ptr<Node> const & currentRoot = mcts->getRoot();
     // calculate average action-value of all actions in the root node
@@ -157,13 +153,13 @@ void Game::updateMemoryWithWinner(ePlayer winner)
 
 bool Game::saveMemoryToFile()
 {
-    std::string folder = m_Settings->getMemoryFolder();
+    std::filesystem::path folder = m_Settings->getMemoryFolder();
     if (!std::filesystem::exists(folder))
     {
-        std::filesystem::create_directory(folder);
+        std::filesystem::create_directories(folder);
     }
-    std::string filename = folder + m_GameID + ".bin";
-    return utils::writeMemoryElementsToFile(m_Memory, filename);
+    std::filesystem::path file = folder / (m_GameID + ".bin");
+    return utils::writeMemoryElementsToFile(m_Memory, file);
 }
 
 void Game::addElementToMemory(MemoryElement element)
